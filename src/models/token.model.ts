@@ -4,7 +4,7 @@ import moment from 'moment'
 import crypto from 'crypto';
 
 const tokenSchema: Schema = new Schema<IToken>({
-    token:{
+    key:{
         type:String,
         required:true,
         default:crypto.randomBytes(16).toString('hex'),

@@ -1,4 +1,4 @@
-import nodemailer from "nodemailer";
+import nodemailer, { TransportOptions } from "nodemailer";
 import { google } from "googleapis";
 import { OAuth2Client } from "google-auth-library";
 import {
@@ -8,6 +8,8 @@ import {
   GOOGLE_REFRESH_TOKEN,
 } from "../config";
 import { logger } from "./logger";
+import { link } from "fs";
+import { IToken } from "../interfaces/token.interface";
 const oAuth2 = new OAuth2Client(
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
@@ -15,7 +17,7 @@ const oAuth2 = new OAuth2Client(
 );
 oAuth2.setCredentials({ refresh_token: GOOGLE_REFRESH_TOKEN });
 
-export const sendmail = async (email:string,data: string) => {
+export const sendmail = async (email: string, data: string) => {
   try {
     const accessToken = await oAuth2.getAccessToken();
     const transport = nodemailer.createTransport({
@@ -31,7 +33,7 @@ export const sendmail = async (email:string,data: string) => {
       tls: {
         rejectUnauthorized: false,
       },
-    });
+    } as TransportOptions);
     const mailOptions = {
       from: "noreply@stringcode.com",
       to: email,
@@ -40,8 +42,69 @@ export const sendmail = async (email:string,data: string) => {
     };
     const result = await transport.sendMail(mailOptions);
   } catch (e) {
-      logger.error(e);
+    logger.error(e);
 
-    return false
+    return false;
   }
+};
+
+export const getMail = (token: IToken, name: string):string => {
+  const link = `localhost:3000/verify/key?=${token.key}`;
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: block;
+        }
+        p{
+            color: rgb(10, 10, 10);
+            font-size: medium;
+            font-weight: 700;
+        }
+        .block{
+            display: block;
+            padding: 30px;
+            width: 400px;
+            margin: auto;
+            margin-top: 30px;
+            background-color: whitesmoke;
+        
+    box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
+        }
+        .container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        a{
+            text-decoration: none;
+            background-color: rgb(60, 60, 240);
+            width: 80px;
+            height: 40px;
+            border-radius: 5%;
+            color: white;
+            /* text-align: center; */
+            display: grid;
+            place-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="block">
+        <div class="container">
+            <p>Hello ${name}</p>
+             <p>Please verify your email</p>
+            <a href="${link}"> Verify</a>
+        </div>
+    </div>
+</body>
+</html>`;
 };

@@ -53,7 +53,7 @@ class App {
   }
   initializeRoutes(routes: IRoute[]) {
      routes.forEach((route) => {
-       this.app.use("/", route.router);
+       this.app.use("/api/v1", route.router);
      });
   }
   initializeErrorHandling() {
