@@ -1,6 +1,7 @@
-import { model, Schema, Document} from "mongoose";
+import { model, Schema, Document } from "mongoose";
 import { IUser } from "../interfaces/user.interface";
-
+import { logger } from "../utils/logger";
+import { compare, hashPassword } from "../utils/utils";
 
 const userSchema: Schema = new Schema<IUser>({
   email: {
@@ -20,12 +21,31 @@ const userSchema: Schema = new Schema<IUser>({
     type: String,
     required: true,
   },
-  verified:{
+  verified: {
     type: Boolean,
     required: true,
-    default:false,
+    default: false,
   },
 });
+userSchema.pre("save", async function (next) {
+  try {
+    const user = this;
+    const hash = hashPassword(user.password);
+    user.password = hash;
+    next();
+  } catch (e) {
+    logger.error(e);
+    next(e);
+  }
+});
+userSchema.methods.isValidPassword = async function (password: string){
+  try {
+      let user = this;
+    return await compare(password, user.password);
+  } catch (e) {
+    logger.error(e);
+  }
+};
 
-const userModel = model<IUser>("User", userSchema);
+const userModel = model<Document & IUser>("User", userSchema);
 export default userModel;

@@ -4,7 +4,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import { CREDENTIALS, LOG_FORMAT, NODE_ENV, ORIGIN, PORT } from "./config";
-import { Routes } from "./interfaces/routes.interfaces";
+import { IRoute } from "./interfaces/routes.interfaces";
 import {logger,stream} from "./utils/logger";
 import errorMiddleware from "./middlewares/error.middleware";
 import { connect, ConnectOptions } from "mongoose";
@@ -15,7 +15,7 @@ class App {
   public env: string;
   public port: string | number;
 
-  constructor(routes: Routes[]) {
+  constructor(routes: IRoute[]) {
     this.app = express();
     this.env = NODE_ENV || "development";
     this.port = PORT || 3000;
@@ -51,7 +51,7 @@ class App {
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
   }
-  initializeRoutes(routes: Routes[]) {
+  initializeRoutes(routes: IRoute[]) {
      routes.forEach((route) => {
        this.app.use("/", route.router);
      });

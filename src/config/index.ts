@@ -2,7 +2,7 @@ import { config } from "dotenv";
 config();
 
 export const CREDENTIALS = process.env.CREDENTIALS === "true";
-export const  {
+export const {
   NODE_ENV,
   PORT,
   DB_HOST,
@@ -12,5 +12,9 @@ export const  {
   LOG_FORMAT,
   LOG_DIR,
   ORIGIN,
-  DB_URL  
+  DB_URL,
+  GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_SECRET,
+  GOOGLE_REDIRECT_URL,
+  GOOGLE_REFRESH_TOKEN,
 } = process.env;
