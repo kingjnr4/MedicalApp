@@ -1,7 +1,7 @@
 import nodemailer, { TransportOptions } from "nodemailer";
-import { google } from "googleapis";
-import { OAuth2Client } from "google-auth-library";
+const { google } = require("googleapis");
 import {
+  GOOGLE_CLIENT_EMAIL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URL,
@@ -10,45 +10,43 @@ import {
 import { logger } from "./logger";
 import { link } from "fs";
 import { IToken } from "../interfaces/token.interface";
-const oAuth2 = new OAuth2Client(
+const oAuth2 = new google.auth.OAuth2(
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   GOOGLE_REDIRECT_URL
 );
+
 oAuth2.setCredentials({ refresh_token: GOOGLE_REFRESH_TOKEN });
 
 export const sendmail = async (email: string, data: string) => {
-  try {
+  try{
     const accessToken = await oAuth2.getAccessToken();
     const transport = nodemailer.createTransport({
       service: "gmail",
       auth: {
         type: "OAuth2",
-        user: "onyiboixy@gmail.com",
+        user: GOOGLE_CLIENT_EMAIL,
         clientId: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
         refreshToken: GOOGLE_REFRESH_TOKEN,
         accessToken: accessToken,
       },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    } as TransportOptions);
+    } );
     const mailOptions = {
       from: "noreply@stringcode.com",
       to: email,
       subject: "Please Verify Your Account ",
       text: "Please Verify Your Account ",
+      html:data
     };
-    const result = await transport.sendMail(mailOptions);
-  } catch (e) {
-    logger.error(e);
-
-    return false;
+ const result = await transport.sendMail(mailOptions);
+ return result;
+  }catch(e){
+return e;
   }
 };
 
-export const getMail = (token: IToken, name: string):string => {
+export const getMail = (token: IToken):string => {
   const link = `localhost:3000/verify/key?=${token.key}`;
   return `<!DOCTYPE html>
 <html lang="en">
@@ -100,7 +98,6 @@ export const getMail = (token: IToken, name: string):string => {
 <body>
     <div class="block">
         <div class="container">
-            <p>Hello ${name}</p>
              <p>Please verify your email</p>
             <a href="${link}"> Verify</a>
         </div>

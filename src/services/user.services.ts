@@ -1,8 +1,9 @@
-import { isEmpty } from "class-validator";
+
 import { CreateUserDto } from "../dtos/user.dto";
 import { HttpException } from "../exceptions/HttpException";
 import { IUser } from "../interfaces/user.interface";
 import userModel from "../models/user.model";
+import { isEmpty } from "../utils/utils";
 
 class UserService {
   public model = userModel;
@@ -13,20 +14,25 @@ class UserService {
   public async findUserById(userId: string): Promise<IUser> {
     if (isEmpty(userId)) throw new HttpException(400, "No userId passed");
 
-    const user  = await this.model.findOne({ _id: userId });
-    if (!user) throw new HttpException(409, "You're not user");
+    const user = await this.model.findOne({ _id: userId });
+    if (!user) throw new HttpException(409, "User not found");
     return user;
   }
+  public async findUserByEmail(email:string): Promise<IUser> {
+    if (isEmpty(email)) throw new HttpException(400, "No Email passed");
 
+    const user = await this.model.findOne({ email });
+    if (!user) throw new HttpException(409, "User not found");
+    return user;
+  }
   public async createUser(userData: CreateUserDto): Promise<IUser> {
-    if (isEmpty(userData)) throw new HttpException(400, "Please make sure all fields are filled");
+    if (isEmpty(userData))
+      throw new HttpException(400, "Please make sure all fields are filled");
 
-    const findUser = await this.model.findOne({ email: userData.email });
-    if (findUser)
-      throw new HttpException(
-        409,
-        `You're email ${userData.email} already exists Log in instead`
-      );
+    const findEmail = await this.model.findOne({ email: userData.email });
+    const findName = await this.model.findOne({ username: userData.username });
+    if (findEmail) throw new HttpException(409, ` email is in use`);
+    if (findName) throw new HttpException(409, ` username is in use`);
 
     const createUserData: IUser = await this.model.create({
       ...userData,
@@ -35,12 +41,10 @@ class UserService {
     return createUserData;
   }
 
- 
-
   public async deleteUser(userId: string): Promise<IUser> {
     const deleteUserById = await this.model.findByIdAndDelete(userId);
     if (!deleteUserById) throw new HttpException(409, "You're not user");
     return deleteUserById;
   }
 }
-export default UserService
+export default UserService;

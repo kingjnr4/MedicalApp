@@ -1,17 +1,18 @@
-import { plainToClass, plainToInstance } from "class-transformer";
+import {   plainToInstance } from "class-transformer";
 import { validate, ValidationError } from "class-validator";
 import { RequestHandler } from "express";
 import { HttpException } from "../exceptions/HttpException";
 import { logger } from "../utils/logger";
 
 const MESSAGES = {
-  userReg:" fill all fields"
+  fields:" fill all fields",
+  key:"key is empty"
 }
-Type msgtype = keyof MESSAGES
+type msgType = keyof typeof MESSAGES
 const validationMiddleware = (
   type: any,
   value:  "body" | "query" | "params" = "body",
-  msg:msgtype,
+  msg:msgType,
   skipMissingProperties = false,
   whitelist = true,
   forbidNonWhitelisted = true
@@ -24,7 +25,7 @@ const validationMiddleware = (
     }).then((errors: ValidationError[]) => {
       if (errors.length > 0) {
         logger.error(errors);
-        const message = MESSAGE[msg];
+        const message = MESSAGES[msg];
         next(new HttpException(400, message));
       } else {
         next();

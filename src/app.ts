@@ -9,6 +9,7 @@ import {logger,stream} from "./utils/logger";
 import errorMiddleware from "./middlewares/error.middleware";
 import { connect, ConnectOptions } from "mongoose";
 import { dbConnection } from "./databases";
+import morganMiddleware from "./middlewares/morgan.middleware";
 
 class App {
   public app: express.Application;
@@ -44,7 +45,7 @@ class App {
      });
   }
   initializeMiddlewares() {
-        this.app.use(morgan(LOG_FORMAT!, { stream }));
+        this.app.use(morganMiddleware);
         this.app.use(cors({ origin: ORIGIN, credentials: CREDENTIALS }));
         this.app.use(helmet());
         this.app.use(express.json());
