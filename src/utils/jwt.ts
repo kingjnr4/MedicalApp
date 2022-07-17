@@ -1,5 +1,7 @@
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
+import moment from "moment";
 import { SECRET_KEY } from "../config";
+import { HttpException } from "../exceptions/HttpException";
 import { logger } from "./logger";
 
 const generateAccessToken = (userId: string) => {
@@ -12,7 +14,13 @@ const generateAccessToken = (userId: string) => {
 
 const decodeToken = (token: string) => {
   try {
-    return jwt.verify(token, SECRET_KEY!);
+    const decoded= jwt.verify(token, SECRET_KEY!,{complete:true});
+    const payload = decoded.payload as jwt.JwtPayload
+    const exp = payload.exp!;
+    if(moment(exp* 1000).isAfter(Date.now())){
+      throw new HttpException(505,"unauthorized");
+    }
+    return payload['userId'] as string;
   } catch (e) {
     logger.error(e);
   }
