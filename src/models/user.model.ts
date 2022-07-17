@@ -23,6 +23,11 @@ const userSchema: Schema = new Schema<IUser>({
     required: true,
     default: false,
   },
+  status:{
+    type:String,
+    required:true,
+    default:'open'
+  }
 });
 userSchema.pre("save", async function (next) {
   try {
