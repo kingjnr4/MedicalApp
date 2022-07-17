@@ -4,4 +4,6 @@ export interface IUser {
   username:string;
   password: string;
   verified:boolean;
+  status:stat;
 }
+type stat = "blocked" | "open";
