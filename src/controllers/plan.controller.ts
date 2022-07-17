@@ -13,16 +13,20 @@ class PlanController {
       next(error);
     }
   };
-  public update = (req: Request, res: Response, next: NextFunction) => {
+  public update = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.send("<h1>hello after hrs </h1>");
+       const data = req.body
+     const plan = await this.service.updatePlan(data.id,data.plan);
+     return res.status(200).send({ message: "success" });
     } catch (error) {
       next(error);
     }
   };
-  public delete = (req: Request, res: Response, next: NextFunction) => {
+  public delete = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      res.send("<h1>hello after hrs </h1>");
+      const id = req.body
+     const plan = await this.service.deletePlan(id);
+     return res.status(200).send({ message: "success" });
     } catch (error) {
       next(error);
     }

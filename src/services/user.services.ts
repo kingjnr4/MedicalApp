@@ -1,4 +1,3 @@
-
 import { CreateUserDto } from "../dtos/user.dto";
 import { HttpException } from "../exceptions/HttpException";
 import { IUser } from "../interfaces/user.interface";
@@ -18,7 +17,7 @@ class UserService {
     if (!user) throw new HttpException(409, "User not found");
     return user;
   }
-  public async findUserByEmail(email:string): Promise<IUser> {
+  public async findUserByEmail(email: string): Promise<IUser> {
     if (isEmpty(email)) throw new HttpException(400, "No Email passed");
 
     const user = await this.model.findOne({ email });
@@ -40,7 +39,15 @@ class UserService {
 
     return createUserData;
   }
-
+  public async verify(userId: string): Promise<Boolean> {
+    const user = await this.model.findById(userId);
+    if (user == null) {
+      throw new HttpException(409, `User not found`);
+    }
+    user.verified = true;
+    user?.save();
+    return true;
+  }
   public async deleteUser(userId: string): Promise<IUser> {
     const deleteUserById = await this.model.findByIdAndDelete(userId);
     if (!deleteUserById) throw new HttpException(409, "You're not user");

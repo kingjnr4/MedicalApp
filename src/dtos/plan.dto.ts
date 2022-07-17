@@ -1,4 +1,10 @@
-import { IsEmail, IsString, IsNotEmpty, IsNumberString, IsNumber } from "class-validator";
+import {
+  IsEmail,
+  IsString,
+  IsNotEmpty,
+  IsNumberString,
+  IsNumber,
+} from "class-validator";
 
 export class CreatePlanDto {
   @IsString()
@@ -12,3 +18,20 @@ export class CreatePlanDto {
   public spaces!: number;
 }
 
+export class UpdatePlanDto {
+  @IsString()
+  public name!: string;
+  @IsString()
+  public id!: string;
+  @IsString()
+  public description!: string;
+  @IsNumber()
+  public amount!: number;
+  @IsNumber()
+  public spaces!: number;
+}
+
+export class DeletePlanDto {
+  @IsString()
+  public id!: string;
+}

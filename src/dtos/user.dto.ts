@@ -17,3 +17,7 @@ export class LoginUserDto {
   @IsString()
   public password!: string;
 }
+export class VerifyUserDto {
+  @IsString()
+  public key!: string;
+}

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import PlanController from "../controllers/plan.controller";
-import { CreatePlanDto } from "../dtos/plan.dto";
+import { CreatePlanDto, DeletePlanDto, UpdatePlanDto } from "../dtos/plan.dto";
 import { IRoute } from "../interfaces/routes.interfaces";
 import validationMiddleware from "../middlewares/validation.middleware";
 
@@ -14,11 +14,21 @@ class PlanRoute implements IRoute {
   }
 
   private initializeRoutes() {
- this.router.post(
+    this.router.post(
       `${this.path}/create`,
-      validationMiddleware(CreatePlanDto, "body","fields"),
+      validationMiddleware(CreatePlanDto, "body", "fields"),
       this.controller.create
-    )
+    );
+    this.router.delete(
+      `${this.path}/delete`,
+      validationMiddleware(DeletePlanDto, "body", "key"),
+      this.controller.delete
+    );
+    this.router.post(
+      `${this.path}/update`,
+      validationMiddleware(UpdatePlanDto, "body", "fields"),
+      this.controller.update
+    );
   }
 }
 export default PlanRoute;
