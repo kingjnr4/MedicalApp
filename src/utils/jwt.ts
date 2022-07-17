@@ -10,6 +10,15 @@ const generateAccessToken = (userId: string) => {
   }
 };
 
+const decodeToken = (token: string) => {
+  try {
+    return jwt.verify(token, SECRET_KEY!);
+  } catch (e) {
+    logger.error(e);
+  }
+};
+
+
 const generateRefreshToken = (userId: string) => {
   try {
     return jwt.sign({ userId }, SECRET_KEY!, { expiresIn: "7d" });
