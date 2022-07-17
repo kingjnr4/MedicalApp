@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CreateUserDto, LoginUserDto, VerifyUserDto } from "../dtos/user.dto";
+import { BlockUserDto, CreateUserDto, LoginUserDto, VerifyUserDto } from "../dtos/user.dto";
 import tokenModel from "../models/token.model";
 import UserService from "../services/user.services";
 import { generateJWT } from "../utils/jwt";
@@ -37,18 +37,26 @@ class UserController {
     }
   };
   public verify = async (req: Request, res: Response, next: NextFunction) => {
-        try {
-    const data: VerifyUserDto = req.body;
-    const isValid = await verifyVerificationToken(data.key);
-     const id = await getIdFromToken(data.key);
-    if (isValid && id !== "") {
-      const verified = await this.service.verify(id);
-       return res.status(200).send({ message: "success", verified });
-    }
+    try {
+      const data: VerifyUserDto = req.body;
+      const isValid = await verifyVerificationToken(data.key);
+      const id = await getIdFromToken(data.key);
+      if (isValid && id !== "") {
+        const verified = await this.service.verify(id);
+        return res.status(200).send({ message: "success", verified });
+      }
     } catch (e) {
       next(e);
     }
-}
+  };
+  public block = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data: BlockUserDto = req.body;
+      
+    } catch (e) {
+      next(e);
+    }
+  };
 }
 
 export default UserController;

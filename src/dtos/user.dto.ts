@@ -1,4 +1,4 @@
-import { IsEmail, IsString, IsNotEmpty } from "class-validator";
+import { IsEmail, IsString, IsNotEmpty, isJWT } from "class-validator";
 
 export class CreateUserDto {
   @IsEmail()
@@ -20,4 +20,8 @@ export class LoginUserDto {
 export class VerifyUserDto {
   @IsString()
   public key!: string;
+}
+export class BlockUserDto {
+  @isJWT()
+  public token!: string;
 }
