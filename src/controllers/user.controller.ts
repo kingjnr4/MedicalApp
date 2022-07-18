@@ -31,6 +31,7 @@ class UserController {
       const data: LoginUserDto = req.body;
       const user = await this.service.findUserByEmail(data.email);
       const jwt = generateJWT(user._id);
+      
       return res.status(200).send({ message: "success", jwt });
     } catch (e) {
       next(e);

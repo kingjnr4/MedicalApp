@@ -1,5 +1,5 @@
 import { model, Schema, Document } from "mongoose";
-import { IAdmin } from "../interfaces/user.interface";
+import { IAdmin } from "../interfaces/admin.interface";
 import { logger } from "../utils/logger";
 import { compare, hashPassword } from "../utils/utils";
 
@@ -19,7 +19,7 @@ const adminSchema: Schema = new Schema<IAdmin>({
     required: true,
   },
 });
-userSchema.pre("save", async function (next) {
+adminSchema.pre("save", async function (next) {
   try {
     const user = this;
     const hash = hashPassword(user.password);
@@ -30,9 +30,9 @@ userSchema.pre("save", async function (next) {
     next(e);
   }
 });
-userSchema.methods.isValidPassword = async function (password: string){
+adminSchema.methods.isValidPassword = async function (password: string) {
   try {
-      let user = this;
+    let user = this;
     return await compare(password, user.password);
   } catch (e) {
     logger.error(e);
