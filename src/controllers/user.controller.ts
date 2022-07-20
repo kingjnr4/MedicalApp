@@ -20,7 +20,11 @@ class UserController {
       const token = await generateVerificationToken(user._id);
       const mail = getMail(token);
       sendmail(user.email, mail)
-        .then((msg) => res.status(200).send({ message: "success" }))
+        .then((msg) => {
+          logger.info(msg)
+          return res.status(200).send({ message: "success",msg}
+      
+      )})
         .catch((e) => next(e));
     } catch (e) {
       next(e);
