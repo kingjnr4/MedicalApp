@@ -37,7 +37,7 @@ userSchema.pre("save", async function (next) {
     next();
   } catch (e) {
     logger.error(e);
-    next(e);
+    next();
   }
 });
 userSchema.methods.isValidPassword = async function (password: string){
