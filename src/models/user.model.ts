@@ -31,9 +31,8 @@ const userSchema: Schema = new Schema<IUser>({
 });
 userSchema.pre("save", async function (next) {
   try {
-    const user = this;
-    const hash = hashPassword(user.password);
-    user.password = hash;
+    const hash = await hashPassword(this.password);
+    this.password = hash;
     next();
   } catch (e) {
     logger.error(e);
@@ -43,8 +42,8 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.checkPassword = async function (password: string) {
   try {
     let user = this;
-    logger.info( user.password);
-    return await compare(password, user.password);
+    const isvalid =await compare(password, user.password)
+    return isvalid ;
   } catch (e) {
     logger.error(e);
   }

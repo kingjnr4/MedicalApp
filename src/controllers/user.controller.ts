@@ -35,7 +35,8 @@ class UserController {
     try {
       const data: LoginUserDto = req.body;
       const user = await this.service.findUserByEmail(data.email);
-     if (user.checkPassword(data.password)==false){
+      const isvalid = await user.checkPassword(data.password)
+     if (isvalid==false){
        throw new HttpException(401,"your password is incorrect")
      }
       const jwt = generateJWT(user._id);
