@@ -40,7 +40,7 @@ userSchema.pre("save", async function (next) {
     next();
   }
 });
-userSchema.methods.checkPassword = async function (password: string):boolean {
+userSchema.methods.checkPassword = async function (password: string):Promise<boolean> {
   try {
     let user = this;
     return await compare(password, user.password);
