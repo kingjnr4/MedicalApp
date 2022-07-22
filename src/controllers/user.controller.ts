@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { BlockUserDto, CreateUserDto, LoginUserDto, VerifyUserDto } from "../dtos/user.dto";
+import { HttpException } from "../exceptions/HttpException";
 import tokenModel from "../models/token.model";
 import UserService from "../services/user.services";
 import { generateJWT } from "../utils/jwt";
@@ -22,7 +23,7 @@ class UserController {
       sendmail(user.email, mail)
         .then((msg) => {
           logger.info(msg)
-          return res.status(200).send({ message: "success",msg}
+          return res.status(200).send({ message: "success"}
       
       )})
         .catch((e) => next(e));
@@ -34,6 +35,9 @@ class UserController {
     try {
       const data: LoginUserDto = req.body;
       const user = await this.service.findUserByEmail(data.email);
+     if (user.checkPassword(data.password)==false){
+       throw new HttpException(401,"your password is incorrect")
+     }
       const jwt = generateJWT(user._id);
       
       return res.status(200).send({ message: "success", jwt });

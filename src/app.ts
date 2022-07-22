@@ -10,7 +10,7 @@ import errorMiddleware from "./middlewares/error.middleware";
 import { connect, ConnectOptions } from "mongoose";
 import { dbConnection } from "./databases";
 import morganMiddleware from "./middlewares/morgan.middleware";
-
+import filemanager from 'express-file-manager'
 class App {
   public app: express.Application;
   public env: string;
@@ -51,6 +51,7 @@ class App {
         this.app.use(express.json());
         this.app.use(express.urlencoded({ extended: true }));
         this.app.use(cookieParser());
+        this.app.use('/filemanager', filemanager(__dirname,{}));
   }
   initializeRoutes(routes: IRoute[]) {
      routes.forEach((route) => {

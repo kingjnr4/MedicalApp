@@ -1,38 +1,23 @@
-import https from "https";
-export const createPaystackPlan = () => {
+import https from 'https';
+import { axiosFetch } from './axios';
+type Interval = 'monthly' | 'yearly' | 'daily';
+export const createPaystackPlan = async (
+  name: string,
+  amount: number,
+  interval: Interval = 'monthly',
+) => {
   const params = JSON.stringify({
-    name: "Monthly retainer",
-    interval: "monthly",
-    amount: "500000",
+    name,
+    interval,
+    amount,
   });
 
-  const options = {
-    hostname: "api.paystack.co",
-    port: 443,
-    path: "/plan",
-    method: "POST",
-    headers: {
-      Authorization: "Bearer SECRET_KEY",
-      "Content-Type": "application/json",
-    },
-  };
+  const url = 'api.paystack.co/plan',
+    method = 'POST',
+    headers = {
+      Authorization: 'Bearer SECRET_KEY',
+      'Content-Type': 'application/json',
+    };
 
-  const req = https
-    .request(options, (res) => {
-      let data = "";
-
-      res.on("data", (chunk) => {
-        data += chunk;
-      });
-
-      res.on("end", () => {
-        return res
-      });
-    })
-    .on("error", (error) => {
-      console.error(error);
-    });
-
-  req.write(params);
-  req.end();
+  const data = await axiosFetch(url, method, headers, params);
 };
