@@ -43,6 +43,7 @@ userSchema.pre("save", async function (next) {
 userSchema.methods.checkPassword = async function (password: string) {
   try {
     let user = this;
+    logger.info( user.password);
     return await compare(password, user.password);
   } catch (e) {
     logger.error(e);
