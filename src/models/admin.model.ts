@@ -19,7 +19,7 @@ const adminSchema: Schema = new Schema<IAdmin>({
     required: true,
   },
   role: {
-    type: string,
+    type: String,
     required: true,
   },
 });
