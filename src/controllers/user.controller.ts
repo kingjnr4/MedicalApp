@@ -5,7 +5,7 @@ import tokenModel from "../models/token.model";
 import UserService from "../services/user.services";
 import { generateJWT } from "../utils/jwt";
 import { logger } from "../utils/logger";
-import { getMail, sendmail } from "../utils/mail";
+import { getMailForVerify, sendmail } from "../utils/mail";
 import {
   generateVerificationToken,
   getIdFromToken,
@@ -19,7 +19,7 @@ class UserController {
       const data: CreateUserDto = req.body;
       const user = await this.service.createUser(data);
       const token = await generateVerificationToken(user._id);
-      const mail = getMail(token);
+      const mail = getMailForVerify(token);
       sendmail(user.email, mail)
         .then((msg) => {
           logger.info(msg)

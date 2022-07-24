@@ -2,8 +2,12 @@ import https from 'https';
 import paystack from 'paystack';
 import { PAYSTACK_SECRET } from '../config';
 import { axiosFetch } from './axios';
+
+import { NextFunction, Request, Response } from "express";
+
 type Interval = 'monthly' | 'yearly' | 'daily';
 const api = paystack(PAYSTACK_SECRET!);
+
 
 export class Paystack {
   // createPaystackPlan = async (
@@ -61,4 +65,7 @@ export class Paystack {
     const data = await axiosFetch(url, method, headers, params);
     return data;
   };
+  static webhook = (req: Request, res: Response, next: NextFunction)=>{
+
+  }
 }

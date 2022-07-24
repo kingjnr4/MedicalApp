@@ -6,7 +6,7 @@ import tokenModel from "../models/token.model";
 import AdminService from "../services/admin.services";
 import { generateJWT } from "../utils/jwt";
 import { logger } from "../utils/logger";
-import { getMail, sendmail } from "../utils/mail";
+import { getMailForVerify, sendmail } from "../utils/mail";
 import {
   generateVerificationToken,
   getIdFromToken,
@@ -20,7 +20,7 @@ class AdminController {
       const data: CreateAdminDto = req.body;
       const user = await this.service.createAdmin(data);
       const token = await generateVerificationToken(user._id);
-      const mail = getMail(token);
+      const mail = getMailForVerify(token);
     } catch (e) {
       next(e);
     }

@@ -10,6 +10,7 @@ import errorMiddleware from "./middlewares/error.middleware";
 import { connect, ConnectOptions } from "mongoose";
 import { dbConnection } from "./databases";
 import morganMiddleware from "./middlewares/morgan.middleware";
+import { Paystack } from "./utils/paystack";
 
 class App {
   public app: express.Application;
@@ -56,6 +57,7 @@ class App {
      routes.forEach((route) => {
        this.app.use("/api/v1", route.router);
      });
+     this.app.use('/api/v1/paystackhook',Paystack.webhook);
   }
   initializeErrorHandling() {
     this.app.use(errorMiddleware);
