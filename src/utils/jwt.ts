@@ -6,13 +6,13 @@ import { logger } from "./logger";
 
 const generateAccessToken = (userId: string) => {
   try {
-    return jwt.sign({ userId }, SECRET_KEY!, { expiresIn: "15m" });
+    return jwt.sign({ userId }, SECRET_KEY!, { expiresIn: '7d' });
   } catch (e) {
     logger.error(e);
   }
 };
 
-const decodeToken = (token: string) => {
+export const decodeToken = (token: string) => {
   try {
     const decoded= jwt.verify(token, SECRET_KEY!,{complete:true});
     const payload = decoded.payload as jwt.JwtPayload

@@ -18,4 +18,5 @@ export const {
   GOOGLE_REDIRECT_URL,
   GOOGLE_REFRESH_TOKEN,
   GOOGLE_CLIENT_EMAIL,
+  PAYSTACK_SECRET,
 } = process.env;

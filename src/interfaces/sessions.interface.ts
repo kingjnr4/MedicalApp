@@ -3,4 +3,5 @@ export interface ISession {
     userid:string;
     ip:string;
     platform:string;
+    current:boolean;
 }

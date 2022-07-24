@@ -5,7 +5,7 @@ const sessionSchema: Schema = new Schema<ISession>({
   userid: {
     type: String,
     required: true,
-    unique: true,
+    ref:'users'
   },
   ip: {
     type: String,
@@ -15,7 +15,10 @@ const sessionSchema: Schema = new Schema<ISession>({
   platform: {
     type: String,
     required: true,
-    unique: true,
+  },
+  current: {
+    type: Boolean,
+    required: true,
   },
 });
 

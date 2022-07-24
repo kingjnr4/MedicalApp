@@ -1,23 +1,64 @@
 import https from 'https';
+import paystack from 'paystack';
+import { PAYSTACK_SECRET } from '../config';
 import { axiosFetch } from './axios';
 type Interval = 'monthly' | 'yearly' | 'daily';
-export const createPaystackPlan = async (
-  name: string,
-  amount: number,
-  interval: Interval = 'monthly',
-) => {
-  const params = JSON.stringify({
-    name,
-    interval,
-    amount,
-  });
+const api = paystack(PAYSTACK_SECRET!);
 
-  const url = 'api.paystack.co/plan',
-    method = 'POST',
-    headers = {
-      Authorization: 'Bearer SECRET_KEY',
-      'Content-Type': 'application/json',
-    };
+export class Paystack {
+  // createPaystackPlan = async (
+  //   name: string,
+  //   amount: number,
+  //   interval: Interval = 'monthly',
+  // ) => {
+  //   const plan = await api.plan.create({
+  //     name,
+  //     amount,
+  //     interval,
+  //   });
+  //   return plan;
+  // };
+  createPaystackPlan = async (
+    name: string,
+    amount: number,
+    interval: Interval = 'monthly',
+  ) => {
+    const params = JSON.stringify({
+      name,
+      interval,
+      amount,
+    });
 
-  const data = await axiosFetch(url, method, headers, params);
-};
+    const url = 'api.paystack.co/plan',
+      method = 'POST',
+      headers = {
+        Authorization: ['Bearer'].join(''),
+        'Content-Type': 'application/json',
+      };
+
+    const data = await axiosFetch(url, method, headers, params);
+    return data;
+  };
+
+  subscribe = async (
+    email: string,
+    amount: number,
+    plan: string,
+    callback_url: string,
+  ) => {
+    const params = JSON.stringify({
+      email,
+      amount,
+      plan,
+      callback_url,
+    });
+    const url = 'api.paystack.co/transaction/initialize',
+      method = 'POST',
+      headers = {
+        Authorization: ['Bearer'].join(''),
+        'Content-Type': 'application/json',
+      };
+    const data = await axiosFetch(url, method, headers, params);
+    return data;
+  };
+}

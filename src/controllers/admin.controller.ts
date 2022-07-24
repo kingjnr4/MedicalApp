@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { CreateAdminDto, LoginAdminDto } from "../dtos/admin.dto";
 import {  CreateUserDto, LoginUserDto,  } from "../dtos/user.dto";
+import { HttpException } from "../exceptions/HttpException";
 import tokenModel from "../models/token.model";
 import AdminService from "../services/admin.services";
 import { generateJWT } from "../utils/jwt";
@@ -27,8 +28,12 @@ class AdminController {
   public login = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: LoginAdminDto = req.body;
-      const user = await this.service.findAdminById(data.email);
-      const jwt = generateJWT(user._id);
+      const admin = await this.service.findAdminById(data.email);
+        const isvalid = await admin.checkPassword(data.password);
+        if (isvalid == false) {
+          throw new HttpException(401, 'your password is incorrect');
+        }
+      const jwt = generateJWT(admin._id);
       return res.status(200).send({ message: "success", jwt });
     } catch (e) {
       next(e);

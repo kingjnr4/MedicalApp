@@ -40,8 +40,10 @@ class UserController {
        throw new HttpException(401,"your password is incorrect")
      }
       const jwt = generateJWT(user._id);
-      
-      return res.status(200).send({ message: "success", jwt });
+     // res.cookie('refreshToken',jwt.refreshToken)
+      return res
+        .status(200)
+        .send({ message: 'success', accessToken: jwt.accessToken });
     } catch (e) {
       next(e);
     }
