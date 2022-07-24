@@ -1,7 +1,7 @@
-import { model, Schema, Document } from "mongoose";
-import { IAdmin, Roles } from "../interfaces/admin.interface";
-import { logger } from "../utils/logger";
-import { compare, hashPassword } from "../utils/utils";
+import { model, Schema, Document } from 'mongoose';
+import { IAdmin, Roles } from '../interfaces/admin.interface';
+import { logger } from '../utils/logger';
+import { compare, hashPassword } from '../utils/utils';
 
 const adminSchema: Schema = new Schema<IAdmin>({
   email: {
@@ -19,11 +19,11 @@ const adminSchema: Schema = new Schema<IAdmin>({
     required: true,
   },
   role: {
-    type: Roles,
+    type: string,
     required: true,
   },
 });
-adminSchema.pre("save", async function (next) {
+adminSchema.pre('save', async function (next) {
   try {
     const admin = this;
     const hash = await hashPassword(admin.password);
@@ -35,14 +35,14 @@ adminSchema.pre("save", async function (next) {
   }
 });
 adminSchema.methods.isValidPassword = async function (password: string) {
- try {
-   let admin = this;
-   const isvalid = await compare(password, admin.password);
-   return isvalid;
- } catch (e) {
-   logger.error(e);
- }
+  try {
+    let admin = this;
+    const isvalid = await compare(password, admin.password);
+    return isvalid;
+  } catch (e) {
+    logger.error(e);
+  }
 };
 
-const adminModel = model<Document & IAdmin>("admins", adminSchema);
+const adminModel = model<Document & IAdmin>('admins', adminSchema);
 export default adminModel;
