@@ -18,9 +18,10 @@ class AdminController {
   public register = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: CreateAdminDto = req.body;
-      const user = await this.service.createAdmin(data);
-      const token = await generateVerificationToken(user._id);
-      const mail = getMailForVerify(token);
+      const admin = await this.service.createAdmin(data);
+      
+      const details = { name: admin.username };
+        return res.status(200).send({ message: 'success',details});
     } catch (e) {
       next(e);
     }
