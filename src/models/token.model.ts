@@ -15,7 +15,7 @@ const tokenSchema: Schema = new Schema<IToken>({
     },
     expires:{
     type:Date,
-    default:moment().add(30,'minutes').toDate()
+    default:()=>moment().add(30,'h').toDate()
     }
 });
 

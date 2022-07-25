@@ -53,6 +53,8 @@ class UserController {
       const data: VerifyUserDto = req.body;
       const isValid = await verifyVerificationToken(data.key);
       const id = await getIdFromToken(data.key);
+      console.log(id+"\t"+isValid);
+      
       if (isValid && id !== "") {
         const verified = await this.service.verify(id);
         return res.status(200).send({ message: "success", verified });
