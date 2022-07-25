@@ -20,7 +20,7 @@ const planSchema: Schema = new Schema<IPlan>({
     type: Number,
     required: true,
   },
-  psname:{
+  code:{
     type: String,
   },
 });
