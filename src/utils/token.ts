@@ -12,7 +12,7 @@ export const verifyVerificationToken = async (key:string): Promise<boolean> => {
   const token = await tokenModel.findOne({key});
   if(token){
     const exp = token.expires
-    return moment(exp).isSameOrBefore(Date.now());
+    return moment(exp).isSameOrAfter(Date.now());
   }
   return false
 };
