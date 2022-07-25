@@ -57,6 +57,7 @@ class UserController {
         const verified = await this.service.verify(id);
         return res.status(200).send({ message: "success", verified });
       }
+      return res.status(200).send({ message: 'failed' });
     } catch (e) {
       next(e);
     }
