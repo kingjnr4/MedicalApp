@@ -22,15 +22,17 @@ export class Paystack {
   //   });
   //   return plan;
   // };
-  createPaystackPlan = async (
+   createPaystackPlan = async (
     name: string,
     amount: number,
+    description:string,
     interval: Interval = 'monthly',
   ) => {
     const params = JSON.stringify({
       name,
       interval,
       amount,
+      description,
     });
 
     const url = 'api.paystack.co/plan',
@@ -44,7 +46,7 @@ export class Paystack {
     return data;
   };
 
-  subscribe = async (
+ public  subscribe = async (
     email: string,
     amount: number,
     plan: string,

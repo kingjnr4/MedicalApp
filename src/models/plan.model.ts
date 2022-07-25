@@ -20,6 +20,9 @@ const planSchema: Schema = new Schema<IPlan>({
     type: Number,
     required: true,
   },
+  psname:{
+    type: String,
+  },
 });
 
 const planModel = model<Document & IPlan>("plans", planSchema);

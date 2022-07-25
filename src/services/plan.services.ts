@@ -18,7 +18,7 @@ class PlanService {
     if (!Plan) throw new HttpException(409, "Plan not found");
     return Plan;
   }
-  public async createPlan(planData: CreatePlanDto): Promise<IPlan> {
+  public async createPlan(planData: CreatePlanDto & {code:string}): Promise<IPlan> {
     if (isEmpty(planData))
       throw new HttpException(400, "Please make sure all fields are filled");
 

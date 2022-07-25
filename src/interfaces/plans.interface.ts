@@ -4,4 +4,5 @@ export interface IPlan {
   description: string;
   price: number;
   spaces: number;
+  code?:string
 }

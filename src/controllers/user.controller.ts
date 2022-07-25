@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { BlockUserDto, CreateUserDto, LoginUserDto, VerifyUserDto } from "../dtos/user.dto";
 import { HttpException } from "../exceptions/HttpException";
-import tokenModel from "../models/token.model";
 import UserService from "../services/user.services";
 import { generateJWT } from "../utils/jwt";
 import { logger } from "../utils/logger";
@@ -19,7 +18,7 @@ class UserController {
       const data: CreateUserDto = req.body;
       const user = await this.service.createUser(data);
       const token = await generateVerificationToken(user._id);
-      const mail = getMailForVerify(token);
+      const mail = getMailForVerify(token,user.email);
       sendmail(user.email, mail)
         .then((msg) => {
           logger.info(msg)
@@ -40,10 +39,11 @@ class UserController {
        throw new HttpException(401,"your password is incorrect")
      }
       const jwt = generateJWT(user._id);
+      const details = {name:user.username,verified:user.verified}
      // res.cookie('refreshToken',jwt.refreshToken)
       return res
         .status(200)
-        .send({ message: 'success', accessToken: jwt.accessToken });
+        .send({ message: 'success', accessToken: jwt.accessToken,details});
     } catch (e) {
       next(e);
     }
