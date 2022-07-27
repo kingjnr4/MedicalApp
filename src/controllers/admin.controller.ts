@@ -29,7 +29,7 @@ class AdminController {
   public login = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: LoginAdminDto = req.body;
-      const admin = await this.service.findAdminById(data.email);
+      const admin = await this.service.findAdminByEmail(data.email);
         const isvalid = await admin.checkPassword(data.password);
         if (isvalid == false) {
           throw new HttpException(401, 'your password is incorrect');
