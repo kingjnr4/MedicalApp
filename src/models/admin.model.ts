@@ -21,6 +21,7 @@ const adminSchema: Schema = new Schema<IAdmin>({
   role: {
     type: String,
     required: true,
+    default:Roles.SUPER
   },
 });
 adminSchema.pre('save', async function (next) {
