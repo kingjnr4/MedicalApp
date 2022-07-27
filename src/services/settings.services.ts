@@ -17,6 +17,13 @@ export class SettingsService {
   }
   public async setKey(data: SetKeyDto): Promise<boolean> {
     try {
+      const exist = await keyModel.findOne({name:data.name});
+      if (exist) {
+        exist.live=data.live
+        exist.test=data.test
+        exist.save();
+        return true
+      }
       await keyModel.create(data);
       return true;
     } catch (e) {

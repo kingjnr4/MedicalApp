@@ -5,7 +5,7 @@ import {AdminGuard} from '../guards/admin.guard';
 import {IRoute} from '../interfaces/routes.interfaces';
 import validationMiddleware from '../middlewares/validation.middleware';
 
-class IndexRoute implements IRoute {
+class SettingsRoute implements IRoute {
   public path = 'settings';
   public router = Router();
   public indexController = new SettingsController();
@@ -41,4 +41,4 @@ class IndexRoute implements IRoute {
   }
 }
 
-export default IndexRoute;
+export default SettingsRoute;
