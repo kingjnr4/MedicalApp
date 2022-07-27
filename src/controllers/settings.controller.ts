@@ -40,7 +40,7 @@ class SettingsController {
     next: NextFunction,
   ) => {
     try {
-      const gateway = this.service.getCurrentPayGateWay();
+      const gateway = await this.service.getCurrentPayGateWay();
       if (gateway == null) {
         return res.status(401).send({msg: 'no gateway'});
       }
