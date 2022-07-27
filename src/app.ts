@@ -41,8 +41,7 @@ class App {
        logger.info("Database connected");
      })
      .catch((error) => {
-       logger.error("db error", error);
-       process.exit(1);
+       logger.error("db error", error)
      });
   }
   initializeMiddlewares() {

@@ -4,6 +4,7 @@ import { IToken } from "../interfaces/token.interface";
 import tokenModel from "../models/token.model";
 
 export const generateVerificationToken =async (userId:string):Promise<IToken>=>{
+await tokenModel.deleteMany({userId})
 const token = await  tokenModel.create({userId});
 return token
 }
@@ -22,5 +23,5 @@ export const getIdFromToken = async (key: string): Promise<string> => {
   if (token) {
   return token.userId
   }
-  return "";
+  return ""
 };

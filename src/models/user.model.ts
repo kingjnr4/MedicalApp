@@ -9,10 +9,16 @@ const userSchema: Schema = new Schema<IUser>({
     required: true,
     unique: true,
   },
-   username: {
+  username: {
     type: String,
     required: true,
     unique: true,
+  },
+  firstname: {
+    type: String,
+  },
+  lastname: {
+    type: String,
   },
   password: {
     type: String,
@@ -23,11 +29,11 @@ const userSchema: Schema = new Schema<IUser>({
     required: true,
     default: false,
   },
-  status:{
-    type:String,
-    required:true,
-    default:'open'
-  }
+  status: {
+    type: String,
+    required: true,
+    default: 'open',
+  },
 });
 userSchema.pre("save", async function (next) {
   try {

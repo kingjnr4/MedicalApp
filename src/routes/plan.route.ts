@@ -1,6 +1,7 @@
 import { Router } from "express";
 import PlanController from "../controllers/plan.controller";
 import { CreatePlanDto, DeletePlanDto, UpdatePlanDto } from "../dtos/plan.dto";
+import { AuthGuard } from "../guards/auth.guard";
 import { IRoute } from "../interfaces/routes.interfaces";
 import validationMiddleware from "../middlewares/validation.middleware";
 
@@ -17,6 +18,7 @@ class PlanRoute implements IRoute {
     this.router.post(
       `${this.path}/create`,
       validationMiddleware(CreatePlanDto, "body", "fields"),
+      AuthGuard.createInstance,
       this.controller.create
     );
     this.router.delete(

@@ -1,7 +1,8 @@
 import { existsSync, mkdirSync } from "fs";
 import { join } from "path";
 import winston from "winston";
-import { LOG_DIR } from "../config";
+import { DB_URL, LOG_DIR } from "../config";
+import {MongoDB } from 'winston-mongodb'
 // logs dir
 const dir: string = join(__dirname, LOG_DIR!);
 
@@ -70,18 +71,28 @@ const custformat = winston.format.combine(
 const transports = [
   // Allow the use the console to print the messages
   new winston.transports.Console({
-    format
+    format,
   }),
   // Allow to print all the error level messages inside the error.log file
   new winston.transports.File({
-    dirname:dir,
-    filename:"error.log",
-    level: "error",
-    format:custformat
+    dirname: dir,
+    filename: 'error.log',
+    level: 'error',
+    format: custformat,
   }),
   // Allow to print all the error message inside the all.log file
   // (also the error log that are also printed inside the error.log(
-  new winston.transports.File({dirname:dir, format:custformat, filename: "all.log" }),
+  new winston.transports.File({
+    dirname: dir,
+    format: custformat,
+    filename: 'all.log',
+  }),
+  new MongoDB({
+    db: DB_URL,
+    tryReconnect: true,
+    collection: 'applogs',
+    options: { useNewUrlParser: true, useUnifiedTopology: true },
+  }),
 ];
 
 // Create the logger instance that has to be exported

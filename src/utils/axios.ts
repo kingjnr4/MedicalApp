@@ -11,6 +11,7 @@ export const axiosFetch = async (
     if (res.status == 200) {
       return res.data;
     }
+    return null
   } catch (e) {
     throw e;
   }

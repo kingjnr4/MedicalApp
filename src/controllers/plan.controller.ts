@@ -9,12 +9,7 @@ class PlanController {
   public create = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: CreatePlanDto = req.body;
-      const psdata = await this.paystack.createPaystackPlan(data.name,data.amount*100,data.description);
-      if (psdata.status !== "true") {
-          return res.status(200).send({ message: 'failed' });
-      }
-      const code = psdata.data.plan_code as string;
-      const plan = await this.service.createPlan({...data,code});
+      const plan = await this.service.createPlan({...data});
       return res.status(200).send({ message: 'success', plan });
     } catch (error) {
       next(error);

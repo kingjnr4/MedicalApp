@@ -1,6 +1,6 @@
 import { Router } from "express";
 import UserController from "../controllers/user.controller";
-import { CreateUserDto, LoginUserDto, VerifyUserDto } from "../dtos/user.dto";
+import { CreateUserDto, GenLinkDto, LoginUserDto, VerifyUserDto } from "../dtos/user.dto";
 import { IRoute } from "../interfaces/routes.interfaces";
 import validationMiddleware from "../middlewares/validation.middleware";
 
@@ -29,6 +29,11 @@ class UserRoute implements IRoute {
       validationMiddleware(VerifyUserDto, "body", "fields"),
       this.controller.verify
     );
+     this.router.post(
+       `${this.path}/generate`,
+       validationMiddleware(GenLinkDto, 'body', 'fields'),
+       this.controller.generateLink,
+     );
   }
 }
 export default UserRoute;

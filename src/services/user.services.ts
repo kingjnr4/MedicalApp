@@ -44,6 +44,9 @@ class UserService {
     if (user == null) {
       throw new HttpException(409, `User not found`);
     }
+    if (user.verified) {
+        throw new HttpException(200, `User already verified`);
+    }
     user.verified = true;
     user?.save();
     return true;
