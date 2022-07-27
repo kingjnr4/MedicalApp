@@ -39,7 +39,8 @@ export const sendmail = async (email: string, data: string) => {
       html: data,
     };
     const result = await transport.sendMail(mailOptions);
-    logger.info(result);
+    console.log(result.accepted);
+    
     return result;
   } catch (e) {
     return e;
