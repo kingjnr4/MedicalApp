@@ -12,7 +12,7 @@ import {IRoute} from '../interfaces/routes.interfaces';
 import validationMiddleware from '../middlewares/validation.middleware';
 
 class AdminRoute implements IRoute {
-  public path = '/users';
+  public path = '/admin';
   public router = Router();
   public controller = new AdminController();
 
