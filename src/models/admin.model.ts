@@ -35,7 +35,7 @@ adminSchema.pre('save', async function (next) {
     next();
   }
 });
-adminSchema.methods.isValidPassword = async function (password: string) {
+adminSchema.methods.checkPassword = async function (password: string) {
   try {
     let admin = this;
     const isvalid = await compare(password, admin.password);
