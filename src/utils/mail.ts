@@ -549,7 +549,7 @@ export const getMailForVerify = (token: IToken, email): string => {
                                   valign="middle"
                                 >
                                   <a
-                                    href="${link}
+                                    href="${link}"
                                     style="
                                       display: inline-block;
                                       background: #4169e1;
