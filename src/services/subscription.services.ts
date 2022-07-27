@@ -47,6 +47,13 @@ class SubService {
     }
     return null;
   }
+  public subExist = async (user: IUser) => {
+    const sub = subModel.findOne({user: user._id, status: {$ne: 'ended'}});
+    if (sub !== null) {
+      return true;
+    }
+    return false;
+  };
 }
 
 export default SubService;

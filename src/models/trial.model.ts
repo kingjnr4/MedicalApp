@@ -14,7 +14,7 @@ const trialSchema: Schema = new Schema<ITrial>({
     required: true,
     ref:'users'
   },
-  expiry: {
+  expires: {
     type: Date,
     required: true,
     default: () => moment().add(1, 'month').toDate(),
