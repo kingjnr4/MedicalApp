@@ -6,7 +6,7 @@ import {IRoute} from '../interfaces/routes.interfaces';
 import validationMiddleware from '../middlewares/validation.middleware';
 
 class SettingsRoute implements IRoute {
-  public path = 'settings';
+  public path = '/settings';
   public router = Router();
   public indexController = new SettingsController();
 

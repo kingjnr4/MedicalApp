@@ -3,7 +3,7 @@ export interface IAdmin {
   email: string;
   username:string;
   password: string;
-  role:Roles;
+  role:Roles|string;
  hashPassword: () => void;
   checkPassword: (password: string) => boolean;
 }
