@@ -7,11 +7,11 @@ const keySchema: Schema = new Schema<IKey>({
     type: String,
     required: true,
   },
-  test: {
+  public: {
     type: String,
     required: true,
   },
-  live: {
+  secret: {
     type: String,
     required: true,
   },

@@ -1,5 +1,7 @@
 import * as jwt from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
 import moment from "moment";
+import { brotliCompress } from "zlib";
 import { SECRET_KEY } from "../config";
 import { HttpException } from "../exceptions/HttpException";
 import { logger } from "./logger";
@@ -14,15 +16,14 @@ const generateAccessToken = (userId: string) => {
 
 export const decodeToken = (token: string) => {
   try {
-    const decoded= jwt.verify(token, SECRET_KEY!,{complete:true});
-    const payload = decoded.payload as jwt.JwtPayload
+    const payload = jwt.verify(token, SECRET_KEY!) as JwtPayload;
     const exp = payload.exp!;
-    if(moment(exp* 1000).isAfter(Date.now())){
+    if(moment(exp* 1000).isBefore(Date.now())){
       throw new HttpException(505,"unauthorized");
     }
     return payload['userId'] as string;
   } catch (e) {
-    logger.error(e);
+    throw e;
   }
 };
 
@@ -37,6 +38,6 @@ const generateRefreshToken = (userId: string) => {
 export const generateJWT = (userId: string) => {
   return {
     accessToken: generateAccessToken(userId),
-    refreshToken: generateRefreshToken(userId),
+    // refreshToken: generateRefreshToken(userId),
   };
 };

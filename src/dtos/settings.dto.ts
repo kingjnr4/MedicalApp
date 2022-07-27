@@ -4,9 +4,9 @@ export class SetKeyDto {
   @IsString()
   public name!: string;
   @IsString()
-  public live!: string;
+  public public!: string;
   @IsString()
-  public test!: string;
+  public secret!: string;
 }
 export class SetGatewayDto {
   @IsString()

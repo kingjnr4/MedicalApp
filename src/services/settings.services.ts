@@ -19,8 +19,8 @@ export class SettingsService {
     try {
       const exist = await keyModel.findOne({name:data.name});
       if (exist) {
-        exist.live=data.live
-        exist.test=data.test
+        exist.public = data.public;
+        exist.secret=data.secret
         exist.save();
         return true
       }
