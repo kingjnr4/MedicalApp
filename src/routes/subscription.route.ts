@@ -1,6 +1,7 @@
 import { Router } from "express";
 import SubscriptionController from "../controllers/subscription.controller";
 import { AuthGuard } from "../guards/auth.guard";
+import { UserInfoCompleteGuard } from "../guards/info-complete.guard";
 import { IRoute } from "../interfaces/routes.interfaces";
 
 
@@ -13,7 +14,12 @@ class SubRoute implements IRoute {
   }
 
   private initializeRoutes() {
-    this.router.post('/subscribe',AuthGuard.createInstance,this.controller.create)
+    this.router.post(
+      '/subscribe',
+      AuthGuard.createInstance,
+      UserInfoCompleteGuard.createInstance,
+      this.controller.create,
+    );
   }
 }
 

@@ -23,27 +23,28 @@ class SubService {
       amount,
       metadata,
       card.authorization_code,
-    )
+    );
     if (res.data.status == 'success') {
       const sub = await subModel.create({
         plan: plan._id,
         users: [user._id],
         email: user.email,
         owner: user._id,
-        status:'recurring'
+        status: 'recurring',
       });
-      return sub
+      return sub;
     }
-     if (res.data.status == 'pending') {
-       const sub = await subModel.create({
-         plan: plan._id,
-         users: [user._id],
-         email: user.email,
-         owner: user._id,
-         status: 'pending',
-       });
-       return sub;
-     }
+    if (res.data.status == 'pending') {
+      const sub = await subModel.create({
+        plan: plan._id,
+        users: [user._id],
+        email: user.email,
+        owner: user._id,
+        status: 'pending',
+        paystackRef: res.data.reference,
+      });
+      return sub;
+    }
     return null;
   }
 }
