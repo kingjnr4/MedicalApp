@@ -17,7 +17,7 @@ export class Gateway {
    */
   public async init() {
     this.current = await this.service.getCurrentPayGateWay();
-    this.key = (await this.service.findKeyByName(this.current)).test;
+    this.key = (await this.service.findKeyByName(this.current)).public;
     switch (this.current) {
       case 'paystack':
         this.paystack = new Paystack(this.key);
