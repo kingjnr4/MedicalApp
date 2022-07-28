@@ -1,3 +1,4 @@
+import {Code} from '../interfaces/plans.interface';
 import settingsModel from '../models/settings.model';
 import {SettingsService} from '../services/settings.services';
 import {Paystack} from './paystack';
@@ -44,14 +45,16 @@ export class Gateway {
   /**
    * initCard
    */
-  public initCard(email: string) {
+  public initCard(email: string, plan: Code) {
     switch (this.current) {
       case 'paystack':
-        const amount = 5000;
         const metadata = JSON.stringify({
           evt: 'card_init',
+          custom_filters: {
+            recurring: true,
+          },
         });
-        return this.paystack.initialize(email, amount, metadata);
+        return this.paystack.initialize(email, metadata);
       default:
         break;
     }
@@ -79,7 +82,12 @@ export class Gateway {
   ) {
     switch (this.current) {
       case 'paystack':
-        return this.paystack.charge(email,amount,metadata,authorization_code);
+        return this.paystack.charge(
+          email,
+          amount,
+          metadata,
+          authorization_code,
+        );
       default:
         break;
     }

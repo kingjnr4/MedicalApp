@@ -36,6 +36,7 @@ const userSchema: Schema = new Schema<IUser>({
   },
 });
 userSchema.pre("save", async function (next) {
+    if (this.isNew) {
   try {
     const hash = await hashPassword(this.password);
     this.password = hash;
@@ -44,6 +45,7 @@ userSchema.pre("save", async function (next) {
     logger.error(e);
     next();
   }
+}
 });
 userSchema.methods.checkPassword = async function (password: string) {
   try {

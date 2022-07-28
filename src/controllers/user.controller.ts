@@ -1,16 +1,19 @@
-import { NextFunction, Request, Response } from 'express';
+import {NextFunction, Request, Response} from 'express';
 import {
   BlockUserDto,
   CreateUserDto,
   GenLinkDto,
   LoginUserDto,
+  UpdateUserDto,
   VerifyUserDto,
 } from '../dtos/user.dto';
-import { HttpException } from '../exceptions/HttpException';
+import {HttpException} from '../exceptions/HttpException';
+import { IUser, UserDoc } from '../interfaces/user.interface';
 import UserService from '../services/user.services';
-import { generateJWT } from '../utils/jwt';
-import { logger } from '../utils/logger';
-import { getMailForVerify, sendmail } from '../utils/mail';
+import {generateJWT} from '../utils/jwt';
+import {logger} from '../utils/logger';
+import {getMailForVerify, sendmail} from '../utils/mail';
+import { Paystack } from '../utils/paystack';
 import {
   generateVerificationToken,
   getIdFromToken,
@@ -19,6 +22,7 @@ import {
 
 class UserController {
   private service = new UserService();
+  private gateway = new Paystack ();
   public register = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: CreateUserDto = req.body;
@@ -26,11 +30,11 @@ class UserController {
       const token = await generateVerificationToken(user._id);
       const mail = getMailForVerify(token, user.email);
       sendmail(user.email, mail)
-        .then((msg) => {
+        .then(msg => {
           logger.info(msg);
-          return res.status(200).send({ message: 'success' });
+          return res.status(200).send({message: 'success'});
         })
-        .catch((e) => next(e));
+        .catch(e => next(e));
     } catch (e) {
       next(e);
     }
@@ -39,16 +43,22 @@ class UserController {
     try {
       const data: LoginUserDto = req.body;
       const user = await this.service.findUserByEmail(data.email);
+      
+      
       const isvalid = await user.checkPassword(data.password);
+      console.log(isvalid);
       if (isvalid == false) {
         throw new HttpException(401, 'your password is incorrect');
       }
+      if (user.verified == false) {
+        throw new HttpException(401, ' verify your email');
+      }
       const jwt = generateJWT(user._id);
-      const details = { name: user.username, verified: user.verified };
+      const details = {name: user.username, verified: user.verified};
       // res.cookie('refreshToken',jwt.refreshToken)
       return res
         .status(200)
-        .send({ message: 'success', accessToken: jwt.accessToken, details });
+        .send({message: 'success', accessToken: jwt.accessToken, details});
     } catch (e) {
       next(e);
     }
@@ -60,9 +70,9 @@ class UserController {
       const id = await getIdFromToken(data.key);
       if (isValid && id !== '') {
         const verified = await this.service.verify(id);
-        return res.status(200).send({ message: 'success', verified });
+        return res.status(200).send({message: 'success', verified});
       }
-      return res.status(200).send({ message: 'failed' });
+      return res.status(200).send({message: 'failed'});
     } catch (e) {
       next(e);
     }
@@ -73,21 +83,47 @@ class UserController {
     next: NextFunction,
   ) => {
     try {
- const data: GenLinkDto = req.body;
- const user = await this.service.findUserByEmail(data.email);
- if (user.verified) {
-     return res.status(409).send({ message: 'user already verified' });
- }
- const token = await generateVerificationToken(user._id);
- const mail = getMailForVerify(token, user.email);
- sendmail(user.email, mail).then((msg) => {
-  return res.status(200).send({ message: 'success' });
- }).catch((e)=>{
- return res.status(200).send({ message: 'failed' });
- });
+      const data: GenLinkDto = req.body;
+      const user = await this.service.findUserByEmail(data.email);
+      if (user.verified) {
+        return res.status(409).send({message: 'user already verified'});
+      }
+      const token = await generateVerificationToken(user._id);
+      const mail = getMailForVerify(token, user.email);
+      sendmail(user.email, mail)
+        .then(msg => {
+          return res.status(200).send({message: 'success'});
+        })
+        .catch(e => {
+          return res.status(200).send({message: 'failed'});
+        });
     } catch (e) {
       next(e);
     }
+  };
+  /**
+   * updateInfo
+   */
+  public updateInfo = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+     try {
+       const data: UpdateUserDto = req.body;
+       const user: UserDoc = req['user'];
+       user.firstname = data.firstname;
+       user.lastname = data.lastname;
+      
+       const saved = await this.gateway.createCustomer(user.email,user.firstname,user.lastname);
+       if (saved) {
+          await user.save();
+           return res.status(200).send({message: 'success', user});
+       }
+      return res.status(200).send({message: 'failed',user});
+     } catch (e) {
+       next(e)
+     }
   };
   public block = async (req: Request, res: Response, next: NextFunction) => {
     try {

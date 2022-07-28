@@ -1,4 +1,5 @@
 import axios, { AxiosRequestHeaders, Method } from 'axios';
+import { HttpException } from '../exceptions/HttpException';
 
 export const axiosFetch = async (
   url: string,
@@ -13,6 +14,6 @@ export const axiosFetch = async (
     }
     return null
   } catch (e) {
-    throw e;
+    throw new HttpException(401,"axios")
   }
 };

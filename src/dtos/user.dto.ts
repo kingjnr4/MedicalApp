@@ -1,13 +1,25 @@
-import { IsEmail, IsString, IsNotEmpty, IsJWT } from 'class-validator';
+import { IsEmail, IsString, IsOptional, IsJWT,IsPhoneNumber } from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
   public email!: string;
-  
+
   @IsString()
   public password!: string;
-   @IsString()
+  @IsString()
   public username!: string;
+  @IsString()
+  @IsOptional()
+  public subscription?: string;
+}
+export class UpdateUserDto {
+  @IsString()
+  public firstname!: string;
+  @IsString()
+  public lastname!: string;
+  // @IsPhoneNumber()
+  // @IsOptional()
+  // public number?: number;
 }
 
 export class GenLinkDto {

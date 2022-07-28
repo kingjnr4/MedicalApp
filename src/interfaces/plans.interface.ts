@@ -4,4 +4,9 @@ export interface IPlan {
   description: string;
   price: number;
   spaces: number;
+  code:Code
+}
+export type Code =  {
+  paystack:string,
+  flutterwave:string,
 }

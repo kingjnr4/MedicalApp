@@ -8,7 +8,6 @@ type Interval = 'monthly' | 'yearly' | 'daily';
 
 export class Paystack {
   private secret: string;
-  private Authorization: String;
   constructor(key?: string) {
     this.secret = key || PAYSTACK_SECRET;
   }
@@ -42,13 +41,11 @@ export class Paystack {
 
   public initialize = async (
     email: string,
-    amount: number,
-    metares: string,
+    metadata: string,
   ) => {
     const params = JSON.stringify({
       email,
-      amount,
-      metares,
+      metadata,
       channels: ['card'],
     });
     const url = 'https://api.paystack.co/transaction/initialize',
@@ -133,6 +130,7 @@ export class Paystack {
     return res;
   };
   static webhook = (req: Request, res: Response, next: NextFunction) => {
+    const ps = new Paystack()
     const hash = crypto
       .createHmac('sha512', PAYSTACK_SECRET)
       .update(JSON.stringify(req.body))
@@ -140,8 +138,16 @@ export class Paystack {
     if (hash == req.headers['x-paystack-signature']) {
       res.send(200);
       // Retrieve the request's body
-      const event = req.body;
-      console.log(event);
+      const data = req.body;
+      console.log(data);
+      switch (data.event) {
+        case "charge.success":
+          
+          break;
+      
+        default:
+          break;
+      }
       return;
     }
     res.send(404);
