@@ -10,6 +10,7 @@ import {
 import {HttpException} from '../exceptions/HttpException';
 import { IUser, UserDoc } from '../interfaces/user.interface';
 import UserService from '../services/user.services';
+import { Gateway } from '../utils/gateway';
 import {generateJWT} from '../utils/jwt';
 import {logger} from '../utils/logger';
 import {getMailForVerify, sendmail} from '../utils/mail';
@@ -22,7 +23,7 @@ import {
 
 class UserController {
   private service = new UserService();
-  private gateway = new Paystack ();
+  private gateway = new Gateway ();
   public register = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: CreateUserDto = req.body;
@@ -38,15 +39,24 @@ class UserController {
     } catch (e) {
       next(e);
     }
+
   };
+  public addCard = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user:UserDoc = req['user']
+      await this.gateway.init()
+      const data =  await this.gateway.initCard(user.email)
+       return res.status(200).send({message: 'success',url:data});
+    } catch (e) {
+      
+    }
+  }
+
   public login = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: LoginUserDto = req.body;
       const user = await this.service.findUserByEmail(data.email);
-      
-      
       const isvalid = await user.checkPassword(data.password);
-      console.log(isvalid);
       if (isvalid == false) {
         throw new HttpException(401, 'your password is incorrect');
       }
@@ -113,16 +123,18 @@ class UserController {
        const data: UpdateUserDto = req.body;
        const user: UserDoc = req['user'];
        user.firstname = data.firstname;
-       user.lastname = data.lastname;
-      
+       user.lastname = data.lastname; 
+       await this.gateway.init();
        const saved = await this.gateway.createCustomer(user.email,user.firstname,user.lastname);
        if (saved) {
           await user.save();
-           return res.status(200).send({message: 'success', user});
+           return res.status(200).send({message: 'success'});
        }
-      return res.status(200).send({message: 'failed',user});
+      return res.status(200).send({message: 'failed'});
      } catch (e) {
-       next(e)
+       next()
+       console.log(e);
+       
      }
   };
   public block = async (req: Request, res: Response, next: NextFunction) => {

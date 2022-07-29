@@ -1,10 +1,10 @@
 import {PAYSTACK_SECRET} from '../config';
-import {axiosFetch} from './axios';
+import {post} from './requests';
 import crypto from 'crypto';
 
 import {NextFunction, Request, Response} from 'express';
 
-type Interval = 'monthly' | 'yearly' | 'daily';
+export type Interval = 'monthly' | 'yearly' | 'daily';
 
 export class Paystack {
   private secret: string;
@@ -12,7 +12,7 @@ export class Paystack {
     this.secret = key || PAYSTACK_SECRET;
   }
 
-  createPaystackPlan = async (
+  public createPaystackPlan = async (
     name: string,
     amount: number,
     description: string,
@@ -26,49 +26,47 @@ export class Paystack {
     });
 
     const url = 'api.paystack.co/plan',
-      method = 'POST',
       headers = {
-        Authorization: ['Bearer', this.secret].join(''),
+        Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
       };
 
-    const res = await axiosFetch(url, method, headers, params);
-    if (res.status == 'true') {
-      return res;
+    const res = await post(url, headers, params);
+    if (res.status == true) {
+      return true;
     }
-    return '';
+    return false;
   };
 
-  public initialize = async (
-    email: string,
-    metadata: string,
-  ) => {
+  public initialize = async (email: string, metadata: string) => {
     const params = JSON.stringify({
       email,
       metadata,
       channels: ['card'],
+      amount:5000
     });
     const url = 'https://api.paystack.co/transaction/initialize',
-      method = 'POST',
       headers = {
-        Authorization: ['Bearer', this.secret].join(''),
+        Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
       };
-    const res = await axiosFetch(url, method, headers, params);
-    return res;
+    const res = await post(url, headers, params);
+    if (res.status == true) {
+      return res.data;
+    }
+    return null;
   };
 
   verify = async (reference: string) => {
     const url = `https://api.paystack.co/transaction/verify/${reference}`,
-      method = 'POST',
       headers = {
-        Authorization: ['Bearer', this.secret].join(''),
+        Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
       };
-    const res = await axiosFetch(url, method, headers);
+    const res = await post(url, headers);
     return res;
   };
-  createCustomer = async (
+  public createCustomer = async (
     email: string,
     first_name: string,
     last_name: string,
@@ -79,13 +77,12 @@ export class Paystack {
       last_name,
     });
     const url = 'https://api.paystack.co/customer',
-      method = 'POST',
       headers = {
-        Authorization: ['Bearer', this.secret].join(''),
+        Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
       };
-    const res = await axiosFetch(url, method, headers, params);
-    if (res.status == 'true') {
+    const res = await post(url, headers, params);
+    if (res.status == true) {
       return true;
     }
     return false;
@@ -94,43 +91,18 @@ export class Paystack {
     const url = `https://api.paystack.co/refund`,
       method = 'POST',
       headers = {
-        Authorization: ['Bearer', this.secret].join(''),
+        Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
       };
-    const res = await axiosFetch(url, method, headers);
+    const res = await post(url, headers);
     if (res.status == 'true') {
       return true;
     }
     return false;
   };
-  charge = async (
-    email: string,
-    amount: number,
-    metadata: string,
-    authorization_code: string,
-  ) => {
-    const params = JSON.stringify({
-      email,
-      amount,
-      metadata,
-      authorization_code,
-    });
-    const url = `https://api.paystack.co/transaction/charge_authorization`,
-      method = 'POST',
-      headers = {
-        Authorization: ['Bearer', this.secret].join(''),
-        'Content-Type': 'application/json',
-      };
-    let res = await axiosFetch(url, method, headers, params);
-    if (res.status == true && res.data.status == 'pending') {
-      const urlVer = `https://api.paystack.co/charge/${res.data.reference}`,
-        methodVer = 'GET';
-      return await axiosFetch(urlVer, methodVer, headers, params);
-    }
-    return res;
-  };
+
   static webhook = (req: Request, res: Response, next: NextFunction) => {
-    const ps = new Paystack()
+    const ps = new Paystack();
     const hash = crypto
       .createHmac('sha512', PAYSTACK_SECRET)
       .update(JSON.stringify(req.body))
@@ -141,10 +113,9 @@ export class Paystack {
       const data = req.body;
       console.log(data);
       switch (data.event) {
-        case "charge.success":
-          
+        case 'charge.success':
           break;
-      
+
         default:
           break;
       }

@@ -1,13 +1,13 @@
-import { Router } from "express";
-import PlanController from "../controllers/plan.controller";
-import { CreatePlanDto, DeletePlanDto, UpdatePlanDto } from "../dtos/plan.dto";
-import { AdminGuard } from "../guards/admin.guard";
-import { AuthGuard } from "../guards/auth.guard";
-import { IRoute } from "../interfaces/routes.interfaces";
-import validationMiddleware from "../middlewares/validation.middleware";
+import {Router} from 'express';
+import PlanController from '../controllers/plan.controller';
+import {CreatePlanDto, DeletePlanDto, UpdatePlanDto} from '../dtos/plan.dto';
+import {AdminGuard} from '../guards/admin.guard';
+import {AuthGuard} from '../guards/auth.guard';
+import {IRoute} from '../interfaces/routes.interfaces';
+import validationMiddleware from '../middlewares/validation.middleware';
 
 class PlanRoute implements IRoute {
-  public path = "/plans";
+  public path = '/plans';
   public router = Router();
   public controller = new PlanController();
 
@@ -18,9 +18,14 @@ class PlanRoute implements IRoute {
   private initializeRoutes() {
     this.router.post(
       `${this.path}/create`,
-      validationMiddleware(CreatePlanDto, "body", "fields"),
+      validationMiddleware(CreatePlanDto, 'body', 'fields'),
       AdminGuard.createInstance,
-      this.controller.create
+      this.controller.create,
+    );
+    this.router.post(
+      `${this.path}/get`,
+      validationMiddleware(CreatePlanDto, 'body', 'fields'),
+      this.controller.get,
     );
     this.router.delete(
       `${this.path}/delete`,

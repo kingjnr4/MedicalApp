@@ -1,7 +1,7 @@
 import {Code} from '../interfaces/plans.interface';
 import settingsModel from '../models/settings.model';
 import {SettingsService} from '../services/settings.services';
-import {Paystack} from './paystack';
+import {Interval, Paystack} from './paystack';
 
 export class Gateway {
   private key: string;
@@ -18,34 +18,44 @@ export class Gateway {
    */
   public async init() {
     this.current = await this.service.getCurrentPayGateWay();
-    this.key = (await this.service.findKeyByName(this.current)).public;
+    this.key = (await this.service.findKeyByName(this.current)).secret;
     switch (this.current) {
       case 'paystack':
         this.paystack = new Paystack(this.key);
-
         break;
-
       default:
         break;
     }
   }
 
   /**
-   * createCustomer
+   * create
    */
-  public createCustomer(email: string, firstname: string, lastname: string) {
+  public createPlan( name: string,
+    amount: number,
+    description: string,
+    interval: Interval = 'monthly',) {
     switch (this.current) {
       case 'paystack':
-        return this.paystack.createCustomer(email, firstname, lastname);
+        return this.paystack.createPaystackPlan(name,amount,description,interval);
       default:
         break;
-    }
+  }}
+  /**
+   * createCustomer
+   */
+  public async createCustomer(
+    email: string,
+    firstname: string,
+    lastname: string,
+  ) {
+    return this.paystack.createCustomer(email, firstname, lastname);
   }
 
   /**
    * initCard
    */
-  public initCard(email: string, plan: Code) {
+  public initCard(email: string) {
     switch (this.current) {
       case 'paystack':
         const metadata = JSON.stringify({
@@ -74,22 +84,4 @@ export class Gateway {
   /**
    * charge
    */
-  public charge(
-    email: string,
-    amount: number,
-    metadata: string,
-    authorization_code: string,
-  ) {
-    switch (this.current) {
-      case 'paystack':
-        return this.paystack.charge(
-          email,
-          amount,
-          metadata,
-          authorization_code,
-        );
-      default:
-        break;
-    }
-  }
 }

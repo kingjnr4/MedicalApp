@@ -41,6 +41,11 @@ class UserRoute implements IRoute {
        AuthGuard.createInstance,
        this.controller.updateInfo,
      );
+      this.router.post(
+        `${this.path}/card`,
+        AuthGuard.createInstance,
+        this.controller.addCard,
+      );
   }
 }
 export default UserRoute;
