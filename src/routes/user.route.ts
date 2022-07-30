@@ -1,6 +1,6 @@
 import { Router } from "express";
 import UserController from "../controllers/user.controller";
-import { CreateUserDto, GenLinkDto, LoginUserDto, UpdateUserDto, VerifyUserDto } from "../dtos/user.dto";
+import { ChangePassDto, CreateUserDto, GenLinkDto, LoginUserDto, UpdateUserDto, VerifyUserDto } from "../dtos/user.dto";
 import { AuthGuard } from "../guards/auth.guard";
 import { IRoute } from "../interfaces/routes.interfaces";
 import validationMiddleware from "../middlewares/validation.middleware";
@@ -46,6 +46,16 @@ class UserRoute implements IRoute {
         AuthGuard.createInstance,
         this.controller.addCard,
       );
+        this.router.post(
+          `${this.path}/genpasslink`,
+          validationMiddleware(GenLinkDto, 'body', 'fields'),
+          this.controller.generatePasswordLink,
+        );
+          this.router.post(
+            `${this.path}/changepass`,
+            validationMiddleware(ChangePassDto, 'body', 'fields'),
+            this.controller.changePassword,
+          );
   }
 }
 export default UserRoute;

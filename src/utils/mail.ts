@@ -1,6 +1,7 @@
-import nodemailer, { TransportOptions } from 'nodemailer';
-const { google } = require('googleapis');
+import nodemailer, {TransportOptions} from 'nodemailer';
+const {google} = require('googleapis');
 import {
+  CPANEL_PASS,
   GOOGLE_CLIENT_EMAIL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
@@ -9,49 +10,64 @@ import {
 } from '../config';
 import fs from 'fs';
 import Handlebars from 'handlebars';
-import { IToken } from '../interfaces/token.interface';
+import {IToken} from '../interfaces/token.interface';
 import path from 'path';
-const oAuth2 = new google.auth.OAuth2(
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET,
-  GOOGLE_REDIRECT_URL,
-);
+import Mail from 'nodemailer/lib/mailer';
 
-oAuth2.setCredentials({ refresh_token: GOOGLE_REFRESH_TOKEN });
-
-export const sendmail = async (email: string, data: string) => {
+export const sendmail = async (options: Mail.Options) => {
   try {
-    const accessToken = await oAuth2.getAccessToken();
+    console.log(CPANEL_PASS);
+    
     const transport = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'mail.diagnosisabc.com',
+      port: 587,
+      secure: false,
       auth: {
-        type: 'OAuth2',
-        user: GOOGLE_CLIENT_EMAIL,
-        clientId: GOOGLE_CLIENT_ID,
-        clientSecret: GOOGLE_CLIENT_SECRET,
-        refreshToken: GOOGLE_REFRESH_TOKEN,
-        accessToken: accessToken,
+        user: 'test@diagnosisabc.com',
+        pass: CPANEL_PASS
+      },
+      tls: {
+        // do not fail on invalid certs
+        rejectUnauthorized: false,
       },
     });
-    const mailOptions = {
-      from: 'noreply@stringcode.com',
-      to: email,
-      subject: 'Please Verify Your Account ',
-      text: 'Please Verify Your Account ',
-      html: data,
-    };
-    const result = await transport.sendMail(mailOptions);
-    console.log(result.accepted);
-    
+
+    const result = await transport.sendMail(options);
+    console.log(result);
+
     return result;
   } catch (e) {
-    return e;
+    throw e;
   }
 };
 
-export const getMailForVerify = (token: IToken, email): string => {
-  const link = `https://brilliant-beijinho-78dad5.netlify.app/verify/key?=${token.key}`;
-  const source = fs.readFileSync(path.join(__dirname, '/templates/verifyEmail.hbs'), 'utf8');
-  const template = Handlebars.compile(source)
-  return template({link,email})
+export const getMailForVerify = (token: IToken, email): Mail.Options => {
+  const link = `https://brilliant-beijinho-78dad5.netlify.app/auth/verify?key=${token.key}`;
+  const source = fs.readFileSync(
+    path.join(__dirname, '/templates/verifyEmail.hbs'),
+    'utf8',
+  );
+  const template = Handlebars.compile(source);
+  return {
+    from: 'diagnosisabc.com@stringcode.com',
+    to: email,
+    subject: 'Change  Your Password ',
+    text: 'Please Verify Your Account ',
+    html: template({link, email}),
+  };
+};
+export const getMailForPass = (token: IToken, email): Mail.Options => {
+  const link = `https://brilliant-beijinho-78dad5.netlify.app/auth/change?key=${token.key}`;
+  const source = fs.readFileSync(
+    path.join(__dirname, '/templates/changePass.hbs'),
+    'utf8',
+  );
+  const template = Handlebars.compile(source);
+  return {
+    from: 'diagnosisabc.com@stringcode.com',
+    to: email,
+    subject: 'Please Verify Your Account ',
+    text: 'Please Verify Your Account ',
+    html: template({link, email}),
+  };
 };

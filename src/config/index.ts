@@ -19,4 +19,5 @@ export const {
   GOOGLE_REFRESH_TOKEN,
   GOOGLE_CLIENT_EMAIL,
   PAYSTACK_SECRET,
+  CPANEL_PASS,
 } = process.env;

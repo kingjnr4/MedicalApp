@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import {
   BlockUserDto,
+  ChangePassDto,
   CreateUserDto,
   GenLinkDto,
   LoginUserDto,
@@ -13,7 +14,7 @@ import UserService from '../services/user.services';
 import { Gateway } from '../utils/gateway';
 import {generateJWT} from '../utils/jwt';
 import {logger} from '../utils/logger';
-import {getMailForVerify, sendmail} from '../utils/mail';
+import {getMailForPass, getMailForVerify, sendmail} from '../utils/mail';
 import { Paystack } from '../utils/paystack';
 import {
   generateVerificationToken,
@@ -23,14 +24,14 @@ import {
 
 class UserController {
   private service = new UserService();
-  private gateway = new Gateway ();
+  private gateway = new Gateway();
   public register = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: CreateUserDto = req.body;
       const user = await this.service.createUser(data);
       const token = await generateVerificationToken(user._id);
       const mail = getMailForVerify(token, user.email);
-      sendmail(user.email, mail)
+      sendmail( mail)
         .then(msg => {
           logger.info(msg);
           return res.status(200).send({message: 'success'});
@@ -39,18 +40,15 @@ class UserController {
     } catch (e) {
       next(e);
     }
-
   };
   public addCard = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const user:UserDoc = req['user']
-      await this.gateway.init()
-      const data =  await this.gateway.initCard(user.email)
-       return res.status(200).send({message: 'success',url:data});
-    } catch (e) {
-      
-    }
-  }
+      const user: UserDoc = req['user'];
+      await this.gateway.init();
+      const data = await this.gateway.initCard(user.email);
+      return res.status(200).send({message: 'success', url: data});
+    } catch (e) {}
+  };
 
   public login = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -87,6 +85,24 @@ class UserController {
       next(e);
     }
   };
+  public changePassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const data: ChangePassDto = req.body;
+      const isValid = await verifyVerificationToken(data.key);
+      const id = await getIdFromToken(data.key);
+      if (isValid && id !== '') {
+        const verified = await this.service.changePass(id, data.password);
+        return res.status(200).send({message: 'success', verified});
+      }
+      return res.status(200).send({message: 'failed'});
+    } catch (e) {
+      next(e);
+    }
+  };
   public generateLink = async (
     req: Request,
     res: Response,
@@ -100,12 +116,34 @@ class UserController {
       }
       const token = await generateVerificationToken(user._id);
       const mail = getMailForVerify(token, user.email);
-      sendmail(user.email, mail)
+      sendmail( mail).catch(e => {
+        
+          return res.status(200).send({message: 'failed'});
+        })
+        .then(msg => {
+          return res.status(200).send({message: 'success'});
+        })
+        
+    } catch (e) {
+      next(e);
+    }
+  };
+  public generatePasswordLink = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const data: GenLinkDto = req.body;
+      const user = await this.service.findUserByEmail(data.email);
+      const token = await generateVerificationToken(user._id);
+      const mail = getMailForPass(token, user.email)
+      sendmail(mail)
         .then(msg => {
           return res.status(200).send({message: 'success'});
         })
         .catch(e => {
-          return res.status(200).send({message: 'failed'});
+          return res.status(200).send({message: 'failed',e});
         });
     } catch (e) {
       next(e);
@@ -119,23 +157,26 @@ class UserController {
     res: Response,
     next: NextFunction,
   ) => {
-     try {
-       const data: UpdateUserDto = req.body;
-       const user: UserDoc = req['user'];
-       user.firstname = data.firstname;
-       user.lastname = data.lastname; 
-       await this.gateway.init();
-       const saved = await this.gateway.createCustomer(user.email,user.firstname,user.lastname);
-       if (saved) {
-          await user.save();
-           return res.status(200).send({message: 'success'});
-       }
+    try {
+      const data: UpdateUserDto = req.body;
+      const user: UserDoc = req['user'];
+      user.firstname = data.firstname;
+      user.lastname = data.lastname;
+      await this.gateway.init();
+      const saved = await this.gateway.createCustomer(
+        user.email,
+        user.firstname,
+        user.lastname,
+      );
+      if (saved) {
+        await user.save();
+        return res.status(200).send({message: 'success'});
+      }
       return res.status(200).send({message: 'failed'});
-     } catch (e) {
-       next()
-       console.log(e);
-       
-     }
+    } catch (e) {
+      next();
+      console.log(e);
+    }
   };
   public block = async (req: Request, res: Response, next: NextFunction) => {
     try {

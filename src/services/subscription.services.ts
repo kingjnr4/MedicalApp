@@ -20,7 +20,7 @@ class SubService {
 
     // const amount = plan.price * 100;
     const metadata = JSON.stringify({});
-    const res = await this.gateway.initCard(user.email, plan.code);
+    const res = await this.gateway.initCard(user.email);
     return res;
   }
   public subExist = async (user: IUser) => {

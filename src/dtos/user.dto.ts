@@ -39,6 +39,12 @@ export class VerifyUserDto {
   @IsString()
   public key!: string;
 }
+export class ChangePassDto {
+  @IsString()
+  public key!: string;
+  @IsString()
+  public password!: string;
+}
 export class BlockUserDto {
   @IsJWT()
   public token!: string;

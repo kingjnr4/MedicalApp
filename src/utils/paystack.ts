@@ -12,6 +12,14 @@ export class Paystack {
     this.secret = key || PAYSTACK_SECRET;
   }
 
+  public initSub = async (email: string, plan: string, metadata:string) => {
+    const params = JSON.stringify({
+      email,
+      plan,
+      metadata,
+    });
+  };
+
   public createPaystackPlan = async (
     name: string,
     amount: number,
@@ -43,7 +51,7 @@ export class Paystack {
       email,
       metadata,
       channels: ['card'],
-      amount:5000
+      amount: 5000,
     });
     const url = 'https://api.paystack.co/transaction/initialize',
       headers = {

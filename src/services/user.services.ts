@@ -2,7 +2,7 @@ import { CreateUserDto } from "../dtos/user.dto";
 import { HttpException } from "../exceptions/HttpException";
 import { IUser } from "../interfaces/user.interface";
 import userModel from "../models/user.model";
-import { isEmpty } from "../utils/utils";
+import { hashPassword, isEmpty } from "../utils/utils";
 
 class UserService {
   public model = userModel;
@@ -11,25 +11,25 @@ class UserService {
     return users;
   }
   public async findUserById(userId: string): Promise<IUser> {
-    if (isEmpty(userId)) throw new HttpException(400, "No userId passed");
+    if (isEmpty(userId)) throw new HttpException(400, 'No userId passed');
 
-    const user = await this.model.findOne({ _id: userId });
-    if (!user) throw new HttpException(409, "User not found");
+    const user = await this.model.findOne({_id: userId});
+    if (!user) throw new HttpException(409, 'User not found');
     return user;
   }
   public async findUserByEmail(email: string): Promise<IUser> {
-    if (isEmpty(email)) throw new HttpException(400, "No Email passed");
+    if (isEmpty(email)) throw new HttpException(400, 'No Email passed');
 
-    const user = await this.model.findOne({ email });
-    if (!user) throw new HttpException(409, "User not found");
+    const user = await this.model.findOne({email});
+    if (!user) throw new HttpException(409, 'User not found');
     return user;
   }
   public async createUser(userData: CreateUserDto): Promise<IUser> {
     if (isEmpty(userData))
-      throw new HttpException(400, "Please make sure all fields are filled");
+      throw new HttpException(400, 'Please make sure all fields are filled');
 
-    const findEmail = await this.model.findOne({ email: userData.email });
-    const findName = await this.model.findOne({ username: userData.username });
+    const findEmail = await this.model.findOne({email: userData.email});
+    const findName = await this.model.findOne({username: userData.username});
     if (findEmail) throw new HttpException(409, ` email is in use`);
     if (findName) throw new HttpException(409, ` username is in use`);
 
@@ -45,9 +45,18 @@ class UserService {
       throw new HttpException(409, `User not found`);
     }
     if (user.verified) {
-        throw new HttpException(200, `User already verified`);
+      throw new HttpException(200, `User already verified`);
     }
     user.verified = true;
+    user?.save();
+    return true;
+  }
+  public async changePass(userId: string,password:string): Promise<Boolean> {
+    const user = await this.model.findById(userId);
+    if (user == null) {
+      throw new HttpException(409, `User not found`);
+    }
+    user.password = await hashPassword (password);
     user?.save();
     return true;
   }
