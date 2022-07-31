@@ -19,8 +19,8 @@ class SubscriptionController {
           .send({message: 'failed', reason: 'user is already subscribed'});
       }
       const sub = await this.subService.createSubscription(user, plan._id);
-      if (sub != null) {
-        return res.status(200).send({message: 'success', sub});
+      if (sub) {
+        return res.status(200).send({message: 'processing request', sub});
       }
       return res
         .status(200)

@@ -5,10 +5,6 @@ const subSchema: Schema = new Schema<ISubscription>({
   status: {
     type: String,
   },
-  email: {
-    type: String,
-    required: true,
-  },
   users: {
     type: [Schema.Types.ObjectId],
     ref: 'users',

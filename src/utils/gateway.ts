@@ -1,4 +1,4 @@
-import {Code} from '../interfaces/plans.interface';
+
 import settingsModel from '../models/settings.model';
 import {SettingsService} from '../services/settings.services';
 import {Interval, Paystack} from './paystack';
@@ -31,16 +31,24 @@ export class Gateway {
   /**
    * create
    */
-  public createPlan( name: string,
+  public async createPlan(
+    name: string,
     amount: number,
     description: string,
-    interval: Interval = 'monthly',) {
-    switch (this.current) {
-      case 'paystack':
-        return this.paystack.createPaystackPlan(name,amount,description,interval);
-      default:
-        break;
-  }}
+    interval: Interval = 'monthly',
+  ) {
+    const codes = {
+      paystack: '',
+      flutterwave: '',
+    };
+    codes.paystack = await this.paystack.createPaystackPlan(
+      name,
+      amount,
+      description,
+      interval,
+    );
+    return codes;
+  }
   /**
    * createCustomer
    */
@@ -80,8 +88,15 @@ export class Gateway {
         break;
     }
   }
-
   /**
-   * charge
+   * Subscribe
    */
+  public  async subscribe(plan: any, email: string, start_date: string) {
+    switch (this.current) {
+      case 'paystack':
+        return this.paystack.subscribe(email, plan, start_date);
+      default:
+        break;
+    }
+  }
 }

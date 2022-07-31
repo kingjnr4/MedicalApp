@@ -1,12 +1,15 @@
+import {Types, Document} from 'mongoose';
+
 export interface IPlan {
   _id: string;
   name: string;
   description: string;
   price: number;
   spaces: number;
-  code:Code
+  paystack_code:string;
+  flutterwave_code:string;
 }
-export type Code =  {
-  paystack:string,
-  flutterwave:string,
-}
+export type  PlanDoc = Document<any, any, any> &
+  IPlan & {
+    _id: Types.ObjectId;
+  };

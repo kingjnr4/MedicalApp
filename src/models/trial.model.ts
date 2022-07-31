@@ -8,6 +8,7 @@ const trialSchema: Schema = new Schema<ITrial>({
   status: {
     type: String,
     required: true,
+    default:'Active'
   },
   user: {
     type: Schema.Types.ObjectId,
@@ -17,7 +18,7 @@ const trialSchema: Schema = new Schema<ITrial>({
   expires: {
     type: Date,
     required: true,
-    default: () => moment().add(1, 'month').toDate(),
+    default: () => moment().add(30, 'days').toDate(),
   },
 });
 

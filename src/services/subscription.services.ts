@@ -1,3 +1,4 @@
+import moment from 'moment';
 import {UpdateWriteOpResult} from 'mongoose';
 import {CreatePlanDto} from '../dtos/plan.dto';
 import {HttpException} from '../exceptions/HttpException';
@@ -7,6 +8,7 @@ import {IUser} from '../interfaces/user.interface';
 import cardModel from '../models/card.model';
 import planModel from '../models/plan.model';
 import subModel from '../models/subscription.model';
+import trialModel from '../models/trial.model';
 import {Gateway} from '../utils/gateway';
 import {isEmpty} from '../utils/utils';
 
@@ -15,12 +17,16 @@ class SubService {
   private gateway = new Gateway();
   public async createSubscription(user: IUser, planId: string) {
     this.gateway.init();
-     const plan = await planModel.findById(planId);
-    // const card: ICard = await cardModel.findOne({userId: user._id});
-
-    // const amount = plan.price * 100;
+    const plan = await planModel.findById(planId);
+    const trial = await trialModel.findOne({user: user._id});
+    const date = trial.expires || Date.now();
     const metadata = JSON.stringify({});
-    const res = await this.gateway.initCard(user.email);
+    const start_date = moment(date).format() + '';
+    const res = await this.gateway.subscribe(
+      user.email,
+      plan.paystack_code,
+      start_date,
+    );
     return res;
   }
   public subExist = async (user: IUser) => {

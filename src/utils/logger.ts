@@ -87,12 +87,7 @@ const transports = [
     format: custformat,
     filename: 'all.log',
   }),
-  new MongoDB({
-    db: DB_URL,
-    tryReconnect: true,
-    collection: 'applogs',
-    options: { useNewUrlParser: true, useUnifiedTopology: true },
-  }),
+
 ];
 
 // Create the logger instance that has to be exported

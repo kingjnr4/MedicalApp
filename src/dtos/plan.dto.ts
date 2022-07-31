@@ -16,6 +16,7 @@ export class CreatePlanDto {
   public price!: number;
   @IsNumber()
   public spaces!: number;
+  
 }
 
 export class UpdatePlanDto {

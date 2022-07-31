@@ -3,16 +3,45 @@ import {post} from './requests';
 import crypto from 'crypto';
 
 import {NextFunction, Request, Response} from 'express';
+import trialModel from '../models/trial.model';
+import userModel from '../models/user.model';
+import UserService from '../services/user.services';
+import subModel from '../models/subscription.model';
+import PlanService from '../services/plan.services';
 
 export type Interval = 'monthly' | 'yearly' | 'daily';
 
 export class Paystack {
-  private secret: string;
+  async handleSubSuccess(data: any) {
+    const uService = new UserService();
+    const pService = new PlanService ()
+    const user = await uService.findUserByEmail(data.customer.email);
+    const plan = await pService.findPlanByName(data.plan.name);
+    const subData = {
+      status: 'active',
+      users: [user._id],
+      owner:user._id,
+      paystackRef: data.subscription_code,
+      next_date: data.next_payment_date,
+      plan:plan._id,
+    };
+    await subModel.create({...subData});
+  }
+  public handleChargeSuccess = async (data: any) => {
+    if (!data.metadata.evt){
+      return
+    }
+    await this.refund(data.reference);
+    const uService = new UserService();
+    const user = await uService.findUserByEmail(data.customer.email);
+    await trialModel.create({user: user._id});
+  };
+  public secret: string;
   constructor(key?: string) {
     this.secret = key || PAYSTACK_SECRET;
   }
 
-  public initSub = async (email: string, plan: string, metadata:string) => {
+  public initSub = async (email: string, plan: string, metadata: string) => {
     const params = JSON.stringify({
       email,
       plan,
@@ -41,11 +70,33 @@ export class Paystack {
 
     const res = await post(url, headers, params);
     if (res.status == true) {
-      return true;
+      return res.data.plan_code;
     }
-    return false;
+    return null;
   };
 
+  public subscribe = async (
+    customer: string,
+    plan: string,
+    start_date: string,
+  ) => {
+    const params = JSON.stringify({
+      customer,
+      plan,
+      start_date,
+    });
+
+    const url = 'api.paystack.co/subscription',
+      headers = {
+        Authorization: ['Bearer', this.secret].join(' '),
+        'Content-Type': 'application/json',
+      };
+    const res = await post(url, headers, params);
+    if (res.status == true) {
+      return true;
+    }
+    return null;
+  };
   public initialize = async (email: string, metadata: string) => {
     const params = JSON.stringify({
       email,
@@ -103,7 +154,7 @@ export class Paystack {
         'Content-Type': 'application/json',
       };
     const res = await post(url, headers);
-    if (res.status == 'true') {
+    if (res && res.status == 'true') {
       return true;
     }
     return false;
@@ -111,8 +162,9 @@ export class Paystack {
 
   static webhook = (req: Request, res: Response, next: NextFunction) => {
     const ps = new Paystack();
+    const secret = ps.secret || PAYSTACK_SECRET;
     const hash = crypto
-      .createHmac('sha512', PAYSTACK_SECRET)
+      .createHmac('sha512', secret)
       .update(JSON.stringify(req.body))
       .digest('hex');
     if (hash == req.headers['x-paystack-signature']) {
@@ -122,8 +174,11 @@ export class Paystack {
       console.log(data);
       switch (data.event) {
         case 'charge.success':
+          ps.handleChargeSuccess(data.data);
           break;
-
+        case 'charge.success':
+          ps.handleSubSuccess(data.data);
+          break;
         default:
           break;
       }

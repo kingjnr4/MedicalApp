@@ -1,6 +1,6 @@
-import { model, Schema, Document } from "mongoose";
-import { IPlan } from "../interfaces/plans.interface";
-import moment from "moment";
+import {model, Schema, Document} from 'mongoose';
+import {IPlan} from '../interfaces/plans.interface';
+import moment from 'moment';
 
 const planSchema: Schema = new Schema<IPlan>({
   name: {
@@ -20,11 +20,13 @@ const planSchema: Schema = new Schema<IPlan>({
     type: Number,
     required: true,
   },
-  code:{
-    type:Object,
-    required:true
-  }
+  paystack_code: {
+    type: String,
+  },
+  flutterwave_code: {
+    type: String,
+  },
 });
 
-const planModel = model<Document & IPlan>("plans", planSchema);
+const planModel = model<Document & IPlan>('plans', planSchema);
 export default planModel;

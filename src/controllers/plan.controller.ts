@@ -11,9 +11,13 @@ class PlanController {
     try {
       await this.gateway.init()
       const data: CreatePlanDto = req.body;
-      const saved = this.gateway.createPlan(data.name,data.price,data.description)
+      const saved = await this.gateway.createPlan(
+        data.name,
+        data.price,
+        data.description,
+      );
       if (saved) {
-        const plan = await this.service.createPlan({...data});
+        const plan = await this.service.createPlan({...data}, saved.paystack);
         return res.status(200).send({message: 'success',plan});
       }
       return res.status(200).send({message: 'failed', });

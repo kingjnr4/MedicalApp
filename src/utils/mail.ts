@@ -23,7 +23,7 @@ export const sendmail = async (options: Mail.Options) => {
       port: 587,
       secure: false,
       auth: {
-        user: 'test@diagnosisabc.com',
+        user: 'admin@diagnosisabc.com',
         pass: CPANEL_PASS
       },
       tls: {
@@ -49,7 +49,7 @@ export const getMailForVerify = (token: IToken, email): Mail.Options => {
   );
   const template = Handlebars.compile(source);
   return {
-    from: 'diagnosisabc.com@stringcode.com',
+    from: 'noreply@diagnosisabc.com',
     to: email,
     subject: 'Change  Your Password ',
     text: 'Please Verify Your Account ',
@@ -64,7 +64,7 @@ export const getMailForPass = (token: IToken, email): Mail.Options => {
   );
   const template = Handlebars.compile(source);
   return {
-    from: 'diagnosisabc.com@stringcode.com',
+    from: 'noreply@diagnosisabc.com',
     to: email,
     subject: 'Please Verify Your Account ',
     text: 'Please Verify Your Account ',
