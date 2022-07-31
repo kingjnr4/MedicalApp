@@ -62,7 +62,7 @@ export class Paystack {
       description,
     });
 
-    const url = 'api.paystack.co/plan',
+    const url = 'https://api.paystack.co/plan',
       headers = {
         Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ export class Paystack {
       start_date,
     });
 
-    const url = 'api.paystack.co/subscription',
+    const url = 'https://api.paystack.co/subscription',
       headers = {
         Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
