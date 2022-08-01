@@ -13,7 +13,7 @@ class SubscriptionController {
       const user: IUser = req['user'];
       const data = req.body;
       const plan = await this.planService.findPlanById(data.planId);
-      if (this.subService.subExist(user)) {
+      if (await this.subService.subExist(user)) {
         return res
           .status(200)
           .send({message: 'failed', reason: 'user is already subscribed'});

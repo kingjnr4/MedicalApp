@@ -16,21 +16,23 @@ class SubService {
   public model = subModel;
   private gateway = new Gateway();
   public async createSubscription(user: IUser, planId: string) {
-    this.gateway.init();
+    await this.gateway.init();
     const plan = await planModel.findById(planId);
     const trial = await trialModel.findOne({user: user._id});
     const date = trial.expires || Date.now();
     const metadata = JSON.stringify({});
     const start_date = moment(date).format() + '';
     const res = await this.gateway.subscribe(
-      user.email,
       plan.paystack_code,
+      user.email,
       start_date,
     );
     return res;
   }
   public subExist = async (user: IUser) => {
-    const sub = subModel.findOne({user: user._id, status: {$ne: 'ended'}});
+    const sub = await subModel.findOne({user: user._id, status: {$ne: 'Ended'}});
+    console.log(sub);
+    
     if (sub !== null) {
       return true;
     }

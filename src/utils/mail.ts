@@ -16,8 +16,6 @@ import Mail from 'nodemailer/lib/mailer';
 
 export const sendmail = async (options: Mail.Options) => {
   try {
-    console.log(CPANEL_PASS);
-    
     const transport = nodemailer.createTransport({
       host: 'mail.diagnosisabc.com',
       port: 587,

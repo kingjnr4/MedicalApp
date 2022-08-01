@@ -30,9 +30,11 @@ class PlanService {
   ): Promise<PlanDoc> {
     if (isEmpty(planData))
       throw new HttpException(400, 'Please make sure all fields are filled');
-
+        
     const findPlan = await this.model.findOne({name: planData.name});
     if (findPlan) throw new HttpException(409, `Plan name  is in use`);
+  
+    
     const createPlanData: PlanDoc = await this.model.create({
       ...planData,
       paystack_code: codes.paystack,

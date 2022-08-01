@@ -6,7 +6,7 @@ import { IRoute } from "../interfaces/routes.interfaces";
 
 
 class SubRoute implements IRoute {
-  public path = "/";
+  public path = "/subscription";
   public router = Router();
   private controller = new SubscriptionController();
   constructor() {
@@ -15,7 +15,7 @@ class SubRoute implements IRoute {
 
   private initializeRoutes() {
     this.router.post(
-      '/subscribe',
+      `${this.path}/subscribe`,
       AuthGuard.createInstance,
       UserInfoCompleteGuard.createInstance,
       this.controller.create,

@@ -92,7 +92,7 @@ export class Paystack {
         'Content-Type': 'application/json',
       };
     const res = await post(url, headers, params);
-    if (res.status == true) {
+    if (res && res.status == true) {
       return true;
     }
     return null;
@@ -176,7 +176,7 @@ export class Paystack {
         case 'charge.success':
           ps.handleChargeSuccess(data.data);
           break;
-        case 'charge.success':
+        case 'subscription.create':
           ps.handleSubSuccess(data.data);
           break;
         default:

@@ -17,7 +17,7 @@ class PlanController {
         data.description,
       );
       if (saved) {
-        const plan = await this.service.createPlan({...data}, saved.paystack);
+        const plan = await this.service.createPlan({...data}, saved);
         return res.status(200).send({message: 'success',plan});
       }
       return res.status(200).send({message: 'failed', });

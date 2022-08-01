@@ -43,10 +43,12 @@ export class Gateway {
     };
     codes.paystack = await this.paystack.createPaystackPlan(
       name,
-      amount,
+      amount *100,
       description,
       interval,
     );
+    
+    
     return codes;
   }
   /**
