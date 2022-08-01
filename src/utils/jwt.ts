@@ -23,7 +23,7 @@ export const decodeToken = (token: string) => {
     }
     return payload['userId'] as string;
   } catch (e) {
-    throw e;
+   logger.error(e)
   }
 };
 

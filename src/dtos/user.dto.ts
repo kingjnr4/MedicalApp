@@ -17,9 +17,8 @@ export class UpdateUserDto {
   public firstname!: string;
   @IsString()
   public lastname!: string;
-  // @IsPhoneNumber()
-  // @IsOptional()
-  // public number?: number;
+  @IsPhoneNumber()
+  public number?: string;
 }
 
 export class GenLinkDto {

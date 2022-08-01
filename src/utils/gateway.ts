@@ -58,8 +58,9 @@ export class Gateway {
     email: string,
     firstname: string,
     lastname: string,
+    number:string,
   ) {
-    return this.paystack.createCustomer(email, firstname, lastname);
+    return this.paystack.createCustomer(email, firstname, lastname,number);
   }
 
   /**

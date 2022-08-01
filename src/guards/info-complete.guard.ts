@@ -16,7 +16,7 @@ export class UserInfoCompleteGuard {
     return next()
   }
     checkInfoExists(user:IUser) {
-        if (!user.firstname || !user.lastname) {
+        if (!user.firstname || !user.lastname || !user.number ) {
               throw new HttpException(401, 'Info incomplete');
         }
         return true

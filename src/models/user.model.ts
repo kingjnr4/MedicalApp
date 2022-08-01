@@ -20,6 +20,9 @@ const userSchema: Schema = new Schema<IUser>({
   lastname: {
     type: String,
   },
+  number:{
+    type:String,
+  },
   password: {
     type: String,
     required: true,

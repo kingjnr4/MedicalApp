@@ -162,11 +162,13 @@ class UserController {
       const user: UserDoc = req['user'];
       user.firstname = data.firstname;
       user.lastname = data.lastname;
+      user.number=data.number
       await this.gateway.init();
       const saved = await this.gateway.createCustomer(
         user.email,
         user.firstname,
         user.lastname,
+        user.number,
       );
       if (saved) {
         await user.save();

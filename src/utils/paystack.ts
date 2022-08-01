@@ -129,11 +129,13 @@ export class Paystack {
     email: string,
     first_name: string,
     last_name: string,
+    phone:string,
   ) => {
     const params = JSON.stringify({
       email,
       first_name,
       last_name,
+      phone,
     });
     const url = 'https://api.paystack.co/customer',
       headers = {

@@ -6,6 +6,7 @@ export interface IUser {
   username: string;
   firstname?: string;
   lastname?: string;
+  number?: string;
   password: string;
   verified: boolean;
   status: stat;

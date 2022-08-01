@@ -22,9 +22,8 @@ class PlanRoute implements IRoute {
       AdminGuard.createInstance,
       this.controller.create,
     );
-    this.router.post(
+    this.router.get(
       `${this.path}/get`,
-      validationMiddleware(CreatePlanDto, 'body', 'fields'),
       this.controller.get,
     );
     this.router.delete(
