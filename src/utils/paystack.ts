@@ -20,10 +20,11 @@ export class Paystack {
     const subData = {
       status: 'active',
       users: [user._id],
-      owner:user._id,
-      paystackRef: data.subscription_code,
+      owner: user._id,
+      paystack_ref: data.subscription_code,
+      ps_email_token: data.email_token,
       next_date: data.next_payment_date,
-      plan:plan._id,
+      plan: plan._id,
     };
     await subModel.create({...subData});
   }

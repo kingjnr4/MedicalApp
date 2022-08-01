@@ -20,9 +20,12 @@ const subSchema: Schema = new Schema<ISubscription>({
     ref: 'plans',
     required: true,
   },
-  paystackRef:{
-    type:String
-  }
+  paystack_ref: {
+    type: String,
+  },
+  ps_email_token: {
+    type: String,
+  },
 });
 
 const subModel = model<Document & ISubscription>('subs', subSchema);
