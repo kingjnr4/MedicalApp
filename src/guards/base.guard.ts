@@ -7,7 +7,8 @@ export class BaseGuard {
   protected ip:string
   constructor(req: Request, res: Response, next: NextFunction) {
     this.token = req.headers['x-access-token'] as string;
-    this.id = decodeToken(this.token) as string;
-    this.ip=req.ip
+     this.id = decodeToken(this.token) as string;
+    this.ip=req.ip 
+    
   }
 }

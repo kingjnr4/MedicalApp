@@ -25,13 +25,17 @@ import {
 class UserController {
   private service = new UserService();
   private gateway = new Gateway();
+  get(req: Request, res: Response, next: NextFunction) {
+    const user:UserDoc = req['user']
+    return res.status(200).send(user);
+  }
   public register = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: CreateUserDto = req.body;
       const user = await this.service.createUser(data);
       const token = await generateVerificationToken(user._id);
       const mail = getMailForVerify(token, user.email);
-      sendmail( mail)
+      sendmail(mail)
         .then(msg => {
           logger.info(msg);
           return res.status(200).send({message: 'success'});
@@ -116,14 +120,13 @@ class UserController {
       }
       const token = await generateVerificationToken(user._id);
       const mail = getMailForVerify(token, user.email);
-      sendmail( mail).catch(e => {
-        
+      sendmail(mail)
+        .catch(e => {
           return res.status(200).send({message: 'failed'});
         })
         .then(msg => {
           return res.status(200).send({message: 'success'});
-        })
-        
+        });
     } catch (e) {
       next(e);
     }
@@ -137,13 +140,13 @@ class UserController {
       const data: GenLinkDto = req.body;
       const user = await this.service.findUserByEmail(data.email);
       const token = await generateVerificationToken(user._id);
-      const mail = getMailForPass(token, user.email)
+      const mail = getMailForPass(token, user.email);
       sendmail(mail)
         .then(msg => {
           return res.status(200).send({message: 'success'});
         })
         .catch(e => {
-          return res.status(200).send({message: 'failed',e});
+          return res.status(200).send({message: 'failed', e});
         });
     } catch (e) {
       next(e);
@@ -162,7 +165,7 @@ class UserController {
       const user: UserDoc = req['user'];
       user.firstname = data.firstname;
       user.lastname = data.lastname;
-      user.number=data.number
+      user.number = data.number;
       await this.gateway.init();
       const saved = await this.gateway.createCustomer(
         user.email,
@@ -186,7 +189,7 @@ class UserController {
     } catch (e) {
       next(e);
     }
-  }; 
+  };
 }
 
 export default UserController;

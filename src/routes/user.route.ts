@@ -2,6 +2,7 @@ import { Router } from "express";
 import UserController from "../controllers/user.controller";
 import { ChangePassDto, CreateUserDto, GenLinkDto, LoginUserDto, UpdateUserDto, VerifyUserDto } from "../dtos/user.dto";
 import { AuthGuard } from "../guards/auth.guard";
+import { EmptyJwtGuard } from "../guards/jwtempty.guard";
 import { IRoute } from "../interfaces/routes.interfaces";
 import validationMiddleware from "../middlewares/validation.middleware";
 
@@ -38,11 +39,13 @@ class UserRoute implements IRoute {
      this.router.post(
        `${this.path}/complete`,
        validationMiddleware(UpdateUserDto, 'body', 'fields'),
+       EmptyJwtGuard.check,
        AuthGuard.createInstance,
        this.controller.updateInfo,
      );
       this.router.post(
         `${this.path}/card`,
+        EmptyJwtGuard.check,
         AuthGuard.createInstance,
         this.controller.addCard,
       );
@@ -56,6 +59,12 @@ class UserRoute implements IRoute {
             validationMiddleware(ChangePassDto, 'body', 'fields'),
             this.controller.changePassword,
           );
+           this.router.post(
+             `${this.path}/info`,
+             EmptyJwtGuard.check,
+             AuthGuard.createInstance,
+             this.controller.get,
+           );
   }
 }
 export default UserRoute;
