@@ -59,7 +59,7 @@ class UserRoute implements IRoute {
             validationMiddleware(ChangePassDto, 'body', 'fields'),
             this.controller.changePassword,
           );
-           this.router.post(
+           this.router.get(
              `${this.path}/info`,
              EmptyJwtGuard.check,
              AuthGuard.createInstance,
