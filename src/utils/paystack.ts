@@ -14,7 +14,7 @@ export type Interval = 'monthly' | 'yearly' | 'daily';
 export class Paystack {
   async handleSubSuccess(data: any) {
     const uService = new UserService();
-    const pService = new PlanService ()
+    const pService = new PlanService();
     const user = await uService.findUserByEmail(data.customer.email);
     const plan = await pService.findPlanByName(data.plan.name);
     const subData = {
@@ -29,8 +29,8 @@ export class Paystack {
     await subModel.create({...subData});
   }
   public handleChargeSuccess = async (data: any) => {
-    if (!data.metadata.evt){
-      return
+    if (!data.metadata.evt) {
+      return;
     }
     await this.refund(data.reference);
     const uService = new UserService();
@@ -76,6 +76,28 @@ export class Paystack {
     return null;
   };
 
+  public cancel = async (
+    customer: string,
+    plan: string,
+    start_date: string,
+  ) => {
+    const params = JSON.stringify({
+      customer,
+      plan,
+      start_date,
+    });
+
+    const url = 'https://api.paystack.co/subscription',
+      headers = {
+        Authorization: ['Bearer', this.secret].join(' '),
+        'Content-Type': 'application/json',
+      };
+    const res = await post(url, headers, params);
+    if (res && res.status == true) {
+      return true;
+    }
+    return null;
+  };
   public subscribe = async (
     customer: string,
     plan: string,
@@ -130,7 +152,7 @@ export class Paystack {
     email: string,
     first_name: string,
     last_name: string,
-    phone:string,
+    phone: string,
   ) => {
     const params = JSON.stringify({
       email,

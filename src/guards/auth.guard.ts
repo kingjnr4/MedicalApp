@@ -17,10 +17,14 @@ export class AuthGuard extends BaseGuard {
   }
 
   static async createInstance(req: Request, res: Response, next: NextFunction) {
-    const guard = new AuthGuard(req, res, next);
+   try {
+      const guard = new AuthGuard(req, res, next);
     let user = await guard.checkUserExists();
     req['user'] = user;
     return next()
+   } catch (e) {
+      next(e);
+   }
   }
 
   async checkUserExists() {

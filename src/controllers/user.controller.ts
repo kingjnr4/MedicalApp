@@ -27,7 +27,15 @@ class UserController {
   private gateway = new Gateway();
   get(req: Request, res: Response, next: NextFunction) {
     const user:UserDoc = req['user']
-    return res.status(200).send(user);
+    const userObj = {
+      username: user.username,
+      firstname: user.firstname,
+      lastname: user.lastname,
+      verified: user.verified,
+      email:user.email,
+      number:user.number
+    };
+    return res.status(200).send(userObj);
   }
   public register = async (req: Request, res: Response, next: NextFunction) => {
     try {
