@@ -9,6 +9,5 @@ export class BaseGuard {
     this.token = req.headers['x-access-token'] as string;
      this.id = decodeToken(this.token) as string;
     this.ip=req.ip 
-    
   }
 }
