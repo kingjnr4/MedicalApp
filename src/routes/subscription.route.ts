@@ -23,7 +23,7 @@ class SubRoute implements IRoute {
       this.controller.create,
     );
     this.router.post(
-      `${this.path}/cancwl`,
+      `${this.path}/cancel`,
       EmptyJwtGuard.check,
       AuthGuard.createInstance,
       UserInfoCompleteGuard.createInstance,

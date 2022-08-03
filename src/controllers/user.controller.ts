@@ -9,13 +9,13 @@ import {
   VerifyUserDto,
 } from '../dtos/user.dto';
 import {HttpException} from '../exceptions/HttpException';
-import { IUser, UserDoc } from '../interfaces/user.interface';
+import {IUser, UserDoc} from '../interfaces/user.interface';
 import UserService from '../services/user.services';
-import { Gateway } from '../utils/gateway';
+import {Gateway} from '../utils/gateway';
 import {generateJWT} from '../utils/jwt';
 import {logger} from '../utils/logger';
 import {getMailForPass, getMailForVerify, sendmail} from '../utils/mail';
-import { Paystack } from '../utils/paystack';
+import {Paystack} from '../utils/paystack';
 import {
   generateVerificationToken,
   getIdFromToken,
@@ -26,14 +26,14 @@ class UserController {
   private service = new UserService();
   private gateway = new Gateway();
   get(req: Request, res: Response, next: NextFunction) {
-    const user:UserDoc = req['user']
+    const user: UserDoc = req['user'];
     const userObj = {
       username: user.username,
       firstname: user.firstname,
       lastname: user.lastname,
       verified: user.verified,
-      email:user.email,
-      number:user.number
+      email: user.email,
+      number: user.number,
     };
     return res.status(200).send(userObj);
   }
@@ -73,8 +73,13 @@ class UserController {
       if (user.verified == false) {
         throw new HttpException(401, ' verify your email');
       }
+      const fields = {
+        firstname: user.firstname ? true : false,
+        lastname: user.lastname ? true : false,
+        number: user.number ? true : false,
+      };
       const jwt = generateJWT(user._id);
-      const details = {name: user.username, verified: user.verified};
+      const details = {name: user.username, verified: user.verified, fields};
       // res.cookie('refreshToken',jwt.refreshToken)
       return res
         .status(200)
