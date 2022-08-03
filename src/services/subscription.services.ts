@@ -38,13 +38,13 @@ class SubService {
     console.log(sub);
 
     if (sub !== null) {
-      return true;
+      return sub;
     }
-    return sub;
+    return null;
   };
   public cancel = async (sub: ISubscription) => {
-    const canceled = this.gateway.cancel(sub);
-    return canceled;
+    const cancelled = await this.gateway.cancelSub(sub);
+    return cancelled;
   };
 }
 

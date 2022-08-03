@@ -12,8 +12,14 @@ import PlanService from '../services/plan.services';
 export type Interval = 'monthly' | 'yearly' | 'daily';
 
 export class Paystack {
-  handleSubCancel(data: any) {
-    throw new Error('Method not implemented.');
+ async handleSubCancel(data: any) {
+    const uService = new UserService();
+    const pService = new PlanService();
+    const user = await uService.findUserByEmail(data.customer.email);
+    const plan = await pService.findPlanByName(data.plan.name);
+    const sub = await subModel.findOne({owner: user._id});
+    sub.status = 'non-renewing'
+    await sub.save();
   }
   async handleSubSuccess(data: any) {
     const uService = new UserService();
