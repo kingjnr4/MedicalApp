@@ -1,4 +1,5 @@
 
+import { ISubscription } from '../interfaces/subscription.interface';
 import settingsModel from '../models/settings.model';
 import {SettingsService} from '../services/settings.services';
 import {Interval, Paystack} from './paystack';
@@ -63,6 +64,15 @@ export class Gateway {
     return this.paystack.createCustomer(email, firstname, lastname,number);
   }
 
+
+  /**
+   * cancelSub
+   */
+  public cancelSub(sub:ISubscription) {
+     switch (this.current) {
+      case 'paystack':  return this.paystack.cancel(sub.paystack_ref, sub.ps_email_token);
+  }
+}
   /**
    * initCard
    */

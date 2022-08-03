@@ -29,6 +29,18 @@ class SubscriptionController {
       next(e);
     }
   };
+ public cancel = async (req: Request, res: Response, next: NextFunction) => {
+   const user:IUser = req['user']
+   const sub = await this.subService.subExist(user)
+   if (sub==false) {
+     return res.send ("User is not subscribed")
+   }
+   const canceled = this.subService.cancel(sub);
+   if (canceled == false) {
+     return res.send('Error cancelling your plan');
+   }
+    return res.send('Plan  canceled successfully');
+ };
 }
 
 export default SubscriptionController;

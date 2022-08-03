@@ -2,7 +2,7 @@ import {Types} from 'mongoose';
 
 export interface ISubscription {
   _id: string;
-  status: 'active' | 'ended';
+  status: 'active' |'non-renewing' |'ended';
   users: Types.ObjectId[];
   plan: Types.ObjectId;
   owner: Types.ObjectId;

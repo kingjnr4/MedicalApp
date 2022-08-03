@@ -12,6 +12,9 @@ import PlanService from '../services/plan.services';
 export type Interval = 'monthly' | 'yearly' | 'daily';
 
 export class Paystack {
+  handleSubCancel(data: any) {
+    throw new Error('Method not implemented.');
+  }
   async handleSubSuccess(data: any) {
     const uService = new UserService();
     const pService = new PlanService();
@@ -26,6 +29,10 @@ export class Paystack {
       next_date: data.next_payment_date,
       plan: plan._id,
     };
+    const sub = subModel.findOne ({owner:user._id})
+    if (sub) {
+      sub.update(subData)
+      return;   }
     await subModel.create({...subData});
   }
   public handleChargeSuccess = async (data: any) => {
@@ -77,17 +84,15 @@ export class Paystack {
   };
 
   public cancel = async (
-    customer: string,
-    plan: string,
-    start_date: string,
+    code: string,
+    token: string,
   ) => {
     const params = JSON.stringify({
-      customer,
-      plan,
-      start_date,
+      code,
+      token,
     });
 
-    const url = 'https://api.paystack.co/subscription',
+    const url = 'https://api.paystack.co/disable',
       headers = {
         Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
@@ -203,6 +208,9 @@ export class Paystack {
           break;
         case 'subscription.create':
           ps.handleSubSuccess(data.data);
+          break;
+        case 'subscription.not_renew':
+          ps.handleSubCancel(data.data);
           break;
         default:
           break;

@@ -4,6 +4,7 @@ import {CreatePlanDto} from '../dtos/plan.dto';
 import {HttpException} from '../exceptions/HttpException';
 import {ICard} from '../interfaces/cards.interface';
 import {IPlan} from '../interfaces/plans.interface';
+import {ISubscription} from '../interfaces/subscription.interface';
 import {IUser} from '../interfaces/user.interface';
 import cardModel from '../models/card.model';
 import planModel from '../models/plan.model';
@@ -30,13 +31,20 @@ class SubService {
     return res;
   }
   public subExist = async (user: IUser) => {
-    const sub = await subModel.findOne({user: user._id, status: {$ne: 'Ended'}});
+    const sub = await subModel.findOne({
+      user: user._id,
+      status: {$ne: 'Ended'},
+    });
     console.log(sub);
-    
+
     if (sub !== null) {
       return true;
     }
-    return false;
+    return sub;
+  };
+  public cancel = async (sub: ISubscription) => {
+    const canceled = this.gateway.cancel(sub);
+    return canceled;
   };
 }
 
