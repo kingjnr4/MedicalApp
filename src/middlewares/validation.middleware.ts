@@ -15,7 +15,7 @@ const validationMiddleware = (
   msg:msgType,
   skipMissingProperties = false,
   whitelist = true,
-  forbidNonWhitelisted = true
+  forbidNonWhitelisted = false
 ): RequestHandler => {
   return (req, res, next) => {
     validate(plainToInstance(type, req[value]), {

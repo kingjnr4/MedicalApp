@@ -72,7 +72,7 @@ class UserController {
       }
       if (user.verified == false) {
         throw new HttpException(401, ' verify your email');
-      }
+      }+6
       const fields = {
         firstname: user.firstname ? true : false,
         lastname: user.lastname ? true : false,
