@@ -98,16 +98,19 @@ export class Paystack {
       token,
     });
 
-    const url = 'https://api.paystack.co/disable',
+    const url = 'https://api.paystack.co/subscription/disable',
       headers = {
         Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
       };
+      
+      
     const res = await post(url, headers, params);
     if (res && res.status == true) {
       return true;
     }
-    return null;
+
+    return false;
   };
   public subscribe = async (
     customer: string,
@@ -129,7 +132,7 @@ export class Paystack {
     if (res && res.status == true) {
       return true;
     }
-    return null;
+    return false;
   };
   public initialize = async (email: string, metadata: string) => {
     const params = JSON.stringify({

@@ -29,6 +29,13 @@ class SubRoute implements IRoute {
       UserInfoCompleteGuard.createInstance,
       this.controller.cancel,
     );
+      this.router.get(
+        `${this.path}/info`,
+        EmptyJwtGuard.check,
+        AuthGuard.createInstance,
+        UserInfoCompleteGuard.createInstance,
+        this.controller.get,
+      );
   }
 }
 

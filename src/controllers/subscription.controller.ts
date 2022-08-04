@@ -1,6 +1,7 @@
 import {NextFunction, Request, Response} from 'express';
 import {CreatePlanDto} from '../dtos/plan.dto';
 import {IUser} from '../interfaces/user.interface';
+import trialModel from '../models/trial.model';
 import PlanService from '../services/plan.services';
 import SubService from '../services/subscription.services';
 import {Paystack} from '../utils/paystack';
@@ -36,11 +37,35 @@ class SubscriptionController {
       return res.send('User is not subscribed');
     }
     const cancelled = await this.subService.cancel(sub);
+    console.log(cancelled);
+    
     if (cancelled == false) {
+  
       return res.send('Error cancelling your plan');
     }
     return res.send('Plan  canceled successfully');
   };
+  public  get = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+      const user: IUser = req['user'];
+      
+      const trial = await this.subService.getTrial(user);
+      
+  
+      
+      const sub = await this.subService.getSub(user);
+      if (sub) {
+        return res.status(200).send({sub});
+      }
+      if (trial) {
+        return res.status(200).send({sub: trial});
+      }
+      return res.status(200).send({sub: 'no sub '});
+    
+   } catch (e) {
+     throw e
+   }
+  }
 }
 
 export default SubscriptionController;
