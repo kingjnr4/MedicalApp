@@ -8,22 +8,30 @@ import userModel from '../models/user.model';
 import UserService from '../services/user.services';
 import subModel from '../models/subscription.model';
 import PlanService from '../services/plan.services';
+import NotifService from '../services/notification.service';
 
 export type Interval = 'monthly' | 'yearly' | 'daily';
 
 export class Paystack {
- async handleSubCancel(data: any) {
+  async handleSubCancel(data: any) {
     const uService = new UserService();
     const pService = new PlanService();
+    const nService = new NotifService();
     const user = await uService.findUserByEmail(data.customer.email);
     const plan = await pService.findPlanByName(data.plan.name);
     const sub = await subModel.findOne({owner: user._id});
-    sub.status = 'non-renewing'
+    sub.status = 'non-renewing';
     await sub.save();
+    await nService.createNotification(
+      user,
+      'Sub Cancelled',
+      'You have cancelled your subscribtion and it wont renew',
+    );
   }
   async handleSubSuccess(data: any) {
     const uService = new UserService();
     const pService = new PlanService();
+    const nService = new NotifService();
     const user = await uService.findUserByEmail(data.customer.email);
     const plan = await pService.findPlanByName(data.plan.name);
     const subData = {
@@ -35,11 +43,22 @@ export class Paystack {
       next_date: data.next_payment_date,
       plan: plan._id,
     };
-    const sub = subModel.findOne ({owner:user._id})
+    const sub = await subModel.findOne({owner: user._id});
     if (sub) {
-      sub.update(subData)
-      return;   }
+      await sub.update(subData);
+      await nService.createNotification(
+        user,
+        'Sub Created',
+        'You have subscribed to plan' + plan.name,
+      );
+      return;
+    }
     await subModel.create({...subData});
+    await nService.createNotification(
+      user,
+      'Sub Created',
+      'You have subscribed to plan' + plan.name,
+    );
   }
   public handleChargeSuccess = async (data: any) => {
     if (!data.metadata.evt) {
@@ -89,10 +108,7 @@ export class Paystack {
     return null;
   };
 
-  public cancel = async (
-    code: string,
-    token: string,
-  ) => {
+  public cancel = async (code: string, token: string) => {
     const params = JSON.stringify({
       code,
       token,
@@ -103,8 +119,7 @@ export class Paystack {
         Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
       };
-      
-      
+
     const res = await post(url, headers, params);
     if (res && res.status == true) {
       return true;

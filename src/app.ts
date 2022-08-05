@@ -22,10 +22,10 @@ class App {
     this.env = NODE_ENV || "development";
     this.port = PORT || 3000;
 
-    this.connectToDatabase();
     this.initializeMiddlewares();
     this.initializeRoutes(routes);
     this.initializeErrorHandling();
+    this.connectToDatabase();
   }
   public listen() {
     this.app.listen(this.port, () => {
@@ -41,7 +41,7 @@ class App {
        logger.info("Database connected");
      })
      .catch((error) => {
-       logger.error("db error", error)
+       logger.error("Db error: ", error)
      });
   }
   initializeMiddlewares() {
