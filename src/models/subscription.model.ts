@@ -26,6 +26,9 @@ const subSchema: Schema = new Schema<ISubscription>({
   ps_email_token: {
     type: String,
   },
+  next_date:{
+    type:String
+  }
 });
 
 const subModel = model<Document & ISubscription>('subs', subSchema);

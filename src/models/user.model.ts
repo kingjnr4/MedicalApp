@@ -60,5 +60,5 @@ userSchema.methods.checkPassword = async function (password: string) {
   }
 };
 
-const userModel = model<Document & IUser>("User", userSchema);
+const userModel = model<Document & IUser>("users", userSchema);
 export default userModel;
