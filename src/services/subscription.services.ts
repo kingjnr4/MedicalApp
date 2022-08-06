@@ -32,7 +32,7 @@ class SubService {
   }
   public subExist = async (user: IUser) => {
     const sub = await subModel.findOne({
-      user: user._id,
+      users: {$in: [user._id]},
       status: {$ne: 'Ended'},
     });
     console.log(sub);
@@ -74,7 +74,7 @@ class SubService {
       };
     }
     const sub = await subModel.findOne({
-      user: user._id,
+      users: {$in:[user._id] },
       status: {$ne: 'Ended'},
     });
 

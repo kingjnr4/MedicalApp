@@ -33,7 +33,6 @@ class SubRoute implements IRoute {
         `${this.path}/info`,
         EmptyJwtGuard.check,
         AuthGuard.createInstance,
-        UserInfoCompleteGuard.createInstance,
         this.controller.get,
       );
   }

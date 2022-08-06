@@ -11,9 +11,13 @@ export class UserInfoCompleteGuard {
   }
 
   static async createInstance(req: Request, res: Response, next: NextFunction) {
-    const guard = new UserInfoCompleteGuard(req, res, next);
- await guard.checkInfoExists(req['user']);
-    return next()
+  try {
+      const guard = new UserInfoCompleteGuard(req, res, next);
+      await guard.checkInfoExists(req['user']);
+      return next();
+  } catch (e) {
+    next(e);
+  }
   }
     checkInfoExists(user:IUser) {
         if (!user.firstname || !user.lastname || !user.number ) {

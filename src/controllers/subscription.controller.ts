@@ -56,6 +56,14 @@ class SubscriptionController {
       throw e;
     }
   };
+  public addUserToSub = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user: IUser = req['user'];
+      return res.status(200).send({sub: 'no sub '});
+    } catch (e) {
+      throw e;
+    }
+  };
 }
 
 export default SubscriptionController;
