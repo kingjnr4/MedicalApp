@@ -19,7 +19,10 @@ class SubService {
   public async createSubscription(user: IUser, planId: string) {
     await this.gateway.init();
     const plan = await planModel.findById(planId);
-    // const trial = await trialModel.findOne({user: user._id});
+     const trial = await trialModel.findOne({user: user._id});
+     if (!trial) {
+       throw new HttpException(401,'Add A Fucking Card');
+     }
     const date = Date.now();
     const metadata = JSON.stringify({});
     const start_date = moment(date).format() + '';

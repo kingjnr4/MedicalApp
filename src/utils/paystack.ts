@@ -34,6 +34,9 @@ export class Paystack {
     const nService = new NotifService();
     const user = await uService.findUserByEmail(data.customer.email);
     const plan = await pService.findPlanByName(data.plan.name);
+    const trial = await trialModel.findOne({user: user._id});
+    trial.status = 'Ended';
+    await trial.save();
     const subData = {
       status: 'active',
       users: [user._id],
@@ -67,7 +70,10 @@ export class Paystack {
     await this.refund(data.reference);
     const uService = new UserService();
     const user = await uService.findUserByEmail(data.customer.email);
-    await trialModel.create({user: user._id});
+    const trial = await trialModel.findOne({user: user._id});
+    if (!trial) {
+      await trialModel.create({user: user._id});
+    }
   };
   public secret: string;
   constructor(key?: string) {
