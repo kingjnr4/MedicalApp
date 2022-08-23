@@ -55,7 +55,7 @@ export const getMailForVerify = (token: IToken, email): Mail.Options => {
   };
 };
 export const getMailForPass = (token: IToken, email): Mail.Options => {
-  const link = `https://brilliant-beijinho-78dad5.netlify.app/auth/change?key=${token.key}`;
+  const link = `https://brilliant-beijinho-78dad5.netlify.app/auth/change-password?key=${token.key}`;
   const source = fs.readFileSync(
     path.join(__dirname, '/templates/changePass.hbs'),
     'utf8',

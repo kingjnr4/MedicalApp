@@ -20,7 +20,9 @@ class UserService {
   public async findUserByEmail(email: string): Promise<IUser> {
     if (isEmpty(email)) throw new HttpException(400, 'No Email passed');
 
-    const user = await this.model.findOne({email});
+    const user = await this.model.findOne({
+      email: {$regex: new RegExp(email, 'i')},
+    });
     if (!user) throw new HttpException(409, 'User not found');
     return user;
   }

@@ -104,10 +104,10 @@ export class Gateway {
   /**
    * Subscribe
    */
-  public  async subscribe(plan: any, email: string, start_date: string) {
+  public  async subscribe(plan: any, email: string) {
     switch (this.current) {
       case 'paystack':
-        return this.paystack.subscribe(email, plan, start_date);
+        return this.paystack.subscribe(email, plan);
       default:
         break;
     }

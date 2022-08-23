@@ -136,12 +136,10 @@ export class Paystack {
   public subscribe = async (
     customer: string,
     plan: string,
-    start_date: string,
   ) => {
     const params = JSON.stringify({
       customer,
       plan,
-      start_date,
     });
 
     const url = 'https://api.paystack.co/subscription',
@@ -206,14 +204,16 @@ export class Paystack {
     }
     return false;
   };
-  refund = async (ref: string) => {
+  refund = async (transaction: string) => {
+      const params = JSON.stringify({
+        transaction
+      });
     const url = `https://api.paystack.co/refund`,
-      method = 'POST',
       headers = {
         Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
       };
-    const res = await post(url, headers);
+    const res = await post(url, headers,params);
     if (res && res.status == 'true') {
       return true;
     }
