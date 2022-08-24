@@ -45,7 +45,8 @@ class SubService {
       subId: sub._id,
     });
     const mail = getMailForInvite(invite._id.toString(),user.email)
-    sendmail(mail).then(()=>console.log('mail')).catch((e)=>{throw e}
+    sendmail(mail).then((msg)=>console.log(msg)).catch((e)=>{console.log(e)
+     }
     )
     return invite;
   };
