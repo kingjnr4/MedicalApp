@@ -64,8 +64,23 @@ export const getMailForPass = (token: IToken, email): Mail.Options => {
   return {
     from: 'noreply@diagnosisabc.com',
     to: email,
-    subject: 'Please Verify Your Account ',
-    text: 'Please Verify Your Account ',
+    subject: 'Change your Password',
+    text: 'Change your Password',
+    html: template({link, email}),
+  };
+};
+export const getAdminMailForPass = (token: IToken, email): Mail.Options => {
+  const link = `https://brilliant-beijinho-78dad5.netlify.app/admin/change-password?key=${token.key}`;
+  const source = fs.readFileSync(
+    path.join(__dirname, '/templates/changePass.hbs'),
+    'utf8',
+  );
+  const template = Handlebars.compile(source);
+  return {
+    from: 'noreply@diagnosisabc.com',
+    to: email,
+    subject: 'Change your Password',
+    text: 'Change your Password ',
     html: template({link, email}),
   };
 };

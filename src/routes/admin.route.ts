@@ -3,6 +3,7 @@ import AdminController from '../controllers/admin.controller';
 import UserController from '../controllers/user.controller';
 import { CreateAdminDto, LoginAdminDto } from '../dtos/admin.dto';
 import {
+  ChangePassDto,
   CreateUserDto,
   GenLinkDto,
   LoginUserDto,
@@ -31,6 +32,17 @@ class AdminRoute implements IRoute {
       validationMiddleware(LoginAdminDto, 'body', 'fields'),
       this.controller.login,
     );
+     this.router.post(
+       `${this.path}/passlink`,
+       validationMiddleware(GenLinkDto, 'body', 'fields'),
+       this.controller.generatePasswordLink,
+     );
+     this.router.post(
+       `${this.path}/changepass`,
+       validationMiddleware(ChangePassDto, 'body', 'fields'),
+       this.controller.changePassword,
+     );
+    
   }
 }
 export default AdminRoute;

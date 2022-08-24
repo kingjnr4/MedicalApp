@@ -65,13 +65,12 @@ class SubService {
     return false;
   };
 
-  public subExist = async (user: IUser) => {
+  public activeSubExist = async (user: IUser) => {
     const sub = await subModel.findOne({
       users: {$in: [user._id]},
       status: {$nin: ['ended','non-renewing']},
     });
     console.log(sub);
-
     if (sub !== null) {
       return sub;
     }

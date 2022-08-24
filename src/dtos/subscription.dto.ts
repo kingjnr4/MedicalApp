@@ -6,7 +6,10 @@ import {
   IsPhoneNumber,
 } from 'class-validator';
 
-export class CreatSubDto {}
+export class CreateSubDto {
+  @IsString()
+  planId: string;
+}
 
 export class AddUserToSubToDto {
   @IsEmail()

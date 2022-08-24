@@ -2,7 +2,7 @@ import { CreateAdminDto } from "../dtos/admin.dto";
 import { HttpException } from "../exceptions/HttpException";
 import { IAdmin } from "../interfaces/admin.interface";
 import adminModel from "../models/admin.model";
-import { isEmpty } from "../utils/utils";
+import { hashPassword, isEmpty } from "../utils/utils";
 
 class AdminService {
   public model = adminModel;
@@ -38,6 +38,15 @@ class AdminService {
     });
 
     return createAdminData;
+  }
+  public async changePass(id: string, password: string): Promise<Boolean> {
+    const admin = await this.model.findById(id);
+    if (admin == null) {
+      throw new HttpException(409, `User not found`);
+    }
+    admin.password = await hashPassword(password);
+    admin?.save();
+    return true;
   }
 }
 export default AdminService;

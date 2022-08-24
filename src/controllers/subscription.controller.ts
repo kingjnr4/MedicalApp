@@ -1,6 +1,10 @@
 import {NextFunction, Request, Response} from 'express';
 import {CreatePlanDto} from '../dtos/plan.dto';
-import {AcceptInviteDto, AddUserToSubToDto} from '../dtos/subscription.dto';
+import {
+  AcceptInviteDto,
+  AddUserToSubToDto,
+  CreateSubDto,
+} from '../dtos/subscription.dto';
 import {IUser} from '../interfaces/user.interface';
 import trialModel from '../models/trial.model';
 import userModel from '../models/user.model';
@@ -16,7 +20,7 @@ class SubscriptionController {
       const user: IUser = req['user'];
       const data = req.body;
       const plan = await this.planService.findPlanById(data.planId);
-      if (await this.subService.subExist(user)) {
+      if (await this.subService.activeSubExist(user)) {
         return res
           .status(200)
           .send({message: 'failed', reason: 'user is already subscribed'});
@@ -34,7 +38,7 @@ class SubscriptionController {
   };
   public cancel = async (req: Request, res: Response, next: NextFunction) => {
     const user: IUser = req['user'];
-    const sub = await this.subService.subExist(user);
+    const sub = await this.subService.activeSubExist(user);
     if (sub == null) {
       return res.send('User is not subscribed');
     }
@@ -93,7 +97,7 @@ class SubscriptionController {
           .status(200)
           .send({message: 'failed', reason: 'subscription is filled up'});
       }
-     await this.subService.createInvite (user1,sub)
+      await this.subService.createInvite(user1, sub);
       return res
         .status(200)
         .send({message: 'success', reason: 'invitation sent successfully'});
@@ -101,31 +105,67 @@ class SubscriptionController {
       throw e;
     }
   };
-  public acceptInvite = async (   req: Request,
+  public acceptInvite = async (
+    req: Request,
     res: Response,
-    next: NextFunction,)=>{
-     
-      try {
-         const data: AcceptInviteDto = req.body;
-         const user:IUser = req['body']
-         const isInvited = await this.subService.checkInvitedUser(data.inviteId,user)
-         if (! isInvited) {
-           return res
-             .status(200)
-             .send({message: 'failed', reason: 'user is not invited '});
-         }
-         if (this.subService.acceptInvite(data.inviteId)) {
-           return res
-             .status(200)
-             .send({message: 'success',  });
-         }
-         return res
-           .status(200)
-           .send({message: 'failed', reason: 'sub has expired or invite has been used  '});
-      } catch (e) {
-        
+    next: NextFunction,
+  ) => {
+    try {
+      const data: AcceptInviteDto = req.body;
+      const user: IUser = req['body'];
+      const isInvited = await this.subService.checkInvitedUser(
+        data.inviteId,
+        user,
+      );
+      if (!isInvited) {
+        return res
+          .status(200)
+          .send({message: 'failed', reason: 'user is not invited '});
       }
+      if (this.subService.acceptInvite(data.inviteId)) {
+        return res.status(200).send({message: 'success'});
+      }
+      return res.status(200).send({
+        message: 'failed',
+        reason: 'sub has expired or invite has been used  ',
+      });
+    } catch (e) {}
+  };
+  public switch = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user: IUser = req['user'];
+      const sub = await this.subService.activeSubExist(user);
+      const data: CreateSubDto = req.body;
+      if (sub) {
+        const plan = await this.planService.findPlanById(data.planId);
+        if (plan) {
+          sub.users = [];
+          await sub.save();
+          const cancelled = await this.subService.cancel(sub);
+          if (cancelled == false) {
+            return res.send('Error cancelling your plan');
+          }
+          const newsub = await this.subService.createSubscription(
+            user,
+            plan._id,
+          );
+          if (newsub) {
+            return res
+              .status(200)
+              .send({message: 'processing request', newsub});
+          }
+        }
+          return res
+            .status(200)
+            .send({message: 'failed', reason: 'plan  not found'});
+      }
+      return res
+        .status(200)
+        .send({message: 'failed', reason: 'user is not subscribed'});
+    } catch (e) {
+      throw e;
     }
+  };
 }
 
 export default SubscriptionController;

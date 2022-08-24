@@ -159,6 +159,7 @@ export class Paystack {
       metadata,
       channels: ['card'],
       amount: 5000,
+      callback_url : 'https://brilliant-beijinho-78dad5.netlify.app/my/subscribe',
     });
     const url = 'https://api.paystack.co/transaction/initialize',
       headers = {
@@ -206,7 +207,8 @@ export class Paystack {
   };
   refund = async (transaction: string) => {
       const params = JSON.stringify({
-        transaction
+        transaction,
+        merchant_note:'verifying card',
       });
     const url = `https://api.paystack.co/refund`,
       headers = {

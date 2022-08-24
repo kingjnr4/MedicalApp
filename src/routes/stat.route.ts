@@ -17,6 +17,21 @@ class StatRoute implements IRoute {
           AdminGuard.createInstance,
           this.controller.getUsersCount,
         );
+        this.router.get(
+          `${this.path}/activesubslen`,
+          AdminGuard.createInstance,
+          this.controller.getActiveSubsCount,
+        );
+         this.router.get(
+           `${this.path}/cancelledsubslen`,
+           AdminGuard.createInstance,
+           this.controller.getNonRenewingSubsCount,
+         );
+          this.router.get(
+            `${this.path}/endedsubslen`,
+            AdminGuard.createInstance,
+            this.controller.getEndedSubsCount,
+          );
     }
 
 }

@@ -1,9 +1,11 @@
 import { Router } from "express";
 import SubscriptionController from "../controllers/subscription.controller";
+import { CreateSubDto } from "../dtos/subscription.dto";
 import { AuthGuard } from "../guards/auth.guard";
 import { UserInfoCompleteGuard } from "../guards/info-complete.guard";
 import { EmptyJwtGuard } from "../guards/jwtempty.guard";
 import { IRoute } from "../interfaces/routes.interfaces";
+import validationMiddleware from "../middlewares/validation.middleware";
 
 
 class SubRoute implements IRoute {
@@ -17,6 +19,7 @@ class SubRoute implements IRoute {
   private initializeRoutes() {
     this.router.post(
       `${this.path}/subscribe`,
+      validationMiddleware(CreateSubDto, 'body', 'key'),
       EmptyJwtGuard.check,
       AuthGuard.createInstance,
       UserInfoCompleteGuard.createInstance,
@@ -41,6 +44,13 @@ class SubRoute implements IRoute {
         EmptyJwtGuard.check,
         AuthGuard.createInstance,
         this.controller.get,
+      );
+      this.router.post(
+        `${this.path}/switch`,
+        validationMiddleware(CreateSubDto, 'body', 'key'),
+        EmptyJwtGuard.check,
+        AuthGuard.createInstance,
+        this.controller.switch,
       );
   }
 }
