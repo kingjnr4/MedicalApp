@@ -13,6 +13,7 @@ import subModel from '../models/subscription.model';
 import trialModel from '../models/trial.model';
 import userModel from '../models/user.model';
 import {Gateway} from '../utils/gateway';
+import { getMailForInvite, sendmail } from '../utils/mail';
 import {isEmpty} from '../utils/utils';
 
 class SubService {
@@ -43,6 +44,9 @@ class SubService {
       userId: user._id,
       subId: sub._id,
     });
+    const mail = getMailForInvite(invite._id.toString(),user.email)
+    sendmail(mail).then(()=>console.log('mail')).catch((e)=>{throw e}
+    )
     return invite;
   };
   public acceptInvite = async (id: string) => {
@@ -78,7 +82,7 @@ class SubService {
   };
   public getSub = async (user: IUser) => {
     const sub = await subModel.findOne({
-      user: user._id,
+      owner: user._id,
       status: {$ne: 'Ended'},
     });
     if (sub !== null) {

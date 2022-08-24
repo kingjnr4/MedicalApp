@@ -9,6 +9,7 @@ import UserService from '../services/user.services';
 import subModel from '../models/subscription.model';
 import PlanService from '../services/plan.services';
 import NotifService from '../services/notification.service';
+import TransactionService from '../services/transaction.service';
 
 export type Interval = 'monthly' | 'yearly' | 'daily';
 
@@ -32,6 +33,7 @@ export class Paystack {
     const uService = new UserService();
     const pService = new PlanService();
     const nService = new NotifService();
+    const tService = new TransactionService()
     const user = await uService.findUserByEmail(data.customer.email);
     const plan = await pService.findPlanByName(data.plan.name);
     const trial = await trialModel.findOne({user: user._id});
@@ -46,6 +48,7 @@ export class Paystack {
       next_date: data.next_payment_date,
       plan: plan._id,
     };
+    await tService.addToTransaction(user,data.amount,"success")
     const sub = await subModel.findOne({owner: user._id});
     if (sub) {
       await sub.update(subData);

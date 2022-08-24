@@ -72,22 +72,28 @@ class SubscriptionController {
       const sub = await this.subService.getSub(user);
       const data: AddUserToSubToDto = req.body;
       const user1 = await userModel.findOne({email: data.email});
+      const dup = await userModel.findById(user._id)
+      if(dup.email==data.email){
+       return res.status(200)
+          .send({message: 'failed', reason: 'cannot send invite to yourself'});
+      }
       if (!user1) {
         return res
           .status(200)
           .send({message: 'failed', reason: 'user is not registered '});
       }
 
-      const hasSub = (await this.subService.getSub(user1)) ? true : false;
-      if (hasSub) {
+      const hasSub = (await this.subService.activeSubExist(user1)) ? true : false;
+      const hasSub1 = (await this.subService.getSub(user)) ? true : false;
+      if (hasSub==true) {
         return res
           .status(200)
-          .send({message: 'failed', reason: 'user not subscribed'});
+          .send({message: 'failed', reason: 'user is subscribed'});
       }
-      if (hasSub) {
+      if (!hasSub1) {
         return res
           .status(200)
-          .send({message: 'failed', reason: 'user not subscribed'});
+          .send({message: 'failed', reason: 'sender is not subscribed'});
       }
       if (
         (await this.planService.findPlanById(sub.plan.toString())).spaces ==

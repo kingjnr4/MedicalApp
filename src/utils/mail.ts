@@ -83,4 +83,21 @@ export const getAdminMailForPass = (token: IToken, email): Mail.Options => {
     text: 'Change your Password ',
     html: template({link, email}),
   };
+
+};
+export const getMailForInvite = (token: string, email): Mail.Options => {
+  const link = `https://brilliant-beijinho-78dad5.netlify.app/admin/accept-invite?key=${token}`;
+  const source = fs.readFileSync(
+    path.join(__dirname, '/templates/subInvite.hbs'),
+    'utf8',
+  );
+  const template = Handlebars.compile(source);
+  return {
+    from: 'noreply@diagnosisabc.com',
+    to: email,
+    subject: 'Change your Password',
+    text: 'Change your Password ',
+    html: template({link, email}),
+  };
+  
 };
