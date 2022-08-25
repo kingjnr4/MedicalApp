@@ -48,7 +48,7 @@ class PlanService {
     if (isEmpty(planData))
       throw new HttpException(400, 'Please make sure all fields are filled');
 
-    const findPlan = await this.model.findOne({_id: id});
+    const findPlan = await this.model.findById(id);
     if (!findPlan) throw new HttpException(409, `Plan does not exist`);
     const createPlanData = await this.model.updateOne({
       ...planData,
