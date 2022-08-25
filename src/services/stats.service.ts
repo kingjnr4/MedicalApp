@@ -11,7 +11,7 @@ class StatsService {
     return subs
   }
   public async getCancelledSubLen() {
-    const subs = await subModel.count({status: 'not-renewing'});
+    const subs = await subModel.count({status: 'non-renewing'});
     return subs
   }
   public async getEndedSubLen() {

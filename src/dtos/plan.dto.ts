@@ -27,7 +27,7 @@ export class UpdatePlanDto {
   @IsString()
   public description!: string;
   @IsNumber()
-  public amount!: number;
+  public price!: number;
   @IsNumber()
   public spaces!: number;
 }

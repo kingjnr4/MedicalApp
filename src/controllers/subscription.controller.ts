@@ -1,5 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {CreatePlanDto} from '../dtos/plan.dto';
+
 import {
   AcceptInviteDto,
   AddUserToSubToDto,
@@ -11,6 +12,7 @@ import userModel from '../models/user.model';
 import PlanService from '../services/plan.services';
 import SubService from '../services/subscription.services';
 import {Paystack} from '../utils/paystack';
+import {getMailForInvite, sendmail} from '../utils/mail';
 
 class SubscriptionController {
   private planService = new PlanService();
@@ -72,9 +74,10 @@ class SubscriptionController {
       const sub = await this.subService.getSub(user);
       const data: AddUserToSubToDto = req.body;
       const user1 = await userModel.findOne({email: data.email});
-      const dup = await userModel.findById(user._id)
-      if(dup.email==data.email){
-       return res.status(200)
+      const dup = await userModel.findById(user._id);
+      if (dup.email == data.email) {
+        return res
+          .status(200)
           .send({message: 'failed', reason: 'cannot send invite to yourself'});
       }
       if (!user1) {
@@ -83,9 +86,11 @@ class SubscriptionController {
           .send({message: 'failed', reason: 'user is not registered '});
       }
 
-      const hasSub = (await this.subService.activeSubExist(user1)) ? true : false;
+      const hasSub = (await this.subService.activeSubExist(user1))
+        ? true
+        : false;
       const hasSub1 = (await this.subService.getSub(user)) ? true : false;
-      if (hasSub==true) {
+      if (hasSub == true) {
         return res
           .status(200)
           .send({message: 'failed', reason: 'user is subscribed'});
@@ -103,10 +108,19 @@ class SubscriptionController {
           .status(200)
           .send({message: 'failed', reason: 'subscription is filled up'});
       }
-      await this.subService.createInvite(user1, sub);
-      return res
-        .status(200)
-        .send({message: 'success', reason: 'invitation sent successfully'});
+      const invite = await this.subService.createInvite(user1, sub);
+      const mail = getMailForInvite(invite._id.toString(), user.email);
+      sendmail(mail)
+        .then(msg =>
+          res
+            .status(200)
+            .send({message: 'success', reason: 'invitation sent successfully'}),
+        )
+        .catch(e => {
+          return res
+            .status(200)
+            .send({message: 'failed', reason: 'invitation not sent'});
+        });
     } catch (e) {
       throw e;
     }
@@ -161,9 +175,9 @@ class SubscriptionController {
               .send({message: 'processing request', newsub});
           }
         }
-          return res
-            .status(200)
-            .send({message: 'failed', reason: 'plan  not found'});
+        return res
+          .status(200)
+          .send({message: 'failed', reason: 'plan  not found'});
       }
       return res
         .status(200)

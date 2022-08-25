@@ -1,5 +1,5 @@
 import {PAYSTACK_SECRET} from '../config';
-import {post} from './requests';
+import {post,put} from './requests';
 import crypto from 'crypto';
 
 import {NextFunction, Request, Response} from 'express';
@@ -33,7 +33,7 @@ export class Paystack {
     const uService = new UserService();
     const pService = new PlanService();
     const nService = new NotifService();
-    const tService = new TransactionService()
+    const tService = new TransactionService();
     const user = await uService.findUserByEmail(data.customer.email);
     const plan = await pService.findPlanByName(data.plan.name);
     const trial = await trialModel.findOne({user: user._id});
@@ -48,7 +48,7 @@ export class Paystack {
       next_date: data.next_payment_date,
       plan: plan._id,
     };
-    await tService.addToTransaction(user,data.amount,"success")
+    await tService.addToTransaction(user, data.amount, 'success');
     const sub = await subModel.findOne({owner: user._id});
     if (sub) {
       await sub.update(subData);
@@ -116,6 +116,32 @@ export class Paystack {
     }
     return null;
   };
+  public updatePaystackPlan = async (
+    name: string,
+    amount: number,
+    description: string,
+    interval: Interval = 'monthly',
+    ref: string,
+  ) => {
+    const params = JSON.stringify({
+      name,
+      interval,
+      amount,
+      description,
+    });
+
+    const url = `https://api.paystack.co/plan/${ref}`,
+      headers = {
+        Authorization: ['Bearer', this.secret].join(' '),
+        'Content-Type': 'application/json',
+      };
+
+    const res = await put(url, headers, params);
+    if (res.status == true) {
+      return true
+    }
+    return false;
+  };
 
   public cancel = async (code: string, token: string) => {
     const params = JSON.stringify({
@@ -136,10 +162,7 @@ export class Paystack {
 
     return false;
   };
-  public subscribe = async (
-    customer: string,
-    plan: string,
-  ) => {
+  public subscribe = async (customer: string, plan: string) => {
     const params = JSON.stringify({
       customer,
       plan,
@@ -162,7 +185,8 @@ export class Paystack {
       metadata,
       channels: ['card'],
       amount: 5000,
-      callback_url : 'https://brilliant-beijinho-78dad5.netlify.app/my/subscribe',
+      callback_url:
+        'https://brilliant-beijinho-78dad5.netlify.app/my/subscribe',
     });
     const url = 'https://api.paystack.co/transaction/initialize',
       headers = {
@@ -209,16 +233,16 @@ export class Paystack {
     return false;
   };
   refund = async (transaction: string) => {
-      const params = JSON.stringify({
-        transaction,
-        merchant_note:'verifying card',
-      });
+    const params = JSON.stringify({
+      transaction,
+      merchant_note: 'verifying card',
+    });
     const url = `https://api.paystack.co/refund`,
       headers = {
         Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
       };
-    const res = await post(url, headers,params);
+    const res = await post(url, headers, params);
     if (res && res.status == 'true') {
       return true;
     }

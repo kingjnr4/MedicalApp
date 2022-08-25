@@ -35,8 +35,31 @@ class PlanController {
   };
   public update = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      await this.gateway.init();
       const data = req.body;
-      const plan = await this.service.updatePlan(data.id, data.plan);
+       const plan = await this.service.findPlanById(data.id);
+       if (!plan) {
+          return res.status(200).send({message: 'failed', reason:'plan not found'});
+       }
+       const saved = await this.gateway.updatePlan(
+         data.name,
+         data.price,
+         data.description,
+         plan.paystack_code
+       );
+        if (!saved) {
+          return res
+            .status(200)
+            .send({message: 'failed', reason: 'error occurred'});
+        }
+       const planUpd = await this.service.updatePlan(data.id, {
+         name:data.name,
+         description:data.description,
+         price:data.price,
+         spaces:data.spaces
+       });
+      
+
       return res.status(200).send({message: 'success'});
     } catch (error) {
       next(error);

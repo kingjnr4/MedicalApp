@@ -26,7 +26,7 @@ class SubRoute implements IRoute {
       this.controller.create,
     );
      this.router.post(
-      `${this.path}/add`,
+      `${this.path}/invite`,
       validationMiddleware(AddUserToSubToDto, 'body', 'key'),
       EmptyJwtGuard.check,
       AuthGuard.createInstance,

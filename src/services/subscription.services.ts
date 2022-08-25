@@ -44,10 +44,7 @@ class SubService {
       userId: user._id,
       subId: sub._id,
     });
-    const mail = getMailForInvite(invite._id.toString(),user.email)
-    sendmail(mail).then((msg)=>console.log(msg)).catch((e)=>{console.log(e)
-     }
-    )
+
     return invite;
   };
   public acceptInvite = async (id: string) => {

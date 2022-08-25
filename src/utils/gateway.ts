@@ -1,5 +1,4 @@
-
-import { ISubscription } from '../interfaces/subscription.interface';
+import {ISubscription} from '../interfaces/subscription.interface';
 import settingsModel from '../models/settings.model';
 import {SettingsService} from '../services/settings.services';
 import {Interval, Paystack} from './paystack';
@@ -44,13 +43,30 @@ export class Gateway {
     };
     codes.paystack = await this.paystack.createPaystackPlan(
       name,
-      amount *100,
+      amount * 100,
       description,
       interval,
     );
-    
-    
+
     return codes;
+  }
+  /**
+   * update plan
+   */
+  public async updatePlan(
+    name: string,
+    amount: number,
+    description: string,
+    ref: string,
+    interval: Interval = 'monthly',
+  ) {
+    return  this.paystack.updatePaystackPlan(
+      name,
+      amount * 100,
+      description,
+      interval,
+      ref,
+    );
   }
   /**
    * createCustomer
@@ -59,20 +75,20 @@ export class Gateway {
     email: string,
     firstname: string,
     lastname: string,
-    number:string,
+    number: string,
   ) {
-    return this.paystack.createCustomer(email, firstname, lastname,number);
+    return this.paystack.createCustomer(email, firstname, lastname, number);
   }
-
 
   /**
    * cancelSub
    */
-  public cancelSub(sub:ISubscription) {
-     switch (this.current) {
-      case 'paystack':  return this.paystack.cancel(sub.paystack_ref, sub.ps_email_token);
+  public cancelSub(sub: ISubscription) {
+    switch (this.current) {
+      case 'paystack':
+        return this.paystack.cancel(sub.paystack_ref, sub.ps_email_token);
+    }
   }
-}
   /**
    * initCard
    */
@@ -104,7 +120,7 @@ export class Gateway {
   /**
    * Subscribe
    */
-  public  async subscribe(plan: any, email: string) {
+  public async subscribe(plan: any, email: string) {
     switch (this.current) {
       case 'paystack':
         return this.paystack.subscribe(email, plan);
