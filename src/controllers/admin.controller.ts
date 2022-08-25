@@ -79,6 +79,18 @@ class AdminController {
       next(e);
     }
   };
+   public getAllAdmin = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const admins = await this.service.findAllAdmin ()
+        return res.status(200).send({admins});
+    } catch (e) {
+      next(e);
+    }
+  };
 }
 
 export default AdminController;
