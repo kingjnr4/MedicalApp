@@ -1,5 +1,5 @@
 import {PAYSTACK_SECRET} from '../config';
-import {post,put} from './requests';
+import {post, put} from './requests';
 import crypto from 'crypto';
 
 import {NextFunction, Request, Response} from 'express';
@@ -73,6 +73,8 @@ export class Paystack {
     await this.refund(data.reference);
     const uService = new UserService();
     const user = await uService.findUserByEmail(data.customer.email);
+    user.hasCard = true;
+    await user.save();
     const trial = await trialModel.findOne({user: user._id});
     if (!trial) {
       await trialModel.create({user: user._id});
@@ -130,16 +132,14 @@ export class Paystack {
     });
 
     const url = `https://api.paystack.co/plan/${ref}`,
-  
-    
       headers = {
         Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
       };
-      console.log(url);
+    console.log(url);
     const res = await put(url, headers, params);
     if (res && res.status == true) {
-      return true
+      return true;
     }
     return false;
   };
@@ -212,15 +212,9 @@ export class Paystack {
   };
   public createCustomer = async (
     email: string,
-    first_name: string,
-    last_name: string,
-    phone: string,
   ) => {
     const params = JSON.stringify({
       email,
-      first_name,
-      last_name,
-      phone,
     });
     const url = 'https://api.paystack.co/customer',
       headers = {
@@ -228,6 +222,28 @@ export class Paystack {
         'Content-Type': 'application/json',
       };
     const res = await post(url, headers, params);
+    if (res.status == true) {
+      return true;
+    }
+    return false;
+  };
+  public updateCustomer = async (
+    email: string,
+    first_name: string,
+    last_name: string,
+    phone: string,
+  ) => {
+    const params = JSON.stringify({
+      first_name,
+      last_name,
+      phone,
+    });
+    const url = `https://api.paystack.co/customer/${email}`,
+      headers = {
+        Authorization: ['Bearer', this.secret].join(' '),
+        'Content-Type': 'application/json',
+      };
+    const res = await put(url, headers, params);
     if (res.status == true) {
       return true;
     }

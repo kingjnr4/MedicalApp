@@ -1,5 +1,5 @@
 import {IsEmail, IsString, IsEnum} from 'class-validator';
-import { Roles } from '../interfaces/admin.interface';
+import {Roles} from '../interfaces/admin.interface';
 
 export class CreateAdminDto {
   @IsEmail()
@@ -24,4 +24,18 @@ export class LoginAdminDto {
 export class VerifyAdminDto {
   @IsString()
   public key!: string;
+}
+
+export class SendMailDto {
+  @IsString()
+  public subject!: string;
+  @IsString()
+  public message!: string;
+}
+
+export class SendNotificationDto {
+  @IsString()
+  public title!: string;
+  @IsString()
+  public message!: string;
 }

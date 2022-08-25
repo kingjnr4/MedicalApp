@@ -54,6 +54,19 @@ export const getMailForVerify = (token: IToken, email): Mail.Options => {
     html: template({link, email}),
   };
 };
+export const getMailForAll = (
+  emails: string[],
+  subject: string,
+  message: string,
+): Mail.Options => {
+  return {
+    from: 'noreply@diagnosisabc.com',
+    to: emails,
+    subject,
+    text: 'Information For All Users ',
+    html: message,
+  };
+};
 export const getMailForPass = (token: IToken, email): Mail.Options => {
   const link = `https://brilliant-beijinho-78dad5.netlify.app/auth/change-password?key=${token.key}`;
   const source = fs.readFileSync(

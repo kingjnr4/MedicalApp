@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { CreatePlanDto } from "../dtos/plan.dto";
+import { CreatePlanDto, UpdatePlanDto } from "../dtos/plan.dto";
 import PlanService from "../services/plan.services";
 import { Gateway } from "../utils/gateway";
 
@@ -36,10 +36,18 @@ class PlanController {
   public update = async (req: Request, res: Response, next: NextFunction) => {
     try {
       await this.gateway.init();
-      const data = req.body;
+      const data:UpdatePlanDto = req.body;
        const plan = await this.service.findPlanById(data.id);
        if (!plan) {
           return res.status(200).send({message: 'failed', reason:'plan not found'});
+       }
+       if (plan.name==data.name) {
+        const check = await this.service.findPlanByName (data.name)
+        if (check && check._id != plan._id) {
+          return res
+            .status(200)
+            .send({message: 'failed', reason: 'another plan has this name'});
+        }
        }
        const saved = await this.gateway.updatePlan(
          data.name,

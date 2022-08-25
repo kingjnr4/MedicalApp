@@ -13,35 +13,30 @@ class StatRoute implements IRoute {
   
     private initializeRoutes() {
         this.router.get(
-          `${this.path}/userslen`,
+          `${this.path}/all`,
           AdminGuard.createInstance,
-          this.controller.getUsersCount,
+          this.controller.getHomeStats,
         );
-        this.router.get(
-          `${this.path}/activesubslen`,
-          AdminGuard.createInstance,
-          this.controller.getActiveSubsCount,
-        );
-         this.router.get(
-           `${this.path}/cancelledsubslen`,
-           AdminGuard.createInstance,
-           this.controller.getNonRenewingSubsCount,
-         );
-          this.router.get(
-            `${this.path}/endedsubslen`,
-            AdminGuard.createInstance,
-            this.controller.getEndedSubsCount,
-          );
-          this.router.get(
-            `${this.path}/translen`,
-            AdminGuard.createInstance,
-            this.controller.getEndedSubsCount,
-          );
           this.router.get(
             `${this.path}/users`,
-            // AdminGuard.createInstance,
+            AdminGuard.createInstance,
             this.controller.getAllUsers,
           );
+          this.router.get(
+            `${this.path}/transactions`,
+            AdminGuard.createInstance,
+            this.controller.getTransactions,
+          );
+           this.router.get(
+             `${this.path}/sendmail`,
+             AdminGuard.createInstance,
+             this.controller.sendEmail,
+           );
+            this.router.get(
+              `${this.path}/sendnotifs`,
+              AdminGuard.createInstance,
+              this.controller.sendInAppNotifications,
+            );
     }
 
 }

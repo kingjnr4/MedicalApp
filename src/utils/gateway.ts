@@ -60,7 +60,7 @@ export class Gateway {
     ref: string,
     interval: Interval = 'monthly',
   ) {
-    return  this.paystack.updatePaystackPlan(
+    return this.paystack.updatePaystackPlan(
       name,
       amount * 100,
       description,
@@ -71,13 +71,16 @@ export class Gateway {
   /**
    * createCustomer
    */
-  public async createCustomer(
+  public async createCustomer(email: string) {
+    return this.paystack.createCustomer(email);
+  }
+  public async updateCustomer(
     email: string,
     firstname: string,
     lastname: string,
     number: string,
   ) {
-    return this.paystack.createCustomer(email, firstname, lastname, number);
+    return this.paystack.updateCustomer(email,firstname,lastname,number);
   }
 
   /**

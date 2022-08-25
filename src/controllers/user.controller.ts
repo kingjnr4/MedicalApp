@@ -39,8 +39,15 @@ class UserController {
   }
   public register = async (req: Request, res: Response, next: NextFunction) => {
     try {
+      await this.gateway.init();
       const data: CreateUserDto = req.body;
       const user = await this.service.createUser(data);
+       const saved = await this.gateway.createCustomer(data.email);
+       if (saved == false) {
+         return res
+           .status(200)
+           .send({message: 'failed', reason: 'internal server error'});
+       }
       const token = await generateVerificationToken(user._id);
       const mail = getMailForVerify(token, user.email);
       sendmail(mail)
@@ -180,7 +187,7 @@ class UserController {
       user.lastname = data.lastname;
       user.number = data.number;
       await this.gateway.init();
-      const saved = await this.gateway.createCustomer(
+      const saved = await this.gateway.updateCustomer(
         user.email,
         user.firstname,
         user.lastname,

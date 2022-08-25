@@ -131,6 +131,7 @@ class SubService {
         renewing: sub.status == 'active' ? true : false,
       };
     }
+    return null
   };
   public cancel = async (sub: ISubscription) => {
     await this.gateway.init();

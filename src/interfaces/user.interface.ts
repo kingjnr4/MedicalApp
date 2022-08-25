@@ -10,6 +10,8 @@ export interface IUser {
   password: string;
   verified: boolean;
   status: stat;
+  joined:Date,
+  hasCard:boolean;
   hashPassword: () => void;
   checkPassword: (password: string) => boolean;
 }

@@ -1,6 +1,6 @@
 import { CreateUserDto } from "../dtos/user.dto";
 import { HttpException } from "../exceptions/HttpException";
-import { IUser } from "../interfaces/user.interface";
+import { IUser, UserDoc } from "../interfaces/user.interface";
 import userModel from "../models/user.model";
 import { hashPassword, isEmpty } from "../utils/utils";
 
@@ -17,7 +17,7 @@ class UserService {
     if (!user) throw new HttpException(409, 'User not found');
     return user;
   }
-  public async findUserByEmail(email: string): Promise<IUser> {
+  public async findUserByEmail(email: string): Promise<UserDoc> {
     if (isEmpty(email)) throw new HttpException(400, 'No Email passed');
 
     const user = await this.model.findOne({
