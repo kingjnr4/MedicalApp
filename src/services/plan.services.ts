@@ -7,9 +7,8 @@ import {isEmpty} from '../utils/utils';
 
 class PlanService {
   async findPlanByName(name: string) {
-    
     const Plan = await this.model.findOne({name});
-    if (!Plan) return null
+    if (!Plan) return null;
     return Plan;
   }
   public model = planModel;
@@ -30,27 +29,23 @@ class PlanService {
   ): Promise<PlanDoc> {
     if (isEmpty(planData))
       throw new HttpException(400, 'Please make sure all fields are filled');
-        
+
     const findPlan = await this.model.findOne({name: planData.name});
     if (findPlan) throw new HttpException(409, `Plan name  is in use`);
-  
-    
+
     const createPlanData: PlanDoc = await this.model.create({
       ...planData,
       paystack_code: codes.paystack,
     });
     return createPlanData;
   }
-  public async updatePlan(
-    id: string,
-    planData: CreatePlanDto,
-  ): Promise<UpdateWriteOpResult> {
+  public async updatePlan(id: string, planData: CreatePlanDto): Promise<IPlan> {
     if (isEmpty(planData))
       throw new HttpException(400, 'Please make sure all fields are filled');
 
     const findPlan = await this.model.findById(id);
     if (!findPlan) throw new HttpException(409, `Plan does not exist`);
-    findPlan.name=planData.name
+    findPlan.name = planData.name;
     findPlan.spaces = planData.spaces;
     findPlan.price = planData.price;
     findPlan.description = planData.description;
