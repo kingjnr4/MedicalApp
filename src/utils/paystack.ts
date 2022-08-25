@@ -125,19 +125,20 @@ export class Paystack {
   ) => {
     const params = JSON.stringify({
       name,
-      interval,
       amount,
       description,
     });
 
     const url = `https://api.paystack.co/plan/${ref}`,
+  
+    
       headers = {
         Authorization: ['Bearer', this.secret].join(' '),
         'Content-Type': 'application/json',
       };
-
+      console.log(url);
     const res = await put(url, headers, params);
-    if (res.status == true) {
+    if (res && res.status == true) {
       return true
     }
     return false;

@@ -18,12 +18,12 @@ export async function put(url: string, headers: Headers, body: string = '') {
   try {
     console.log(body);
     const res = await got(url, {
-      method: 'PUT',
+      method: 'put',
       headers,
       body,
       throwHttpErrors: false,
     });
-    console.log(res.statusMessage);
+    console.log(res.body);
     if (res.statusCode > 199 && res.statusCode < 300) {
       const data = JSON.parse(res.body);
       return data;
