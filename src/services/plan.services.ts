@@ -50,10 +50,12 @@ class PlanService {
 
     const findPlan = await this.model.findById(id);
     if (!findPlan) throw new HttpException(409, `Plan does not exist`);
-    const createPlanData = await this.model.updateOne({
-      ...planData,
-    });
-    return createPlanData;
+    findPlan.name=planData.name
+    findPlan.spaces = planData.spaces;
+    findPlan.price = planData.price;
+    findPlan.description = planData.description;
+    await findPlan.save();
+    return findPlan;
   }
 
   public async deletePlan(planId: string): Promise<IPlan> {
