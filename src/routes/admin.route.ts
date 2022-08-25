@@ -42,6 +42,10 @@ class AdminRoute implements IRoute {
        validationMiddleware(ChangePassDto, 'body', 'fields'),
        this.controller.changePassword,
      );
+       this.router.get(
+         `${this.path}/all`,
+         this.controller.getAllAdmin,
+       );
     
   }
 }

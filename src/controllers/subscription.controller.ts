@@ -109,7 +109,7 @@ class SubscriptionController {
           .send({message: 'failed', reason: 'subscription is filled up'});
       }
       const invite = await this.subService.createInvite(user1, sub);
-      const mail = getMailForInvite(invite._id.toString(), user.email);
+      const mail = getMailForInvite(invite._id.toString(), user1.email);
       sendmail(mail)
         .then(msg =>
           res
