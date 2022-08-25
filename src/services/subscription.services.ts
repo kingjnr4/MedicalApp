@@ -56,11 +56,18 @@ class SubService {
     const user = await userModel.findById(invite.userId);
     await this.addUserToSub(user, sub);
     invite.used = true;
-    invite.save();
+    await invite.save();
+    const trial =await  trialModel.findOne({user:user._id})
+    trial.status='Ended'
+    await trial.save()
     return true;
   };
   public checkInvitedUser = async (id: string, user: IUser) => {
     const invite = await inviteModel.findById(id);
+    console.log(invite.userId.toString());
+    console.log(user._id);
+    
+    
     if (invite.userId.toString() == user._id) {
       return true;
     }

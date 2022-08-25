@@ -1,6 +1,6 @@
 import { Router } from "express";
 import SubscriptionController from "../controllers/subscription.controller";
-import { AddUserToSubToDto, CreateSubDto } from "../dtos/subscription.dto";
+import { AddUserToSubToDto, CreateSubDto,AcceptInviteDto } from "../dtos/subscription.dto";
 import { AuthGuard } from "../guards/auth.guard";
 import { UserInfoCompleteGuard } from "../guards/info-complete.guard";
 import { EmptyJwtGuard } from "../guards/jwtempty.guard";
@@ -52,6 +52,13 @@ class SubRoute implements IRoute {
         EmptyJwtGuard.check,
         AuthGuard.createInstance,
         this.controller.switch,
+      );
+      this.router.post(
+        `${this.path}/accept`,
+        validationMiddleware(AcceptInviteDto, 'body', 'key'),
+        EmptyJwtGuard.check,
+        AuthGuard.createInstance,
+        this.controller.acceptInvite,
       );
   }
 }

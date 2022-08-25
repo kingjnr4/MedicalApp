@@ -1,5 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
 import {CreatePlanDto} from '../dtos/plan.dto';
+import inviteModel from '../models/invite.model';
 
 import {
   AcceptInviteDto,
@@ -132,15 +133,21 @@ class SubscriptionController {
   ) => {
     try {
       const data: AcceptInviteDto = req.body;
-      const user: IUser = req['body'];
+      const user: IUser = req['user'];
+      const invite = await inviteModel.findById(data.inviteId)
+      if (!invite) {
+        return res
+          .status(200)
+          .send({message: 'failed', reason: 'id is not valid'});
+      }
       const isInvited = await this.subService.checkInvitedUser(
         data.inviteId,
         user,
       );
-      if (!isInvited) {
+      if (isInvited==false) {
         return res
           .status(200)
-          .send({message: 'failed', reason: 'user is not invited '});
+          .send({message: 'failed', reason: 'user is not invited'});
       }
       if (this.subService.acceptInvite(data.inviteId)) {
         return res.status(200).send({message: 'success'});
@@ -149,7 +156,9 @@ class SubscriptionController {
         message: 'failed',
         reason: 'sub has expired or invite has been used  ',
       });
-    } catch (e) {}
+    } catch (e) {
+  next(e)
+    }
   };
   public switch = async (req: Request, res: Response, next: NextFunction) => {
     try {
