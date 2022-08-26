@@ -41,14 +41,13 @@ class PlanController {
        if (!plan) {
           return res.status(200).send({message: 'failed', reason:'plan not found'});
        }
-       if (plan.name==data.name) {
+    
         const check = await this.service.findPlanByName (data.name)
         if (check && check._id.toString() != plan._id) {
           return res
             .status(200)
             .send({message: 'failed', reason: 'another plan has this name'});
         }
-       }
        const saved = await this.gateway.updatePlan(
          data.name,
          data.price,
