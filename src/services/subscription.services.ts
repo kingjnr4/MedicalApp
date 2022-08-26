@@ -134,6 +134,19 @@ class SubService {
         renewing: sub.status == 'active' ? true : false,
       };
     }
+    const sub1 = await subModel.findOne({
+      owner:user._id,
+      status: {$ne: 'ended'},
+    });
+
+    if (sub1) {
+      const plan = await planModel.findById(sub1.plan);
+      return {
+        name: plan.name,
+        expires: sub1.next_date + '',
+        renewing: sub1.status == 'active' ? true : false,
+      };
+    }
     return null;
   };
   public cancel = async (sub: ISubscription) => {

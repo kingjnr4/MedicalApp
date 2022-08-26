@@ -169,20 +169,22 @@ class SubscriptionController {
         const plan = await this.planService.findPlanById(data.planId);
         if (plan) {
           const cancelled = await this.subService.cancel(sub);
-             sub.users = [];
-             await sub.save();
-          if (cancelled == false) {
-            return res.send('Error cancelling your plan');
+          if (cancelled == true) {
+              sub.users.length = 0;
+              await sub.save();
+            const subbed = await this.subService.createSubscription(
+              user,
+              plan._id,
+            );
+            if (subbed) {
+              return res
+                .status(200)
+                .send({message: 'processing request'});
+            }
           }
-          const newsub = await this.subService.createSubscription(
-            user,
-            plan._id,
-          );
-          if (newsub) {
-            return res
-              .status(200)
-              .send({message: 'processing request', newsub});
-          }
+           return res
+             .status(200)
+             .send({message: 'failed', reason: 'error  cancelling  plan'});
         }
         return res
           .status(200)
@@ -192,7 +194,7 @@ class SubscriptionController {
         .status(200)
         .send({message: 'failed', reason: 'user is not subscribed'});
     } catch (e) {
-      throw e;
+     next (e)
     }
   };
 }
