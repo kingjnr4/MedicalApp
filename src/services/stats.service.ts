@@ -6,7 +6,8 @@ import TransactionService from './transaction.service';
 import UserService from './user.services';
 import {Document} from 'mongoose';
 import {UserDoc} from '../interfaces/user.interface';
-import { getMailForAll, sendmail } from '../utils/mail';
+import {getMailForAll, sendmail} from '../utils/mail';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 class StatsService {
   public async getUserlen() {
@@ -61,8 +62,18 @@ class StatsService {
   }
   public async sendBulkMail(subject: string, message: string) {
     const emails = (await this.getAllUsers()).map(val => val.email as string);
-    const mail = getMailForAll(emails, subject, message);
-    return sendmail(mail);
+    let promises = [];
+    for (var i = 0; i < emails.length; i++) {
+      promises.push(
+        new Promise(function (resolve, reject) {
+          const mail = getMailForAll(emails[i], subject, message);
+           sendmail(mail)
+            .then(res => resolve(res))
+            .catch(err => reject(err));
+        }),
+      );
+    }
+    return  Promise.all(promises);
   }
   public async getAllTransactions() {
     const service = new TransactionService();
@@ -70,7 +81,7 @@ class StatsService {
     return all;
   }
   public async getRecentSix() {
-    const users = await userModel.find().sort("-joined").limit(6)
+    const users = await userModel.find().sort('-joined').limit(6);
     return users;
   }
 }

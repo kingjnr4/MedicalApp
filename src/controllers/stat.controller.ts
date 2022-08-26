@@ -72,10 +72,10 @@ class StatController {
       const data: SendMailDto = req.body;
       this.service
         .sendBulkMail(data.subject, data.message)
-        .then(msg =>
-          res
+        .then(msg => {
+          return res
             .status(200)
-            .send({message: 'success', reason: 'mails sent successfully'}),
+            .send({message: 'success', reason: 'mails sent successfully'})        }
         )
         .catch(e => {
           return res

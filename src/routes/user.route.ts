@@ -66,14 +66,14 @@ class UserRoute implements IRoute {
              AuthGuard.createInstance,
              this.controller.get,
            );
-           this.router.get(
+           this.router.post(
              `${this.path}/block`,
              EmptyJwtGuard.check,
              AdminGuard.createInstance,
              validationMiddleware(BlockUserDto, 'body', 'fields'),
              this.controller.block,
            );
-           this.router.get(
+           this.router.post(
              `${this.path}/unblock`,
              EmptyJwtGuard.check,
              AdminGuard.createInstance,

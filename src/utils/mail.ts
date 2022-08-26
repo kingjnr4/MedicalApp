@@ -55,13 +55,13 @@ export const getMailForVerify = (token: IToken, email): Mail.Options => {
   };
 };
 export const getMailForAll = (
-  emails: string[],
+  email: string,
   subject: string,
   message: string,
 ): Mail.Options => {
   return {
     from: 'noreply@diagnosisabc.com',
-    to: emails,
+    to: email,
     subject,
     text: 'Information For All Users ',
     html: message,
