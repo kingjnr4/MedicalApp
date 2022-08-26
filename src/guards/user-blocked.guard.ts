@@ -22,9 +22,8 @@ export class UserNotBlockedGuard {
     this.user=req['body']
   }
   async checkUserIsNotBlocked() {
-  if (this.user.status == 'open') {
-    return;
+  if (this.user.status == 'blocked') {
+   throw new HttpException(409, 'User is blocked');
   } 
-  throw new HttpException(409, 'User is blocked');
   }
 }
