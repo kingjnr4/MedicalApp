@@ -42,12 +42,12 @@ class UserController {
       await this.gateway.init();
       const data: CreateUserDto = req.body;
       const user = await this.service.createUser(data);
-       const saved = await this.gateway.createCustomer(data.email);
-       if (saved == false) {
-         return res
-           .status(200)
-           .send({message: 'failed', reason: 'internal server error'});
-       }
+      const saved = await this.gateway.createCustomer(data.email);
+      if (saved == false) {
+        return res
+          .status(200)
+          .send({message: 'failed', reason: 'internal server error'});
+      }
       const token = await generateVerificationToken(user._id);
       const mail = getMailForVerify(token, user.email);
       sendmail(mail)
@@ -206,13 +206,31 @@ class UserController {
   public block = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: BlockUserDto = req.body;
-      const user = await this.service.findUserByEmail(data.email)
+      const user = await this.service.findUserByEmail(data.email);
       if (user) {
-        user.status='blocked'
-        await user.save ()
+        user.status = 'blocked';
+        await user.save();
         return res.status(200).send({message: 'success'});
       }
-      return res.status(200).send({message: 'failed',reason:'user not found'});
+      return res
+        .status(200)
+        .send({message: 'failed', reason: 'user not found'});
+    } catch (e) {
+      next(e);
+    }
+  };
+  public unblock = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data: BlockUserDto = req.body;
+      const user = await this.service.findUserByEmail(data.email);
+      if (user) {
+        user.status = 'open';
+        await user.save();
+        return res.status(200).send({message: 'success'});
+      }
+      return res
+        .status(200)
+        .send({message: 'failed', reason: 'user not found'});
     } catch (e) {
       next(e);
     }
