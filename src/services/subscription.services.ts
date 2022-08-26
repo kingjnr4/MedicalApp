@@ -123,12 +123,10 @@ class SubService {
     }
     const sub = await subModel.findOne({
       users: {$in: [user._id]},
-      status: {$ne: 'Ended'},
+      status: {$ne: 'ended'},
     });
 
     if (sub) {
-      console.log(sub.next_date);
-
       const plan = await planModel.findById(sub.plan);
       return {
         name: plan.name,

@@ -59,7 +59,7 @@ export class Paystack {
       );
       return;
     }
-    await subModel.create({...subData});
+    await subModel.create({owner: user._id,...subData});
     await nService.createNotification(
       user,
       'Sub Created',
