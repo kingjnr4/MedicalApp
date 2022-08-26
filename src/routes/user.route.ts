@@ -80,6 +80,12 @@ class UserRoute implements IRoute {
              validationMiddleware(BlockUserDto, 'body', 'fields'),
              this.controller.unblock,
            );
+           this.router.get(
+             `${this.path}/notifications`,
+             EmptyJwtGuard.check,
+             AuthGuard.createInstance,
+             this.controller.getNotif
+           );
   }
 }
 export default UserRoute;

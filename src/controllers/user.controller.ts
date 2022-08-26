@@ -11,6 +11,7 @@ import {
 import {HttpException} from '../exceptions/HttpException';
 import {IUser, UserDoc} from '../interfaces/user.interface';
 import UserService from '../services/user.services';
+import NotifService from '../services/notification.service';
 import {Gateway} from '../utils/gateway';
 import {generateJWT} from '../utils/jwt';
 import {logger} from '../utils/logger';
@@ -25,6 +26,7 @@ import {
 class UserController {
   private service = new UserService();
   private gateway = new Gateway();
+  private notifService = new NotifService()
   get(req: Request, res: Response, next: NextFunction) {
     const user: UserDoc = req['user'];
     const userObj = {
@@ -79,6 +81,11 @@ class UserController {
       }
       if (user.verified == false) {
         throw new HttpException(401, ' verify your email');
+      }
+      if (user.status == "blocked") {
+        return res
+          .status(200)
+          .send({message: 'success',reason:'user is blocked'});
       }
       const fields = {
         firstname: user.firstname ? true : false,
@@ -235,6 +242,17 @@ class UserController {
       next(e);
     }
   };
+  public getNotif = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user:IUser = req['user']
+      const notifications = (await this.notifService.getAllNotification (user)).reverse()
+       return res
+         .status(200)
+         .send(notifications);
+    } catch (e) {
+      next(e);
+    }
+  }
 }
 
 export default UserController;

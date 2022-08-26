@@ -12,10 +12,17 @@ class NotifService {
   }
   public async getAllNotification(user: IUser) {
     const notifs = await notifModel.find({user: user._id});
+    const result  = []
     if (notifs) {
-      return notifs;
+     for (let i = 0; i < notifs.length; i++) {
+      const notif = notifs[i];
+      result.push({
+        title: notif.title,
+        message:notif.message
+      })
+     }
     }
-    return [];
+    return result
   }
 }
 
