@@ -29,10 +29,7 @@ class SubService {
     const date = Date.now();
     const metadata = JSON.stringify({});
     //const start_date = moment(date).format() + '';
-    const res = await this.gateway.subscribe(
-      plan.paystack_code,
-      user.email,
-    );
+    const res = await this.gateway.subscribe(plan.paystack_code, user.email);
     return res;
   }
   public addUserToSub = async (user: UserDoc, sub: SubDoc) => {
@@ -57,17 +54,16 @@ class SubService {
     await this.addUserToSub(user, sub);
     invite.used = true;
     await invite.save();
-    const trial =await  trialModel.findOne({user:user._id})
-    trial.status='Ended'
-    await trial.save()
+    const trial = await trialModel.findOne({user: user._id});
+    trial.status = 'Ended';
+    await trial.save();
     return true;
   };
   public checkInvitedUser = async (id: string, user: IUser) => {
     const invite = await inviteModel.findById(id);
     console.log(invite.userId.toString());
     console.log(user._id);
-    
-    
+
     if (invite.userId.toString() == user._id) {
       return true;
     }
@@ -77,7 +73,7 @@ class SubService {
   public activeSubExist = async (user: IUser) => {
     const sub = await subModel.findOne({
       users: {$in: [user._id]},
-      status: {$nin: ['ended','non-renewing']},
+      status: {$nin: ['ended', 'non-renewing']},
     });
     console.log(sub);
     if (sub !== null) {
@@ -89,6 +85,15 @@ class SubService {
     const sub = await subModel.findOne({
       owner: user._id,
       status: {$ne: 'Ended'},
+    });
+    if (sub !== null) {
+      return sub;
+    }
+  };
+  public getActiveSub = async (user: IUser) => {
+    const sub = await subModel.findOne({
+      owner: user._id,
+      status: {$nin: ['ended', 'non-renewing']},
     });
     if (sub !== null) {
       return sub;
@@ -131,7 +136,7 @@ class SubService {
         renewing: sub.status == 'active' ? true : false,
       };
     }
-    return null
+    return null;
   };
   public cancel = async (sub: ISubscription) => {
     await this.gateway.init();

@@ -19,7 +19,7 @@ class PlanService {
   public async findPlanById(planId: string): Promise<IPlan> {
     if (isEmpty(planId)) throw new HttpException(400, 'No Id passed');
 
-    const Plan = await this.model.findOne({_id: planId});
+    const Plan = await this.model.findById(planId);
     if (!Plan) throw new HttpException(409, 'Plan not found');
     return Plan;
   }

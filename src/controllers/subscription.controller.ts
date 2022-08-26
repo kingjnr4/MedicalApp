@@ -163,14 +163,14 @@ class SubscriptionController {
   public switch = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const user: IUser = req['user'];
-      const sub = await this.subService.activeSubExist(user);
+      const sub = await this.subService.getActiveSub(user);
       const data: CreateSubDto = req.body;
       if (sub) {
         const plan = await this.planService.findPlanById(data.planId);
         if (plan) {
-          sub.users = [];
-         const savedsub= await sub.save();
-          const cancelled = await this.subService.cancel(savedsub);
+          const cancelled = await this.subService.cancel(sub);
+             sub.users = [];
+             await sub.save();
           if (cancelled == false) {
             return res.send('Error cancelling your plan');
           }
