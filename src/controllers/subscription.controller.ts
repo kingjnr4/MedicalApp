@@ -169,8 +169,8 @@ class SubscriptionController {
         const plan = await this.planService.findPlanById(data.planId);
         if (plan) {
           sub.users = [];
-          await sub.save();
-          const cancelled = await this.subService.cancel(sub);
+         const savedsub= await sub.save();
+          const cancelled = await this.subService.cancel(savedsub);
           if (cancelled == false) {
             return res.send('Error cancelling your plan');
           }
