@@ -206,6 +206,13 @@ class UserController {
   public block = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: BlockUserDto = req.body;
+      const user = await this.service.findUserByEmail(data.email)
+      if (user) {
+        user.status='blocked'
+        await user.save ()
+        return res.status(200).send({message: 'success'});
+      }
+      return res.status(200).send({message: 'failed',reason:'user not found'});
     } catch (e) {
       next(e);
     }

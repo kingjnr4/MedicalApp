@@ -1,6 +1,7 @@
 import { Router } from "express";
 import UserController from "../controllers/user.controller";
-import { ChangePassDto, CreateUserDto, GenLinkDto, LoginUserDto, UpdateUserDto, VerifyUserDto } from "../dtos/user.dto";
+import { BlockUserDto, ChangePassDto, CreateUserDto, GenLinkDto, LoginUserDto, UpdateUserDto, VerifyUserDto } from "../dtos/user.dto";
+import { AdminGuard } from "../guards/admin.guard";
 import { AuthGuard } from "../guards/auth.guard";
 import { EmptyJwtGuard } from "../guards/jwtempty.guard";
 import { IRoute } from "../interfaces/routes.interfaces";
@@ -64,6 +65,13 @@ class UserRoute implements IRoute {
              EmptyJwtGuard.check,
              AuthGuard.createInstance,
              this.controller.get,
+           );
+           this.router.get(
+             `${this.path}/block`,
+             EmptyJwtGuard.check,
+             AdminGuard.createInstance,
+             validationMiddleware(BlockUserDto, 'body', 'fields'),
+             this.controller.block,
            );
   }
 }

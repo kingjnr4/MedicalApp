@@ -33,7 +33,7 @@ class StatController {
     next: NextFunction,
   ) => {
     try {
-      const transactions = this.service.getAllTransactions();
+      const transactions = await this.service.getAllTransactions();
       return res.send(transactions);
     } catch (e) {
       next(e);
@@ -116,6 +116,18 @@ class StatController {
     try {
       const len = await this.service.getCancelledSubLen();
       return res.send(len.toString());
+    } catch (e) {
+      next(e);
+    }
+  };
+  public getNewUsers = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const recent = await this.service.getRecentSix();
+      return res.send(recent);
     } catch (e) {
       next(e);
     }

@@ -4,6 +4,7 @@ import { AddUserToSubToDto, CreateSubDto,AcceptInviteDto } from "../dtos/subscri
 import { AuthGuard } from "../guards/auth.guard";
 import { UserInfoCompleteGuard } from "../guards/info-complete.guard";
 import { EmptyJwtGuard } from "../guards/jwtempty.guard";
+import { UserNotBlockedGuard } from "../guards/user-blocked.guard";
 import { IRoute } from "../interfaces/routes.interfaces";
 import validationMiddleware from "../middlewares/validation.middleware";
 
@@ -23,27 +24,31 @@ class SubRoute implements IRoute {
       EmptyJwtGuard.check,
       AuthGuard.createInstance,
       UserInfoCompleteGuard.createInstance,
+      UserNotBlockedGuard.createInstance,
       this.controller.create,
     );
      this.router.post(
-      `${this.path}/invite`,
-      validationMiddleware(AddUserToSubToDto, 'body', 'key'),
-      EmptyJwtGuard.check,
-      AuthGuard.createInstance,
-      UserInfoCompleteGuard.createInstance,
-      this.controller.addUserToSub,
-    );
+       `${this.path}/invite`,
+       validationMiddleware(AddUserToSubToDto, 'body', 'key'),
+       EmptyJwtGuard.check,
+       AuthGuard.createInstance,
+       UserInfoCompleteGuard.createInstance,
+       UserNotBlockedGuard.createInstance,
+       this.controller.addUserToSub,
+     );
     this.router.post(
       `${this.path}/cancel`,
       EmptyJwtGuard.check,
       AuthGuard.createInstance,
       UserInfoCompleteGuard.createInstance,
+      UserNotBlockedGuard.createInstance,
       this.controller.cancel,
     );
       this.router.get(
         `${this.path}/info`,
         EmptyJwtGuard.check,
         AuthGuard.createInstance,
+        UserNotBlockedGuard.createInstance,
         this.controller.get,
       );
       this.router.post(
@@ -51,6 +56,7 @@ class SubRoute implements IRoute {
         validationMiddleware(CreateSubDto, 'body', 'key'),
         EmptyJwtGuard.check,
         AuthGuard.createInstance,
+        UserNotBlockedGuard.createInstance,
         this.controller.switch,
       );
       this.router.post(
@@ -58,6 +64,7 @@ class SubRoute implements IRoute {
         validationMiddleware(AcceptInviteDto, 'body', 'key'),
         EmptyJwtGuard.check,
         AuthGuard.createInstance,
+        UserNotBlockedGuard.createInstance,
         this.controller.acceptInvite,
       );
   }

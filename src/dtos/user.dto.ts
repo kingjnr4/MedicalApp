@@ -45,6 +45,6 @@ export class ChangePassDto {
   public password!: string;
 }
 export class BlockUserDto {
-  @IsJWT()
-  public token!: string;
+  @IsEmail ()
+  public email!: string;
 }

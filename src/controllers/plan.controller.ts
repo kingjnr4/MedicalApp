@@ -43,7 +43,7 @@ class PlanController {
        }
        if (plan.name==data.name) {
         const check = await this.service.findPlanByName (data.name)
-        if (check && check._id != plan._id) {
+        if (check && check._id.toString() != plan._id) {
           return res
             .status(200)
             .send({message: 'failed', reason: 'another plan has this name'});

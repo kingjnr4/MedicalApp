@@ -60,14 +60,18 @@ class StatsService {
     return false;
   }
   public async sendBulkMail(subject: string, message: string) {
-    const emails = (await this.getAllUsers()).map((val)=>val.email as string);
-    const mail = getMailForAll (emails,subject,message)
-    return sendmail (mail)
+    const emails = (await this.getAllUsers()).map(val => val.email as string);
+    const mail = getMailForAll(emails, subject, message);
+    return sendmail(mail);
   }
   public async getAllTransactions() {
     const service = new TransactionService();
     const all = service.getAll();
     return all;
+  }
+  public async getRecentSix() {
+    const users = await userModel.find().sort("-joined").limit(6)
+    return users;
   }
 }
 export default StatsService;
