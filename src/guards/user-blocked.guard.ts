@@ -11,7 +11,7 @@ export class UserNotBlockedGuard {
   ) {
   try {
       const instance = new UserNotBlockedGuard(req, res, next);
-      instance.checkUserIsNotBlocked();
+      await instance.checkUserIsNotBlocked();
       return next();
   } catch (e) {
     next(e);

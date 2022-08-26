@@ -33,14 +33,14 @@ class StatRoute implements IRoute {
             AdminGuard.createInstance,
             this.controller.getTransactions,
           );
-           this.router.get(
+           this.router.post(
              `${this.path}/sendmail`,
              EmptyJwtGuard.check,
              AdminGuard.createInstance,
              validationMiddleware(SendMailDto, 'body', 'fields'),
              this.controller.sendEmail,
            );
-            this.router.get(
+            this.router.post(
               `${this.path}/sendnotifs`,
               EmptyJwtGuard.check,
               AdminGuard.createInstance,
