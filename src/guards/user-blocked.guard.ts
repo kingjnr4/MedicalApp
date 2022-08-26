@@ -19,7 +19,7 @@ export class UserNotBlockedGuard {
     
   }
   constructor(req: Request, _res: Response, _next: NextFunction) {
-    this.user=req['body']
+    this.user=req['user']
   }
   async checkUserIsNotBlocked() {
   if (this.user.status == 'blocked') {
