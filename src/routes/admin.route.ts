@@ -52,6 +52,12 @@ class AdminRoute implements IRoute {
       AdminGuard.createInstance,
       this.controller.getInfo,
     );
+    this.router.post(
+      `${this.path}/notifications`,
+      AdminGuard.createInstance,
+      this.controller.getNotifs,
+    );
+
 
 
   }

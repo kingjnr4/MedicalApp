@@ -7,9 +7,11 @@ import {generateJWT} from '../utils/jwt';
 import {getAdminMailForPass, sendmail} from '../utils/mail';
 import {generateVerificationToken, getIdFromToken, verifyVerificationToken} from '../utils/token';
 import {IAdmin} from '../interfaces/admin.interface';
+import NotifService from '../services/notification.service';
 
 class AdminController {
   private service = new AdminService();
+  private notifService = new NotifService()
   public register = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: CreateAdminDto = req.body;
@@ -75,19 +77,36 @@ class AdminController {
     }
   };
   public deleteAdmin = async (req: Request, res: Response, next: NextFunction) => {
-    const data: DeleteAdminDto = req.body;
-    const admin = await this.service.findAdminByEmail(data.email);
-    if (admin.role == 'super') {
-      return res.send({message: 'failed', reason: 'cannot delete super admin'});
-    }
-    await this.service.deleteAdmin(admin);
-    return res.send({message: 'success', admin});
+   try {
+     const data: DeleteAdminDto = req.body;
+     const admin = await this.service.findAdminByEmail(data.email);
+     if (admin.role == 'super') {
+       return res.send({message: 'failed', reason: 'cannot delete super admin'});
+     }
+     await this.service.deleteAdmin(admin);
+     return res.send({message: 'success', admin});
+   }catch (e) {
+     next(e)
+   }
   };
   public getInfo = async (req: Request, res: Response, next: NextFunction) => {
+  try {
     const admin: IAdmin = req['admin'];
     return res.send({
       username: admin.username, role: admin.role, email: admin.email,
     });
+  }catch (e) {
+    next(e)
+  }
+  };
+  public getNotifs = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const notifs = this.notifService.getAllNotificationByAdmin()
+    return res.send(notifs);
+  }
+  catch (e) {
+    next(e)
+  }
   };
 }
 
