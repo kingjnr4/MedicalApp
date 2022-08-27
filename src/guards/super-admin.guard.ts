@@ -12,9 +12,15 @@ export class SuperAdminGuard extends BaseGuard {
   }
 
   static async createInstance(req: Request, res: Response, next: NextFunction) {
+  try {
     const guard = new SuperAdminGuard(req, res, next);
     let admin = await guard.checkAdminExists();
     req['admin'] = admin;
+    return next()
+  }
+  catch (e){
+    next(e)
+  }
   }
   async checkAdminExists() {
     const admin = await this.model.findOne({ _id: this.id, role: Roles.SUPER });
