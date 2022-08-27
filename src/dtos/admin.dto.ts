@@ -13,7 +13,10 @@ export class CreateAdminDto {
   @IsEnum(Roles)
   public role!: string;
 }
-
+export class ChangeMailDto {
+  @IsEmail ()
+  public email!: string;
+}
 export class LoginAdminDto {
   @IsEmail()
   public email!: string;

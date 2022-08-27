@@ -1,12 +1,12 @@
 import {NextFunction, Request, Response} from 'express';
-import {CreateAdminDto, DeleteAdminDto, LoginAdminDto} from '../dtos/admin.dto';
+import {ChangeMailDto, CreateAdminDto, DeleteAdminDto, LoginAdminDto} from '../dtos/admin.dto';
 import {ChangePassDto, GenLinkDto} from '../dtos/user.dto';
 import {HttpException} from '../exceptions/HttpException';
 import AdminService from '../services/admin.services';
 import {generateJWT} from '../utils/jwt';
 import {getAdminMailForPass, sendmail} from '../utils/mail';
 import {generateVerificationToken, getIdFromToken, verifyVerificationToken} from '../utils/token';
-import {IAdmin} from '../interfaces/admin.interface';
+import {AdminDoc, IAdmin} from '../interfaces/admin.interface';
 import NotifService from '../services/notification.service';
 
 class AdminController {
@@ -47,6 +47,24 @@ class AdminController {
         return res.status(200).send({message: 'success', verified});
       }
       return res.status(200).send({message: 'failed'});
+    } catch (e) {
+      next(e);
+    }
+  };
+  public changeEmail = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data: ChangeMailDto = req.body;
+      const admin:AdminDoc = req['admin']
+      const exists = this.service.findAdminByEmail(data.email)
+      if (admin.email==data.email){
+        return res.status(200).send({message: 'failed',reason:'email was not changed'});
+      }
+      if (exists){
+        return res.status(200).send({message: 'failed',reason:'email exist'});
+      }
+      admin.email=data.email
+      await admin.save()
+        return res.status(200).send({message: 'success', admin});
     } catch (e) {
       next(e);
     }

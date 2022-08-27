@@ -44,6 +44,7 @@ export class ChangePassDto {
   @IsString()
   public password!: string;
 }
+
 export class BlockUserDto {
   @IsEmail ()
   public email!: string;

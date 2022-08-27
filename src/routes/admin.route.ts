@@ -38,6 +38,13 @@ class AdminRoute implements IRoute {
       validationMiddleware(ChangePassDto, 'body', 'fields'),
       this.controller.changePassword,
     );
+    this.router.post(
+      `${this.path}/changemail`,
+      EmptyJwtGuard.check,
+      AdminGuard.createInstance,
+      validationMiddleware(ChangePassDto, 'body', 'fields'),
+      this.controller.changeEmail,
+    );
     this.router.get(
       `${this.path}/all`,
       EmptyJwtGuard.check,
