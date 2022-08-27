@@ -55,7 +55,7 @@ class AdminController {
     try {
       const data: ChangeMailDto = req.body;
       const admin:AdminDoc = req['admin']
-      const exists = this.service.findAdminByEmail(data.email)
+      const exists = await this.service.getAdminByEmail(data.email)
       if (admin.email==data.email){
         return res.status(200).send({message: 'failed',reason:'email was not changed'});
       }

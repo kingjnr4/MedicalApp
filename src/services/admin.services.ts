@@ -37,6 +37,13 @@ class AdminService {
     if (!admin) throw new HttpException(409, 'Admin not found');
     return admin;
   }
+  public async getAdminByEmail(email: string): Promise<IAdmin> {
+    if (isEmpty(email)) throw new HttpException(400, 'No email passed');
+
+    const admin = await this.model.findOne({email});
+    if (!admin) return null;
+    return admin;
+  }
   public async createAdmin(adminData: CreateAdminDto): Promise<IAdmin> {
     if (isEmpty(adminData))
       throw new HttpException(400, 'Please make sure all fields are filled');
