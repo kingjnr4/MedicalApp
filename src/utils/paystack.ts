@@ -10,6 +10,7 @@ import subModel from '../models/subscription.model';
 import PlanService from '../services/plan.services';
 import NotifService from '../services/notification.service';
 import TransactionService from '../services/transaction.service';
+import { uuid } from 'uuidv4';
 
 export type Interval = 'monthly' | 'yearly' | 'daily';
 
@@ -23,10 +24,13 @@ export class Paystack {
     const sub = await subModel.findOne({owner: user._id});
     sub.status = 'non-renewing';
     await sub.save();
+      const id = uuid();
     await nService.createNotification(
       user,
       'Sub Cancelled',
       'You have cancelled your subscribtion and it wont renew',
+      id,
+      'cancelled'
     );
   }
   async handleSubSuccess(data: any) {
@@ -50,20 +54,28 @@ export class Paystack {
     };
     await tService.addToTransaction(user, data.amount, 'success');
     const sub = await subModel.findOne({owner: user._id});
+      const id = uuid();
     if (sub) {
       await sub.update(subData);
+    
       await nService.createNotification(
         user,
         'Sub Created',
-        'You have subscribed to plan' + plan.name,
+        'You have subscribed to plan ' + plan.name,
+        id,
+        'subscribed'
       );
       return;
     }
     await subModel.create({owner: user._id,...subData});
+
     await nService.createNotification(
+
       user,
       'Sub Created',
       'You have subscribed to plan' + plan.name,
+      id,
+      'subscribed'
     );
   }
   public handleChargeSuccess = async (data: any) => {

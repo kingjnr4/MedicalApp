@@ -8,6 +8,7 @@ import {Document} from 'mongoose';
 import {UserDoc} from '../interfaces/user.interface';
 import {getMailForAll, sendmail} from '../utils/mail';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { uuid } from 'uuidv4';
 
 class StatsService {
   public async getUserlen() {
@@ -45,13 +46,14 @@ class StatsService {
       return result;
     }
   }
-  public async sendNotification(title: string, message: string) {
+  public async sendNotification(title: string, message: string,) {
     const service = new NotifService();
     const users = await userModel.find();
     if (users != null) {
+      const id = uuid()
       for (let i = 0; i < users.length; i++) {
         const user = users[i];
-        const sent = await service.createNotification(user, title, message);
+        const sent = await service.createNotification(user, title, message,id,'general');
         if (sent == false) {
           return false;
         }

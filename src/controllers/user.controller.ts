@@ -4,7 +4,7 @@ import {
   ChangePassDto,
   CreateUserDto,
   GenLinkDto,
-  LoginUserDto,
+  LoginUserDto, UnBlockUserDto,
   UpdateUserDto,
   VerifyUserDto,
 } from '../dtos/user.dto';
@@ -22,6 +22,7 @@ import {
   getIdFromToken,
   verifyVerificationToken,
 } from '../utils/token';
+import blockModel from '../models/block.model';
 
 class UserController {
   private service = new UserService();
@@ -36,6 +37,8 @@ class UserController {
       verified: user.verified,
       email: user.email,
       number: user.number,
+      hasCard:user.hasCard,
+      joined:user.joined
     };
     return res.status(200).send(userObj);
   }
@@ -83,9 +86,10 @@ class UserController {
         throw new HttpException(401, ' verify your email');
       }
       if (user.status == "blocked") {
+        const blockInfo = await blockModel.findOne({user:user._id})
         return res
           .status(200)
-          .send({message: 'success',reason:'user is blocked'});
+          .send({message: 'blocked',reason:blockInfo.reason});
       }
       const fields = {
         firstname: user.firstname ? true : false,
@@ -215,6 +219,10 @@ class UserController {
       const data: BlockUserDto = req.body;
       const user = await this.service.findUserByEmail(data.email);
       if (user) {
+       await blockModel.create({
+          user:user._id,
+          reason:data.reason
+        })
         user.status = 'blocked';
         await user.save();
         return res.status(200).send({message: 'success'});
@@ -228,9 +236,12 @@ class UserController {
   };
   public unblock = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const data: BlockUserDto = req.body;
+      const data: UnBlockUserDto = req.body;
       const user = await this.service.findUserByEmail(data.email);
       if (user) {
+        await blockModel.deleteOne({
+          user:user._id
+        })
         user.status = 'open';
         await user.save();
         return res.status(200).send({message: 'success'});

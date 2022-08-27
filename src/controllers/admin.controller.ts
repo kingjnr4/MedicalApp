@@ -1,17 +1,12 @@
-import { NextFunction, Request, Response } from "express";
-import { CreateAdminDto, LoginAdminDto } from "../dtos/admin.dto";
-import {  ChangePassDto, CreateUserDto, GenLinkDto, LoginUserDto,  } from "../dtos/user.dto";
-import { HttpException } from "../exceptions/HttpException";
-import tokenModel from "../models/token.model";
-import AdminService from "../services/admin.services";
-import { generateJWT } from "../utils/jwt";
-import { logger } from "../utils/logger";
-import { getAdminMailForPass, getMailForVerify, sendmail } from "../utils/mail";
-import {
-  generateVerificationToken,
-  getIdFromToken,
-  verifyVerificationToken,
-} from "../utils/token";
+import {NextFunction, Request, Response} from 'express';
+import {CreateAdminDto, DeleteAdminDto, LoginAdminDto} from '../dtos/admin.dto';
+import {ChangePassDto, GenLinkDto} from '../dtos/user.dto';
+import {HttpException} from '../exceptions/HttpException';
+import AdminService from '../services/admin.services';
+import {generateJWT} from '../utils/jwt';
+import {getAdminMailForPass, sendmail} from '../utils/mail';
+import {generateVerificationToken, getIdFromToken, verifyVerificationToken} from '../utils/token';
+import {IAdmin} from '../interfaces/admin.interface';
 
 class AdminController {
   private service = new AdminService();
@@ -30,7 +25,7 @@ class AdminController {
     try {
       const data: LoginAdminDto = req.body;
       const admin = await this.service.findAdminByEmail(data.email);
-      const isvalid = await admin.checkPassword(data.password);
+      const isvalid = admin.checkPassword(data.password);
       if (isvalid == false) {
         throw new HttpException(401, 'your password is incorrect');
       }
@@ -40,11 +35,7 @@ class AdminController {
       next(e);
     }
   };
-  public changePassword = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  public changePassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: ChangePassDto = req.body;
       const isValid = await verifyVerificationToken(data.key);
@@ -58,18 +49,14 @@ class AdminController {
       next(e);
     }
   };
-  public generatePasswordLink = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  public generatePasswordLink = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data: GenLinkDto = req.body;
       const user = await this.service.findAdminByEmail(data.email);
       const token = await generateVerificationToken(user._id);
       const mail = getAdminMailForPass(token, user.email);
       sendmail(mail)
-        .then(msg => {
+        .then(_msg => {
           return res.status(200).send({message: 'success'});
         })
         .catch(e => {
@@ -79,17 +66,28 @@ class AdminController {
       next(e);
     }
   };
-   public getAllAdmin = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => {
+  public getAllAdmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const admins = await this.service.findAllAdmin ()
-        return res.status(200).send({admins});
+      const admins = await this.service.findAllAdmin();
+      return res.status(200).send({admins});
     } catch (e) {
       next(e);
     }
+  };
+  public deleteAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    const data: DeleteAdminDto = req.body;
+    const admin = await this.service.findAdminByEmail(data.email);
+    if (admin.role == 'super') {
+      return res.send({message: 'failed', reason: 'cannot delete super admin'});
+    }
+    await this.service.deleteAdmin(admin);
+    return res.send({message: 'success', admin});
+  };
+  public getInfo = async (req: Request, res: Response, next: NextFunction) => {
+    const admin: IAdmin = req['admin'];
+    return res.send({
+      username: admin.username, role: admin.role, email: admin.email,
+    });
   };
 }
 

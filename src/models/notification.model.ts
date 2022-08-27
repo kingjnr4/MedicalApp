@@ -15,6 +15,14 @@ const noteSchema: Schema = new Schema<INotif>({
     type: String,
     required: true,
   },
+  type:{
+    type:String,
+    required:true,
+    default:'general'
+  },
+  uuid:{
+    type:String
+  }
 });
 
 const notifModel = model<Document & INotif>('notifications', noteSchema);

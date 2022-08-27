@@ -30,7 +30,7 @@ export class GenLinkDto {
 export class LoginUserDto {
   @IsEmail()
   public email!: string;
-  
+
   @IsString()
   public password!: string;
 }
@@ -45,6 +45,12 @@ export class ChangePassDto {
   public password!: string;
 }
 export class BlockUserDto {
+  @IsEmail ()
+  public email!: string;
+  @IsString()
+  public reason!: string;
+}
+export class UnBlockUserDto {
   @IsEmail ()
   public email!: string;
 }

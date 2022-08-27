@@ -8,7 +8,20 @@ class AdminService {
   public model = adminModel;
   public async findAllAdmin(): Promise<IAdmin[]> {
     const admins: IAdmin[] = await this.model.find();
-    return admins;
+    const result = [];
+    if (admins) {
+      for (let i = 0; i < admins.length; i++) {
+        const admin = admins[i]
+        result.push({
+          username: admin.username, role: admin.role, email: admin.email,
+        })
+      }}
+    return result;
+  }
+  public async deleteAdmin (admin:IAdmin){
+    const deleted = await this.model.findByIdAndDelete(admin._id)
+    if (!deleted) throw new HttpException(409, 'Admin not found');
+    return deleted
   }
   public async findAdminById(adminId: string): Promise<IAdmin> {
     if (isEmpty(adminId)) throw new HttpException(400, 'No adminId passed');

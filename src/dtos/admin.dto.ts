@@ -39,3 +39,7 @@ export class SendNotificationDto {
   @IsString()
   public message!: string;
 }
+export class DeleteAdminDto {
+  @IsString()
+  public email!: string;
+}
