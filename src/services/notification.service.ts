@@ -29,6 +29,7 @@ class NotifService {
         result.push({
           title: notif.title,
           message: notif.message,
+		  type:notif.type
         });
       }
     }
@@ -45,8 +46,8 @@ class NotifService {
         result.push({
           title: notif.title,
           message: notif.message,
-          id:notif.uuid
-
+          id:notif.uuid,
+		  type:notif.type
         });
       }
     }
