@@ -6,6 +6,7 @@ import {IRoute} from '../interfaces/routes.interfaces';
 import validationMiddleware from '../middlewares/validation.middleware';
 import {SuperAdminGuard} from '../guards/super-admin.guard';
 import {AdminGuard} from '../guards/admin.guard';
+import {EmptyJwtGuard} from '../guards/jwtempty.guard';
 
 class AdminRoute implements IRoute {
   public path = '/admin';
@@ -39,21 +40,26 @@ class AdminRoute implements IRoute {
     );
     this.router.get(
       `${this.path}/all`,
+      EmptyJwtGuard.check,
+     AdminGuard.createInstance,
       this.controller.getAllAdmin,
     );
     this.router.post(
       `${this.path}/delete`,
+      EmptyJwtGuard.check,
       SuperAdminGuard.createInstance,
       validationMiddleware(DeleteAdminDto, 'body', 'fields'),
       this.controller.deleteAdmin,
     );
     this.router.post(
       `${this.path}/info`,
+      EmptyJwtGuard.check,
       AdminGuard.createInstance,
       this.controller.getInfo,
     );
-    this.router.post(
+    this.router.get(
       `${this.path}/notifications`,
+      EmptyJwtGuard.check,
       AdminGuard.createInstance,
       this.controller.getNotifs,
     );

@@ -36,13 +36,17 @@ class NotifService {
   }
   public async getAllNotificationByAdmin() {
     const notifs = await notifModel.find({type:'general'});
-    const result = [];
+    let result = [];
     if (notifs) {
       for (let i = 0; i < notifs.length; i++) {
         const notif = notifs[i];
+        console.log(notif
+        );
         result.push({
           title: notif.title,
           message: notif.message,
+          id:notif.uuid
+
         });
       }
     }

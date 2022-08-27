@@ -101,7 +101,7 @@ class AdminController {
   };
   public getNotifs = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const notifs = this.notifService.getAllNotificationByAdmin()
+    const notifs = await this.notifService.getAllNotificationByAdmin()
     return res.send(notifs);
   }
   catch (e) {
