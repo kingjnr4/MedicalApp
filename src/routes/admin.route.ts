@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import AdminController from '../controllers/admin.controller';
-import {CreateAdminDto, DeleteAdminDto, LoginAdminDto} from '../dtos/admin.dto';
+import {ChangeMailDto, CreateAdminDto, DeleteAdminDto, LoginAdminDto} from '../dtos/admin.dto';
 import {ChangePassDto, GenLinkDto} from '../dtos/user.dto';
 import {IRoute} from '../interfaces/routes.interfaces';
 import validationMiddleware from '../middlewares/validation.middleware';
@@ -42,7 +42,7 @@ class AdminRoute implements IRoute {
       `${this.path}/changemail`,
       EmptyJwtGuard.check,
       AdminGuard.createInstance,
-      validationMiddleware(ChangePassDto, 'body', 'fields'),
+      validationMiddleware(ChangeMailDto, 'body', 'fields'),
       this.controller.changeEmail,
     );
     this.router.get(
