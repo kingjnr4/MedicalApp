@@ -36,7 +36,7 @@ class NotifService {
     return result;
   }
   public async getAllNotificationByAdmin() {
-    const notifs = await notifModel.find({type:'general'}).distinct('uuid');
+    const notifs = await notifModel.distinct('uuid').find({type:'general'});
     let result = [];
     if (notifs) {
       for (let i = 0; i < notifs.length; i++) {
