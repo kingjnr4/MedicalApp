@@ -1,11 +1,14 @@
 import {NextFunction, Request, Response} from 'express';
-import {SendMailDto, SendNotificationDto} from '../dtos/admin.dto';
+import {SendMailDto, SendNotificationDto, SendSingleMailDto} from '../dtos/admin.dto';
 import StatsService from '../services/stats.service';
 import TransactionService from '../services/transaction.service';
+import UserService from '../services/user.services';
+import { getMailForAll, sendmail } from '../utils/mail';
 
 class StatController {
   private service = new StatsService();
   private tService = new TransactionService();
+  private uService = new UserService ()
   public getHomeStats = async (
     req: Request,
     res: Response,
@@ -75,14 +78,42 @@ class StatController {
         .then(msg => {
           return res
             .status(200)
-            .send({message: 'success', reason: 'mails sent successfully'})        }
-        )
+            .send({message: 'success', reason: 'mails sent successfully'});
+        })
         .catch(e => {
           return res
             .status(200)
             .send({message: 'failed', reason: 'mails not sent'});
         });
     } catch (error) {}
+  };
+  public sendSingleEmail = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const len = await this.service.getUserlen();
+      if (len == 0) {
+        return res.send({message: 'failed', reason: 'no users'});
+      }
+      const data: SendSingleMailDto = req.body;
+      const user =  await this.uService.findUserByEmail (data.email)
+      const mail = getMailForAll (user.email,data.subject,data.message)
+     sendmail(mail)
+        .then(msg => {
+          return res
+            .status(200)
+            .send({message: 'success', reason: 'mails sent successfully'});
+        })
+        .catch(e => {
+          return res
+            .status(200)
+            .send({message: 'failed', reason: 'mails not sent'});
+        });
+    } catch (e) {
+      next (e)
+    }
   };
   public getEndedSubsCount = async (
     req: Request,

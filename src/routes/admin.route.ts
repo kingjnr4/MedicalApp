@@ -93,9 +93,6 @@ class AdminRoute implements IRoute {
       AdminGuard.createInstance,
       this.controller.getNotifs,
     );
-
-
-
   }
 }
 
