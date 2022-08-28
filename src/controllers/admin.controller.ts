@@ -143,12 +143,19 @@ class AdminController {
   try {
     const data: UpdateAdminDto = req.body;
     const info = {
-      email:data.email,
-      password:await hashPassword(data.password),
-      username:data.username,
-      role:data.role
-    }
+      email: data.email || undefined,
+      password: data.password ? await hashPassword(data.password) : undefined,
+      username: data.username || undefined,
+      role: data.role || undefined,
+    };
     const admin = await this.service.findAdminByEmail(data.oldMail)
+    if (data.email && data.email != data.oldMail) {
+      const admin = await this.service.getAdminByEmail (data.email)
+      if (admin) {
+         return res.status(200).send({message: 'failed',reason:'email already exists'});
+      }
+    }
+    
     await admin.update({...info})
     return res.status(200).send({message:'success'});
   }catch (e) {

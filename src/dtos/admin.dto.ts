@@ -1,4 +1,4 @@
-import {IsEmail, IsString, IsEnum} from 'class-validator';
+import {IsEmail, IsString, IsEnum, IsOptional} from 'class-validator';
 import {Roles} from '../interfaces/admin.interface';
 
 export class CreateAdminDto {
@@ -16,14 +16,16 @@ export class CreateAdminDto {
 export class UpdateAdminDto {
   @IsEmail()
   public oldMail!: string;
+  @IsOptional()
   @IsEmail()
   public email!: string;
-
+  @IsOptional()
   @IsString()
   public password!: string;
+  @IsOptional()
   @IsString()
   public username!: string;
-
+  @IsOptional()
   @IsEnum(Roles)
   public role!: string;
 }
