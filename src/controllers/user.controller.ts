@@ -226,7 +226,9 @@ class UserController {
         user.status = 'blocked';
         await user.save();
        const mail = getMailForBlock(user.email,data.reason)
-        sendmail(mail).then(()=>{return res.status(200).send({message: 'success'})})
+        sendmail(mail).then(msg=>{return res.status(200).send({message: 'success'})}) .catch(e => {
+          return res.status(200).send({message: 'failed', e});
+        });
 
       }
       return res
@@ -247,7 +249,9 @@ class UserController {
         user.status = 'open';
         await user.save();
         const mail = getMailForUnBlock(user.email)
-        sendmail(mail).then(()=>{return res.status(200).send({message: 'success'})})
+        sendmail(mail).then(msg=>{return res.status(200).send({message: 'success'})}) .catch(e => {
+          return res.status(200).send({message: 'failed', e});
+        });
       }
       return res
         .status(200)
