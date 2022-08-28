@@ -47,7 +47,7 @@ export const getMailForVerify = (token: IToken, email): Mail.Options => {
   );
   const template = Handlebars.compile(source);
   return {
-    from: 'diagnosisabc@diagnosisabc.com',
+    from: 'DiagnosisABC@diagnosisabc.com',
     to: email,
     subject: 'Change  Your Password ',
     text: 'Please Verify Your Account ',
@@ -60,7 +60,7 @@ export const getMailForAll = (
   message: string,
 ): Mail.Options => {
   return {
-    from: 'diagnosisabc@diagnosisabc.com',
+    from: 'DiagnosisABC@diagnosisabc.com',
     to: email,
     subject,
     text: 'Information For All Users ',
@@ -72,7 +72,7 @@ export const getMailForBlock = (
   reason: string,
 ): Mail.Options => {
   return {
-    from: 'diagnosisabc@diagnosisabc.com',
+    from: 'DiagnosisABC@diagnosisabc.com',
     to: email,
     subject:'Banned',
     text: 'Information For All Users ',
@@ -83,7 +83,7 @@ export const getMailForUnBlock = (
   email: string,
 ): Mail.Options => {
   return {
-    from: 'diagnosisabc@diagnosisabc.com',
+    from: 'DiagnosisABC@diagnosisabc.com',
     to: email,
     subject:'Ban Lifted',
     text: 'Information For All Users ',
@@ -98,7 +98,7 @@ export const getMailForPass = (token: IToken, email): Mail.Options => {
   );
   const template = Handlebars.compile(source);
   return {
-    from: 'diagnosisabc@diagnosisabc.com',
+    from: 'DiagnosisABC@diagnosisabc.com',
     to: email,
     subject: 'Change your Password',
     text: 'Change your Password',
@@ -113,7 +113,7 @@ export const getAdminMailForPass = (token: IToken, email): Mail.Options => {
   );
   const template = Handlebars.compile(source);
   return {
-    from: 'diagnosisabc@diagnosisabc.com',
+    from: 'DiagnosisABC@diagnosisabc.com',
     to: email,
     subject: 'Change your Password',
     text: 'Change your Password ',
@@ -129,7 +129,7 @@ export const getMailForInvite = (token: string, email): Mail.Options => {
   );
   const template = Handlebars.compile(source);
   return {
-    from: 'diagnosisabc@diagnosisabc.com',
+    from: 'DiagnosisABC@diagnosisabc.com',
     to: email,
     subject: 'Change your Password',
     text: 'Change your Password ',

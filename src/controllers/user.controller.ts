@@ -229,7 +229,7 @@ class UserController {
         sendmail(mail).then(msg=>{return res.status(200).send({message: 'success'})}) .catch(e => {
           return res.status(200).send({message: 'failed', e});
         });
-
+        return ;
       }
       return res
         .status(200)
@@ -252,6 +252,7 @@ class UserController {
         sendmail(mail).then(msg=>{return res.status(200).send({message: 'success'})}) .catch(e => {
           return res.status(200).send({message: 'failed', e});
         });
+        return ;
       }
       return res
         .status(200)
