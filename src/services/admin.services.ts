@@ -1,13 +1,13 @@
 import { CreateAdminDto } from "../dtos/admin.dto";
 import { HttpException } from "../exceptions/HttpException";
-import { IAdmin } from "../interfaces/admin.interface";
+import {AdminDoc, IAdmin} from '../interfaces/admin.interface';
 import adminModel from "../models/admin.model";
 import { hashPassword, isEmpty } from "../utils/utils";
 
 class AdminService {
   public model = adminModel;
   public async findAllAdmin(): Promise<IAdmin[]> {
-    const admins: IAdmin[] = await this.model.find();
+    const admins: IAdmin[] = await this.model.find({role:{$ne:'super'}});
     const result = [];
     if (admins) {
       for (let i = 0; i < admins.length; i++) {
@@ -30,7 +30,7 @@ class AdminService {
     if (!admin) throw new HttpException(409, 'User not found');
     return admin;
   }
-  public async findAdminByEmail(email: string): Promise<IAdmin> {
+  public async findAdminByEmail(email: string): Promise<AdminDoc> {
     if (isEmpty(email)) throw new HttpException(400, 'No email passed');
 
     const admin = await this.model.findOne({email});

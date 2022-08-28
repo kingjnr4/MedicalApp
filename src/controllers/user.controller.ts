@@ -15,7 +15,7 @@ import NotifService from '../services/notification.service';
 import {Gateway} from '../utils/gateway';
 import {generateJWT} from '../utils/jwt';
 import {logger} from '../utils/logger';
-import {getMailForPass, getMailForVerify, sendmail} from '../utils/mail';
+import {getMailForBlock, getMailForPass, getMailForUnBlock, getMailForVerify, sendmail} from '../utils/mail';
 import {Paystack} from '../utils/paystack';
 import {
   generateVerificationToken,
@@ -225,7 +225,9 @@ class UserController {
         })
         user.status = 'blocked';
         await user.save();
-        return res.status(200).send({message: 'success'});
+       const mail = getMailForBlock(user.email,data.reason)
+        sendmail(mail).then(()=>{return res.status(200).send({message: 'success'})})
+
       }
       return res
         .status(200)
@@ -244,7 +246,8 @@ class UserController {
         })
         user.status = 'open';
         await user.save();
-        return res.status(200).send({message: 'success'});
+        const mail = getMailForUnBlock(user.email)
+        sendmail(mail).then(()=>{return res.status(200).send({message: 'success'})})
       }
       return res
         .status(200)

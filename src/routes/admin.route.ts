@@ -1,6 +1,13 @@
 import {Router} from 'express';
 import AdminController from '../controllers/admin.controller';
-import {ChangeMailDto, CreateAdminDto, DeleteAdminDto, LoginAdminDto} from '../dtos/admin.dto';
+import {
+  ChangeMailDto,
+  CreateAdminDto,
+  DeleteAdminDto,
+  DeleteNotifDto,
+  LoginAdminDto,
+  UpdateAdminDto,
+} from '../dtos/admin.dto';
 import {ChangePassDto, GenLinkDto} from '../dtos/user.dto';
 import {IRoute} from '../interfaces/routes.interfaces';
 import validationMiddleware from '../middlewares/validation.middleware';
@@ -21,6 +28,8 @@ class AdminRoute implements IRoute {
     this.router.post(
       `${this.path}/register`,
       validationMiddleware(CreateAdminDto, 'body', 'fields'),
+      EmptyJwtGuard.check,
+      SuperAdminGuard.createInstance,
       this.controller.register,
     );
     this.router.post(
@@ -59,10 +68,24 @@ class AdminRoute implements IRoute {
       this.controller.deleteAdmin,
     );
     this.router.post(
+      `${this.path}/deletenotifs`,
+      EmptyJwtGuard.check,
+      AdminGuard.createInstance,
+      validationMiddleware(DeleteNotifDto, 'body', 'fields'),
+      this.controller.deleteNotifications,
+    );
+    this.router.post(
       `${this.path}/info`,
       EmptyJwtGuard.check,
       AdminGuard.createInstance,
       this.controller.getInfo,
+    );
+    this.router.post(
+      `${this.path}/updateinfo`,
+      EmptyJwtGuard.check,
+      SuperAdminGuard.createInstance,
+      validationMiddleware(UpdateAdminDto, 'body', 'fields'),
+      this.controller.updateInfo,
     );
     this.router.get(
       `${this.path}/notifications`,

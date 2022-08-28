@@ -1,5 +1,12 @@
 import {NextFunction, Request, Response} from 'express';
-import {ChangeMailDto, CreateAdminDto, DeleteAdminDto, LoginAdminDto} from '../dtos/admin.dto';
+import {
+  ChangeMailDto,
+  CreateAdminDto,
+  DeleteAdminDto,
+  DeleteNotifDto,
+  LoginAdminDto,
+  UpdateAdminDto,
+} from '../dtos/admin.dto';
 import {ChangePassDto, GenLinkDto} from '../dtos/user.dto';
 import {HttpException} from '../exceptions/HttpException';
 import AdminService from '../services/admin.services';
@@ -8,6 +15,7 @@ import {getAdminMailForPass, sendmail} from '../utils/mail';
 import {generateVerificationToken, getIdFromToken, verifyVerificationToken} from '../utils/token';
 import {AdminDoc, IAdmin} from '../interfaces/admin.interface';
 import NotifService from '../services/notification.service';
+import {hashPassword} from '../utils/utils';
 
 class AdminController {
   private service = new AdminService();
@@ -32,7 +40,9 @@ class AdminController {
         throw new HttpException(401, 'your password is incorrect');
       }
       const jwt = generateJWT(admin._id);
-      return res.status(200).send({message: 'success', jwt});
+      return res.status(200).send({message: 'success', jwt,info:{
+          username: admin.username, role: admin.role, email: admin.email,
+        }});
     } catch (e) {
       next(e);
     }
@@ -107,12 +117,40 @@ class AdminController {
      next(e)
    }
   };
+  public deleteNotifications = async (req: Request, res: Response, next: NextFunction) => {
+   try {
+     const data: DeleteNotifDto = req.body;
+     const deleted = await this.notifService.deleteAll(data.id)
+     if (deleted){
+       return res.status(200).send({message:'Success'});
+     }
+     return res.status(200).send({message:'failed',reason:'Id does not exist'});
+   }catch (e) {
+     next(e)
+   }
+  };
   public getInfo = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const admin: IAdmin = req['admin'];
     return res.send({
       username: admin.username, role: admin.role, email: admin.email,
     });
+  }catch (e) {
+    next(e)
+  }
+  };
+  public updateInfo = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const data: UpdateAdminDto = req.body;
+    const info = {
+      email:data.email,
+      password:await hashPassword(data.password),
+      username:data.username,
+      role:data.role
+    }
+    const admin = await this.service.findAdminByEmail(data.oldMail)
+    await admin.update({...info})
+    return res.status(200).send({message:'success'});
   }catch (e) {
     next(e)
   }

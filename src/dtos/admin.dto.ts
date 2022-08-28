@@ -13,6 +13,20 @@ export class CreateAdminDto {
   @IsEnum(Roles)
   public role!: string;
 }
+export class UpdateAdminDto {
+  @IsEmail()
+  public oldMail!: string;
+  @IsEmail()
+  public email!: string;
+
+  @IsString()
+  public password!: string;
+  @IsString()
+  public username!: string;
+
+  @IsEnum(Roles)
+  public role!: string;
+}
 export class ChangeMailDto {
   @IsEmail ()
   public email!: string;
@@ -35,6 +49,19 @@ export class SendMailDto {
   @IsString()
   public message!: string;
 }
+export class SendSingleMailDto {
+  @IsString()
+  public subject!: string;
+  @IsString()
+  public message!: string;
+  @IsEmail()
+  public email!: string;
+}export class DeleteNotifDto {
+  @IsString()
+  public id!: string;
+}
+
+
 
 export class SendNotificationDto {
   @IsString()

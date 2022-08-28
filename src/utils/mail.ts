@@ -67,6 +67,29 @@ export const getMailForAll = (
     html: message,
   };
 };
+export const getMailForBlock = (
+  email: string,
+  reason: string,
+): Mail.Options => {
+  return {
+    from: 'noreply@diagnosisabc.com',
+    to: email,
+    subject:'Banned',
+    text: 'Information For All Users ',
+    html: `You have been blocked because of ${reason}`,
+  };
+};
+export const getMailForUnBlock = (
+  email: string,
+): Mail.Options => {
+  return {
+    from: 'noreply@diagnosisabc.com',
+    to: email,
+    subject:'Ban Lifted',
+    text: 'Information For All Users ',
+    html: `You have been unblocked`,
+  };
+};
 export const getMailForPass = (token: IToken, email): Mail.Options => {
   const link = `https://brilliant-beijinho-78dad5.netlify.app/auth/change-password?key=${token.key}`;
   const source = fs.readFileSync(
@@ -112,5 +135,5 @@ export const getMailForInvite = (token: string, email): Mail.Options => {
     text: 'Change your Password ',
     html: template({link, email}),
   };
-  
+
 };
