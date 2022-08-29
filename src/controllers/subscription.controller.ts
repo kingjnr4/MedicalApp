@@ -49,9 +49,9 @@ class SubscriptionController {
     console.log(cancelled);
 
     if (cancelled == false) {
-      return res.send('Error cancelling your plan');
+      return res.send({message:'failed'});
     }
-    return res.send('Plan  canceled successfully');
+    return res.send({message:'success'});
   };
   public get = async (req: Request, res: Response, next: NextFunction) => {
     try {
