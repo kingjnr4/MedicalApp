@@ -64,6 +64,12 @@ class StatRoute implements IRoute {
       AdminGuard.createInstance,
       this.controller.getNewUsers,
     );
+    this.router.get(
+      `${this.path}/allsubs`,
+      EmptyJwtGuard.check,
+      AdminGuard.createInstance,
+      this.controller.getAllSubs,
+    );
   }
 }
 

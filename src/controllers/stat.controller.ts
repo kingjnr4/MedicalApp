@@ -139,6 +139,18 @@ class StatController {
       next(e);
     }
   };
+    public getAllSubs = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const len = await this.service.getAllSubs();
+      return res.send(len);
+    } catch (e) {
+      next(e);
+    }
+  };
   public getNonRenewingSubsCount = async (
     req: Request,
     res: Response,

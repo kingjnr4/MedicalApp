@@ -46,6 +46,21 @@ class StatsService {
       return result;
     }
   }
+  
+  public async getAllSubs() {
+    const subs = await subModel.find();
+    let result = []
+      if (subs != null) {
+      for (let i = 0; i < subs.length; i++) {
+         const sub = subs[i];
+         const user = await userModel.findById(sub.owner)
+          result.push({
+            username: user.username,
+            status: sub.status,
+            expires: sub.next_date,
+          });
+      }}
+  }
   public async sendNotification(title: string, message: string,) {
     const service = new NotifService();
     const users = await userModel.find();
