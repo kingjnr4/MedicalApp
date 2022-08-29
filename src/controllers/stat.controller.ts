@@ -145,8 +145,8 @@ class StatController {
     next: NextFunction,
   ) => {
     try {
-      const len = await this.service.getAllSubs();
-      return res.send(len);
+      const all = await this.service.getAllSubs();
+      return res.send(all);
     } catch (e) {
       next(e);
     }

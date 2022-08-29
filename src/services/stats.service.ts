@@ -60,6 +60,7 @@ class StatsService {
             expires: sub.next_date,
           });
       }}
+      return result
   }
   public async sendNotification(title: string, message: string,) {
     const service = new NotifService();
