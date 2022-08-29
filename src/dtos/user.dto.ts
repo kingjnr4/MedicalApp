@@ -1,4 +1,10 @@
-import { IsEmail, IsString, IsOptional, IsJWT,IsPhoneNumber } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  IsOptional,
+  IsJWT,
+  IsPhoneNumber,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsEmail()
@@ -17,14 +23,13 @@ export class UpdateUserDto {
   public firstname!: string;
   @IsString()
   public lastname!: string;
-  @IsPhoneNumber()
+  @IsString()
   public number?: string;
 }
 
 export class GenLinkDto {
   @IsEmail()
   public email!: string;
-
 }
 
 export class LoginUserDto {
@@ -46,12 +51,12 @@ export class ChangePassDto {
 }
 
 export class BlockUserDto {
-  @IsEmail ()
+  @IsEmail()
   public email!: string;
   @IsString()
   public reason!: string;
 }
 export class UnBlockUserDto {
-  @IsEmail ()
+  @IsEmail()
   public email!: string;
 }

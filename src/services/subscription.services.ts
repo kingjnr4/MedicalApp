@@ -13,7 +13,7 @@ import subModel from '../models/subscription.model';
 import trialModel from '../models/trial.model';
 import userModel from '../models/user.model';
 import {Gateway} from '../utils/gateway';
-import { getMailForInvite, sendmail } from '../utils/mail';
+import {getMailForInvite, sendmail} from '../utils/mail';
 import {isEmpty} from '../utils/utils';
 
 class SubService {
@@ -119,6 +119,7 @@ class SubService {
         name: 'Free Trial',
         expires: trial.expires,
         renewing: false,
+        spaces: 0,
       };
     }
     const sub = await subModel.findOne({
@@ -132,10 +133,11 @@ class SubService {
         name: plan.name,
         expires: sub.next_date + '',
         renewing: sub.status == 'active' ? true : false,
+        spaces: 0,
       };
     }
     const sub1 = await subModel.findOne({
-      owner:user._id,
+      owner: user._id,
       status: {$ne: 'ended'},
     });
 
@@ -145,6 +147,7 @@ class SubService {
         name: plan.name,
         expires: sub1.next_date + '',
         renewing: sub1.status == 'active' ? true : false,
+        spaces: plan.spaces - sub1.users.length,
       };
     }
     return null;
