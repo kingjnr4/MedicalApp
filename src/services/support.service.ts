@@ -42,7 +42,7 @@ class SupportService {
     }
   }
   public async getNewRepliesUser(sender: string) {
-    const all = await this.model.find({sender,status:'closed'});
+    const all = await this.model.find({sender,status:'treated'});
     let results = [];
     for (let i = 0; i < all.length; i++) {
       const support = all[i];
