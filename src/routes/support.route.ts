@@ -43,14 +43,14 @@ class SupportRoute implements IRoute {
        validationMiddleware(OpenSupportDto, 'body', 'fields'),
        this.controller.delete,
      );
-     this.router.post(
+     this.router.get(
        `${this.path}/getAll`,
        EmptyJwtGuard.check,
        AdminGuard.createInstance,
        this.controller.getAll,
      );
-     this.router.post(
-       `${this.path}/getAllUsers`,
+     this.router.get(
+       `${this.path}/getAllUser`,
        EmptyJwtGuard.check,
        AuthGuard.createInstance,
        this.controller.getByUser,
