@@ -9,7 +9,7 @@ class SupportController {
   public add = async (req: Request, res: Response, next: NextFunction) => {
     const data: CreateSupportDto = req.body;
     const user: IUser = req['user'];
-    const sent = this.service.create(data, user.email);
+    const sent = await this.service.create(data, user.email);
     if (sent) {
       return res.send({message: 'success'});
     }
@@ -17,7 +17,7 @@ class SupportController {
   };
   public reply = async (req: Request, res: Response, next: NextFunction) => {
     const data: ReplySupportDto = req.body;
-    const updated = this.service.updateReply(data.id, data.reply);
+    const updated = await this.service.updateReply(data.id, data.reply);
     if (updated) {
       return res.send({message: 'success'});
     }
@@ -25,19 +25,19 @@ class SupportController {
   };
   public open = async (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
-    const updated = this.service.updateOpened(data.id);
+    const updated = await this.service.updateOpened(data.id);
     if (updated) {
       return res.send({message: 'success'});
     }
     return res.send({message: 'failed', reason: 'id not found'});
   };
   public getAll = async (req: Request, res: Response, next: NextFunction) => {
-    const all = this.service.getAll();
+    const all = await this.service.getAll();
     return res.send(all);
   };
   public getByUser = async (req: Request, res: Response, next: NextFunction) => {
     const user:IUser = req['user']
-     const all = this.service.getAllFromUser(user.email);
+     const all = await this.service.getAllFromUser(user.email);
      return res.send(all);
   };
    public delete = async (req: Request, res: Response, next: NextFunction) => {}
