@@ -35,12 +35,25 @@ class SupportController {
     const all = await this.service.getAll();
     return res.send(all);
   };
-  public getByUser = async (req: Request, res: Response, next: NextFunction) => {
-    const user:IUser = req['user']
-     const all = await this.service.getAllFromUser(user.email);
-     return res.send(all);
+  public getByUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const user: IUser = req['user'];
+    const all = await this.service.getAllFromUser(user.email);
+    return res.send(all);
   };
-   public delete = async (req: Request, res: Response, next: NextFunction) => {}
+  public getRepliesForUser = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    const user: IUser = req['user'];
+    const all = await this.service.getNewRepliesUser(user.email);
+    return res.send(all);
+  };
+  public delete = async (req: Request, res: Response, next: NextFunction) => {};
 }
 
 export default SupportController

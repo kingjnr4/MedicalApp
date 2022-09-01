@@ -55,6 +55,12 @@ class SupportRoute implements IRoute {
        AuthGuard.createInstance,
        this.controller.getByUser,
      );
+     this.router.get(
+       `${this.path}/replies`,
+       EmptyJwtGuard.check,
+       AuthGuard.createInstance,
+       this.controller.getRepliesForUser,
+     );
   }
 }
 

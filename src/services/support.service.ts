@@ -18,6 +18,7 @@ class SupportService {
     for (let i = 0; i < all.length; i++) {
       const support = all[i];
       results.push({
+        id:support._id,
         sender: support.sender,
         message: support.message,
         reply: support.reply || '',
@@ -26,8 +27,22 @@ class SupportService {
       return results;
     }
   }
-  public async getAllFromUser(sender:string) {
+  public async getAllFromUser(sender: string) {
     const all = await this.model.find({sender});
+    let results = [];
+    for (let i = 0; i < all.length; i++) {
+      const support = all[i];
+      results.push({
+        sender: support.sender,
+        message: support.message,
+        reply: support.reply || '',
+        status: support.status,
+      });
+      return results;
+    }
+  }
+  public async getNewRepliesUser(sender: string) {
+    const all = await this.model.find({sender,status:'closed'});
     let results = [];
     for (let i = 0; i < all.length; i++) {
       const support = all[i];
