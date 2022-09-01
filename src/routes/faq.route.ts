@@ -30,7 +30,7 @@ class FaqRoute implements IRoute {
       validationMiddleware(UpdateFaqDto, 'body', 'fields'),
       this.controller.update,
     );
-    this.router.post(`${this.path}/get`, this.controller.get);
+    this.router.get(`${this.path}/get`, this.controller.get);
     this.router.post(
       `${this.path}/delete`,
       EmptyJwtGuard.check,
