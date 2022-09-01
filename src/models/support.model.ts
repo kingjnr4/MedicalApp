@@ -14,6 +14,7 @@ const supportSchema: Schema = new Schema<ISupport>({
   status: {
     type: String,
     required: true,
+    default:'new'
   },
   date_created: {
     type: Date,
