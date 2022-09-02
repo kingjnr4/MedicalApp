@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from 'express';
-import { CreateSupportDto, ReplySupportDto } from '../dtos/support.dto';
-import { IUser } from '../interfaces/user.interface';
+import {CreateSupportDto, ReplySupportDto} from '../dtos/support.dto';
+import {IUser} from '../interfaces/user.interface';
 import SupportService from '../services/support.service';
 import UserService from '../services/user.services';
 class SupportController {
@@ -26,9 +26,12 @@ class SupportController {
   public open = async (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
     const updated = await this.service.updateOpened(data.id);
-     if (updated==null) {
-       return res.send({message: 'failed', reason: 'already replied not found'});
-     }
+    if (updated == null) {
+      return res.send({
+        message: 'failed',
+        reason: 'already replied to message',
+      });
+    }
     if (updated) {
       return res.send({message: 'success'});
     }
@@ -59,4 +62,4 @@ class SupportController {
   public delete = async (req: Request, res: Response, next: NextFunction) => {};
 }
 
-export default SupportController
+export default SupportController;
