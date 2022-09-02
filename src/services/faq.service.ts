@@ -14,6 +14,7 @@ class FaqService {
 
   public async update(data: UpdateFaqDto) {
     const update = await this.model.findById(data.id);
+    
     if (update) {
       update.question = data.question;
       update.answer = data.answer;

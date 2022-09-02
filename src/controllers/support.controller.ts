@@ -26,6 +26,9 @@ class SupportController {
   public open = async (req: Request, res: Response, next: NextFunction) => {
     const data = req.body;
     const updated = await this.service.updateOpened(data.id);
+     if (updated==null) {
+       return res.send({message: 'failed', reason: 'already replied not found'});
+     }
     if (updated) {
       return res.send({message: 'success'});
     }

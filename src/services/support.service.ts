@@ -71,6 +71,9 @@ class SupportService {
   }
   public async updateOpened(id: string) {
     const support = await this.model.findById(id);
+    if (support &&  support.status == 'treated') {
+      return null;
+    }
     if (support) {
       support.status = 'open';
       await support.save();
