@@ -24,8 +24,8 @@ class SupportService {
         reply: support.reply || '',
         status: support.status,
       });
-      return results;
     }
+     return results;
   }
   public async getAllFromUser(sender: string) {
     const all = await this.model.find({sender});
@@ -38,8 +38,9 @@ class SupportService {
         reply: support.reply || '',
         status: support.status,
       });
-      return results;
+     
     }
+     return results;
   }
   public async getNewRepliesUser(sender: string) {
     const all = await this.model.find({sender,status:'treated'});
@@ -52,8 +53,9 @@ class SupportService {
         reply: support.reply || '',
         status: support.status,
       });
-      return results;
+     
     }
+     return results;
   }
 
   public async updateReply(id: string, reply: string) {
