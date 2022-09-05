@@ -15,14 +15,14 @@ class CategoryRoute implements IRoute {
   }
   private initializeRoutes() {
     this.router.post(
-      `${this.path}\create`,
+      `${this.path}/create`,
       EmptyJwtGuard.check,
       AdminGuard.createInstance,
       validationMiddleware(CreateCatDto, 'body', 'fields'),
       this.controller.create,
     );
     this.router.get(
-      `${this.path}\get`,
+      `${this.path}/get`,
       EmptyJwtGuard.check,
       AdminGuard.createInstance,
       this.controller.getAll,
