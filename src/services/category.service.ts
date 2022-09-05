@@ -19,7 +19,7 @@ class CategoryService {
     return false;
   }
   public async existClinical(name: string) {
-    const created = await this.model.find({name});
+    const created = await this.model.findOne({name});
     if (created) {
       return true;
     }
@@ -52,7 +52,7 @@ class CategoryService {
     return false;
   }
   public async existAntibiotic(name: string) {
-    const created = await this.antibioticModel.find({name});
+    const created = await this.antibioticModel.findOne({name});
     if (created) {
       return true;
     }
