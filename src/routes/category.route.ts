@@ -15,18 +15,31 @@ class CategoryRoute implements IRoute {
   }
   private initializeRoutes() {
     this.router.post(
-      `${this.path}/create`,
+      `${this.path}/clinical/create`,
       EmptyJwtGuard.check,
       AdminGuard.createInstance,
       validationMiddleware(CreateCatDto, 'body', 'fields'),
-      this.controller.create,
+      this.controller.createClinical,
     );
     this.router.get(
-      `${this.path}/get`,
+      `${this.path}/clinical/get`,
       EmptyJwtGuard.check,
       AdminGuard.createInstance,
-      this.controller.getAll,
+      this.controller.getAllClinical,
     );
+     this.router.post(
+       `${this.path}/antibiotic/create`,
+       EmptyJwtGuard.check,
+       AdminGuard.createInstance,
+       validationMiddleware(CreateCatDto, 'body', 'fields'),
+       this.controller.createAntibiotic,
+     );
+      this.router.get(
+        `${this.path}/antibiotic/get`,
+        EmptyJwtGuard.check,
+        AdminGuard.createInstance,
+        this.controller.getAllAntibiotic,
+      );
   }
 }
 
