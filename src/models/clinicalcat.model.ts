@@ -11,7 +11,7 @@ const categorySchema: Schema = new Schema<ICategory>({
 });
 
 const clinicalCatModel = model<Document & ICategory>(
-  'category',
+  'clinicalcategory',
   categorySchema,
 );
 export default clinicalCatModel;

@@ -11,7 +11,7 @@ const categorySchema: Schema = new Schema<ICategory>({
 });
 
 const antibioticCatModel = model<Document & ICategory>(
-  'category',
+  'antibioticcategory',
   categorySchema,
 );
 export default antibioticCatModel;
