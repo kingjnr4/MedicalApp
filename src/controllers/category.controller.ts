@@ -17,6 +17,9 @@ class CategoryController {
         return res.send({message: 'success'});
       }
     } else {
+           if (await(this.service.exist(data.name))) {
+             return res.send({message: 'failed', reason: 'name exist'});
+           }
       const created = await this.service.createWithoutParent(data.name);
       if (created) {
         return res.send({message: 'success'});
