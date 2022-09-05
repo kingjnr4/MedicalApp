@@ -1,6 +1,7 @@
 import App from './app';
 import {Cron} from './cron';
 import AdminRoute from './routes/admin.route';
+import CategoryRoute from './routes/category.route';
 import FaqRoute from './routes/faq.route';
 import IndexRoute from './routes/index.route';
 import PlanRoute from './routes/plan.route';
@@ -19,7 +20,8 @@ const app = new App([
   new PlanRoute(),
   new StatRoute(),
   new FaqRoute (),
-  new SupportRoute ()
+  new SupportRoute (),
+  new CategoryRoute ()
 ]);
 // Cron.start('0 * * * * *', function jobYouNeedToExecute() {
 //   console.log(new Date().toLocaleString());

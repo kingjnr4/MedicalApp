@@ -1,5 +1,5 @@
 
-import {model, Schema} from 'mongoose';
+import {model, Schema,Document} from 'mongoose';
 import {IToken} from '../interfaces/token.interface';
 import {IKey} from '../interfaces/key.interface';
 import { IInvite } from '../interfaces/invite.interface';
