@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import DiagnosisController from '../controllers/diagnosis.controller';
-import { CreateAntibioticDto, CreateClinicalDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
+import { CreateAntibioticDto, CreateClinicalDto, UpdateAntibioticDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
 import { AdminGuard } from '../guards/admin.guard';
 import { EmptyJwtGuard } from '../guards/jwtempty.guard';
 import {IRoute} from '../interfaces/routes.interfaces';
@@ -36,6 +36,13 @@ class DiagnosisRoute implements IRoute {
        AdminGuard.createInstance,
        validationMiddleware(UpdateClinicalDto, 'body', 'fields'),
        this.controller.updateClinicalGuide,
+     );
+     this.router.post(
+       `${this.path}/antibiotic/update`,
+       EmptyJwtGuard.check,
+       AdminGuard.createInstance,
+       validationMiddleware(UpdateAntibioticDto, 'body', 'fields'),
+       this.controller.updateAntiBioticGuide,
      );
   }
 }
