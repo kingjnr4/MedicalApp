@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import CategoryController from '../controllers/category.controller';
-import {CreateCatDto} from '../dtos/category.dto';
+import {CreateCatDto, DeleteCatDto} from '../dtos/category.dto';
 import {AdminGuard} from '../guards/admin.guard';
 import {EmptyJwtGuard} from '../guards/jwtempty.guard';
 import {IRoute} from '../interfaces/routes.interfaces';
@@ -21,6 +21,13 @@ class CategoryRoute implements IRoute {
       validationMiddleware(CreateCatDto, 'body', 'fields'),
       this.controller.createClinical,
     );
+    this.router.post(
+      `${this.path}/clinical/delete`,
+      EmptyJwtGuard.check,
+      AdminGuard.createInstance,
+      validationMiddleware(DeleteCatDto, 'body', 'fields'),
+      this.controller.deleteClinical,
+    );
     this.router.get(
       `${this.path}/clinical/get`,
       EmptyJwtGuard.check,
@@ -34,6 +41,13 @@ class CategoryRoute implements IRoute {
        validationMiddleware(CreateCatDto, 'body', 'fields'),
        this.controller.createAntibiotic,
      );
+      this.router.post(
+        `${this.path}/antibiotic/delete`,
+        EmptyJwtGuard.check,
+        AdminGuard.createInstance,
+        validationMiddleware(DeleteCatDto, 'body', 'fields'),
+        this.controller.deleteAntibiotic,
+      );
       this.router.get(
         `${this.path}/antibiotic/get`,
         EmptyJwtGuard.check,

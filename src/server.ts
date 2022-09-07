@@ -2,6 +2,7 @@ import App from './app';
 import {Cron} from './cron';
 import AdminRoute from './routes/admin.route';
 import CategoryRoute from './routes/category.route';
+import DiagnosisRoute from './routes/diagnosis.route';
 import FaqRoute from './routes/faq.route';
 import IndexRoute from './routes/index.route';
 import PlanRoute from './routes/plan.route';
@@ -19,9 +20,10 @@ const app = new App([
   new SettingsRoute(),
   new PlanRoute(),
   new StatRoute(),
-  new FaqRoute (),
-  new SupportRoute (),
-  new CategoryRoute ()
+  new FaqRoute(),
+  new SupportRoute(),
+  new CategoryRoute(),
+  new DiagnosisRoute(),
 ]);
 // Cron.start('0 * * * * *', function jobYouNeedToExecute() {
 //   console.log(new Date().toLocaleString());
