@@ -29,7 +29,7 @@ class DiagnosisService {
   public async antibioticNameIsDup(name: string, id: string) {
     const exists = await this.aModel.findOne({name});
     if (exists) {
-      return exists._id.toString() == id;
+      return exists._id.toString() == id ? false : true;
     }
     return false;
   }
