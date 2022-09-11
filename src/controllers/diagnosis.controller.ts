@@ -149,7 +149,7 @@ class DiagnosisController {
     next: NextFunction,
   ) => {
     try {
-      const data = this.service.getAntibiotic();
+      const data = await this.service.getAntibiotic();
       return res.send(data);
     } catch (error) {}
   };
@@ -159,7 +159,7 @@ class DiagnosisController {
     next: NextFunction,
   ) => {
     try {
-      const data = this.service.getClinical();
+      const data = await this.service.getClinical();
       return res.send(data);
     } catch (error) {}
   };
