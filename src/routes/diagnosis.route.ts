@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import DiagnosisController from '../controllers/diagnosis.controller';
-import { CreateAntibioticDto, CreateClinicalDto, UpdateAntibioticDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
+import { CreateAntibioticDto, CreateClinicalDto, DeleteAntibioticDto, DeleteClinicalDto, UpdateAntibioticDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
 import { AdminGuard } from '../guards/admin.guard';
 import { EmptyJwtGuard } from '../guards/jwtempty.guard';
 import {IRoute} from '../interfaces/routes.interfaces';
@@ -44,7 +44,34 @@ class DiagnosisRoute implements IRoute {
        validationMiddleware(UpdateAntibioticDto, 'body', 'fields'),
        this.controller.updateAntiBioticGuide,
      );
+      this.router.post(
+        `${this.path}/clinical/delete`,
+        EmptyJwtGuard.check,
+        AdminGuard.createInstance,
+        validationMiddleware(DeleteClinicalDto, 'body', 'fields'),
+        this.controller.deleteClinicalGuide,
+      );
+       this.router.post(
+         `${this.path}/antibiotic/delete`,
+         EmptyJwtGuard.check,
+         AdminGuard.createInstance,
+         validationMiddleware(DeleteAntibioticDto, 'body', 'fields'),
+         this.controller.deleteAntibioticGuide,
+       );
+        this.router.get(
+          `${this.path}/clinical/get`,
+          EmptyJwtGuard.check,
+          AdminGuard.createInstance,
+          this.controller.getClinicalGuide,
+        );
+         this.router.get(
+           `${this.path}/antibiotic/get`,
+           EmptyJwtGuard.check,
+           AdminGuard.createInstance,
+           this.controller.getAntibioticGuide,
+         );
   }
+
 }
 
 export default DiagnosisRoute;

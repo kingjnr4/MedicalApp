@@ -32,6 +32,9 @@ export class UpdateClinicalDto {
   @IsString()
   public guide!: string;
 }
+export class DeleteClinicalDto {
+  @IsString()
+  public id!: string;}
 
 export class UpdateAntibioticDto {
   @IsString()
@@ -45,4 +48,10 @@ export class UpdateAntibioticDto {
   public withoutPenicillin!: string;
   @IsString()
   public withPenicillin!: string;
+}
+
+
+export class DeleteAntibioticDto {
+  @IsString()
+  public id!: string;
 }

@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from 'express';
-import { CreateAntibioticDto, CreateClinicalDto, UpdateAntibioticDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
+import { CreateAntibioticDto, CreateClinicalDto, DeleteAntibioticDto, UpdateAntibioticDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
 import CategoryService from '../services/category.service';
 import DiagnosisService from '../services/diagnosis.service';
 
@@ -107,6 +107,61 @@ class DiagnosisController {
     } catch (error) {
       next(error);
     }
+  };
+  public deleteClinicalGuide = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const data: DeleteAntibioticDto = req.body;
+
+      const deleted = await this.service.deleteClinicalGuide(data.id);
+      if (deleted) {
+        return res.send({message: 'success'});
+      }
+      return res.send({message: 'failed', reason: 'error occured'});
+    } catch (error) {
+      next(error);
+    }
+  };
+  public deleteAntibioticGuide = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const data: DeleteAntibioticDto = req.body;
+
+      const deleted = await this.service.deleteAntibioticGuide(data.id);
+      if (deleted) {
+        return res.send({message: 'success'});
+      }
+      return res.send({message: 'failed', reason: 'error occured'});
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getAntibioticGuide = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const data = this.service.getAntibiotic();
+      return res.send(data);
+    } catch (error) {}
+  };
+  public getClinicalGuide = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const data = this.service.getClinical();
+      return res.send(data);
+    } catch (error) {}
   };
 }
 
