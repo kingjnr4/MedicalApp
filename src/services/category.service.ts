@@ -50,6 +50,7 @@ class CategoryService {
       results.push({
         id: cat._id,
         name: cat.name,
+		category:cat.name,
         parent: cat.parent || '',
       });
     }
@@ -84,6 +85,7 @@ class CategoryService {
       results.push({
         id: cat._id,
         name: cat.name,
+		category:cat.name,
         parent: cat.parent || '',
       });
     }
@@ -101,6 +103,7 @@ class CategoryService {
       results.push({
         id: cat._id,
         name: cat.name,
+		category:cat.name,
         parent: cat.parent || '',
       });
     }
@@ -118,6 +121,7 @@ class CategoryService {
       results.push({
         id: cat._id,
         name: cat.name,
+		category:cat.name,
         parent: cat.parent || '',
       });
     }
