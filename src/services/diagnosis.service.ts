@@ -108,7 +108,7 @@ class DiagnosisService {
       withPenicillin: data.withPenicillin || undefined,
       withoutPenicillin: data.withoutPenicillin || undefined,
     };
-    const deleted = await this.model.findByIdAndUpdate(data.id, {...update});
+    const deleted = await this.aModel.findByIdAndUpdate(data.id, {...update});
     if (deleted) {
       return true;
     }
