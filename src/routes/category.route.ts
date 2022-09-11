@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import CategoryController from '../controllers/category.controller';
-import {CreateCatDto, DeleteCatDto} from '../dtos/category.dto';
+import {CreateCatDto, DeleteCatDto, UpdateCatDto} from '../dtos/category.dto';
 import {AdminGuard} from '../guards/admin.guard';
 import {EmptyJwtGuard} from '../guards/jwtempty.guard';
 import {IRoute} from '../interfaces/routes.interfaces';
@@ -22,6 +22,13 @@ class CategoryRoute implements IRoute {
       this.controller.createClinical,
     );
     this.router.post(
+      `${this.path}/clinical/update`,
+      EmptyJwtGuard.check,
+      AdminGuard.createInstance,
+      validationMiddleware(UpdateCatDto, 'body', 'fields'),
+      this.controller.updateClinical,
+    );
+    this.router.post(
       `${this.path}/clinical/delete`,
       EmptyJwtGuard.check,
       AdminGuard.createInstance,
@@ -34,6 +41,12 @@ class CategoryRoute implements IRoute {
       AdminGuard.createInstance,
       this.controller.getAllClinical,
     );
+     this.router.get(
+       `${this.path}/clinical/getNoParent`,
+       EmptyJwtGuard.check,
+       AdminGuard.createInstance,
+       this.controller.getAllClinicalNoChildren,
+     );
      this.router.post(
        `${this.path}/antibiotic/create`,
        EmptyJwtGuard.check,
@@ -41,6 +54,13 @@ class CategoryRoute implements IRoute {
        validationMiddleware(CreateCatDto, 'body', 'fields'),
        this.controller.createAntibiotic,
      );
+      this.router.post(
+        `${this.path}/antibiotic/update`,
+        EmptyJwtGuard.check,
+        AdminGuard.createInstance,
+        validationMiddleware(UpdateCatDto, 'body', 'fields'),
+        this.controller.updateAntibiotic,
+      );
       this.router.post(
         `${this.path}/antibiotic/delete`,
         EmptyJwtGuard.check,
@@ -54,6 +74,13 @@ class CategoryRoute implements IRoute {
         AdminGuard.createInstance,
         this.controller.getAllAntibiotic,
       );
+      this.router.get(
+        `${this.path}/antibiotic/getNoParent`,
+        EmptyJwtGuard.check,
+        AdminGuard.createInstance,
+        this.controller.getAllAntibioticNoChildren,
+      );
+
   }
 }
 

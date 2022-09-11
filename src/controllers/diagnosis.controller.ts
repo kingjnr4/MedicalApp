@@ -6,22 +6,22 @@ import DiagnosisService from '../services/diagnosis.service';
 class DiagnosisController {
   private service = new DiagnosisService();
   private cService = new CategoryService();
-  public createAntiBioticGuide = (
+  public createAntiBioticGuide = async (
     req: Request,
     res: Response,
     next: NextFunction,
   ) => {
     try {
       const data: CreateAntibioticDto = req.body;
-      const catExist = this.cService.existAntibiotic(data.category);
+      const catExist = await this.cService.existAntibiotic(data.category);
       if (!catExist) {
         return res.send({message: 'failed', reason: 'category does not exist'});
       }
-      const nameExist = this.service.existsAntibiotic(data.name);
+      const nameExist = await this.service.existsAntibiotic(data.name);
       if (nameExist) {
         return res.send({message: 'failed', reason: 'name already exist'});
       }
-      const created = this.service.createAntibiotic(data);
+      const created = await this.service.createAntibiotic(data);
       if (created) {
         return res.send({message: 'success'});
       }
@@ -30,22 +30,22 @@ class DiagnosisController {
       next(error);
     }
   };
-  public createClinicalGuide = (
+  public createClinicalGuide = async (
     req: Request,
     res: Response,
     next: NextFunction,
   ) => {
     try {
       const data: CreateClinicalDto = req.body;
-      const catExist = this.cService.existClinical(data.category);
+      const catExist = await this.cService.existClinical(data.category);
       if (!catExist) {
         return res.send({message: 'failed', reason: 'category does not exist'});
       }
-      const nameExist = this.service.existsClinical(data.disease);
+      const nameExist = await this.service.existsClinical(data.disease);
       if (nameExist) {
         return res.send({message: 'failed', reason: 'name already exist'});
       }
-      const created = this.service.createClinical(data);
+      const created = await this.service.createClinical(data);
       if (created) {
         return res.send({message: 'success'});
       }
@@ -54,7 +54,7 @@ class DiagnosisController {
       next(error);
     }
   };
-  public updateAntiBioticGuide = (
+  public updateAntiBioticGuide = async (
     req: Request,
     res: Response,
     next: NextFunction,
@@ -65,11 +65,14 @@ class DiagnosisController {
       if (!catExist) {
         return res.send({message: 'failed', reason: 'category does not exist'});
       }
-      const nameExist = this.service.antibioticNameIsDup(data.name, data.id);
+      const nameExist = await this.service.antibioticNameIsDup(
+        data.name,
+        data.id,
+      );
       if (nameExist) {
         return res.send({message: 'failed', reason: 'name already exist'});
       }
-      const created = this.service.updateAntibioticGuide(data);
+      const created = await this.service.updateAntibioticGuide(data);
       if (created) {
         return res.send({message: 'success'});
       }
@@ -78,22 +81,25 @@ class DiagnosisController {
       next(error);
     }
   };
-  public updateClinicalGuide = (
+  public updateClinicalGuide = async (
     req: Request,
     res: Response,
     next: NextFunction,
   ) => {
     try {
       const data: UpdateClinicalDto = req.body;
-      const catExist = this.cService.existClinical(data.category);
+      const catExist = await this.cService.existClinical(data.category);
       if (!catExist) {
         return res.send({message: 'failed', reason: 'category does not exist'});
       }
-      const nameExist = this.service.clinicalNameIsDup(data.disease, data.id);
+      const nameExist = await this.service.clinicalNameIsDup(
+        data.disease,
+        data.id,
+      );
       if (nameExist) {
         return res.send({message: 'failed', reason: 'name already exist'});
       }
-      const created = this.service.updateClinicalGuide(data);
+      const created = await this.service.updateClinicalGuide(data);
       if (created) {
         return res.send({message: 'success'});
       }

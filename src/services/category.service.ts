@@ -125,6 +125,8 @@ class CategoryService {
   }
   public async hasChildrenClinical(name: string) {
     const count = await this.model.count({parent: name});
+    console.log(count);
+
     return count > 0;
   }
   public async hasChildrenAntibiotic(name: string) {
@@ -132,16 +134,42 @@ class CategoryService {
     return count > 0;
   }
   public async deleteAntibiotic(id: string) {
-    const deleted = this.antibioticCatModel.findByIdAndDelete(id);
-    if (deleted) {
-      return true;
+    const valid = await this.antibioticCatModel.findById(id);
+    if (valid) {
+      const has = await this.hasChildrenAntibiotic(valid.name);
+      if (has) {
+        const children = await this.antibioticCatModel.find({
+          parent: valid.name,
+        });
+        for (let i = 0; i < children.length; i++) {
+          await this.deleteAntibiotic(children[i]._id.toString());
+        }
+        await valid.remove();
+        return true;
+      } else {
+        await antibioticModel.deleteMany({category: valid.name});
+        await valid.remove();
+        return true;
+      }
     }
     return false;
   }
   public async deleteClinical(id: string) {
-    const deleted = this.model.findByIdAndDelete(id);
-    if (deleted) {
-      return true;
+    const valid = await this.model.findById(id);
+    if (valid) {
+      const has = await this.hasChildrenClinical(valid.name);
+      if (has) {
+        const children = await this.model.find({parent: valid.name});
+        for (let i = 0; i < children.length; i++) {
+          await this.deleteClinical(children[i]._id.toString());
+        }
+        await valid.remove();
+        return true;
+      } else {
+        await clinicalModel.deleteMany({category: valid.name});
+        await valid.remove();
+        return true;
+      }
     }
     return false;
   }
@@ -154,10 +182,10 @@ class CategoryService {
     };
     const updated = await clinical.update(upd);
     if (updated) {
-      await this.model.updateMany({parent: oldname}, {parent: upd.parent});
+      await this.model.updateMany({parent: oldname}, {parent: updated.name});
       await clinicalModel.updateMany(
         {category: oldname},
-        {category: upd.parent},
+        {category: updated.name},
       );
       return true;
     }
@@ -174,15 +202,30 @@ class CategoryService {
     if (updated) {
       await this.antibioticCatModel.updateMany(
         {parent: oldname},
-        {parent: upd.parent},
+        {parent: updated.name},
       );
       await antibioticModel.updateMany(
         {category: oldname},
-        {category: upd.parent},
+        {category: updated.name},
       );
       return true;
     }
     return false;
   }
+  public async clinicalCatNameIsDup(name: string, id: string) {
+    const exists = await this.model.findOne({name});
+    if (exists) {
+      return exists._id.toString() == id ? false : true;
+    }
+    return false;
+  }
+  public async antibioticCatNameIsDup(name: string, id: string) {
+    const exists = await this.antibioticCatModel.findOne({name});
+    if (exists) {
+      return exists._id.toString() == id ? false : true;
+    }
+    return false;
+  }
 }
+
 export default CategoryService;
