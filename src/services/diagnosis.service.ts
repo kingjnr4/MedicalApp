@@ -83,7 +83,7 @@ class DiagnosisService {
     return false;
   }
   public async deleteAntibioticGuide(id: string) {
-    const deleted = await this.model.findByIdAndDelete(id);
+    const deleted = await this.aModel.findByIdAndDelete(id);
     if (deleted) {
       return true;
     }
