@@ -13,6 +13,13 @@ class CategoryController {
       if (!(await this.service.existClinical(data.parent))) {
         return res.send({message: 'failed', reason: 'parent does not exist'});
       }
+      const hasGuide = await this.service.hasGuideClinical(data.parent);
+      if (hasGuide) {
+        return res.send({
+          message: 'failed',
+          reason: 'category has guide',
+        });
+      }
       if (await this.service.existClinical(data.name)) {
         return res.send({message: 'failed', reason: 'name exist'});
       }
@@ -24,6 +31,7 @@ class CategoryController {
       if (await this.service.existClinical(data.name)) {
         return res.send({message: 'failed', reason: 'name exist'});
       }
+      
       const created = await this.service.createWithoutParentClinical(data.name);
       if (created) {
         return res.send({message: 'success'});
@@ -41,6 +49,13 @@ class CategoryController {
       if (!(await this.service.existAntibiotic(data.parent))) {
         return res.send({message: 'failed', reason: 'parent does not exist'});
       }
+        const hasGuide = await this.service.hasGuideAntibiotic(data.parent);
+        if (hasGuide) {
+          return res.send({
+            message: 'failed',
+            reason: 'category has guide',
+          });
+        }
       if (await this.service.existAntibiotic(data.name)) {
         return res.send({message: 'failed', reason: 'name exist'});
       }
