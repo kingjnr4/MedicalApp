@@ -137,6 +137,16 @@ class CategoryService {
     const count = await this.antibioticCatModel.count({parent: name});
     return count > 0;
   }
+    public async hasGuideClinical(name: string) {
+    const count = await clinicalModel.count({category: name});
+    console.log(count);
+
+    return count > 0;
+  }
+  public async hasGuideAntibiotic(name: string) {
+    const count = await antibioticModel.count({category: name});
+    return count > 0;
+  }
   public async deleteAntibiotic(id: string) {
     const valid = await this.antibioticCatModel.findById(id);
     if (valid) {
