@@ -193,10 +193,10 @@ class DiagnosisController {
        }
       const hasChildren = await this.cService.hasChildrenAntibiotic(body.name);
       if (hasChildren) {
-        const all = this.cService.getAntibioticChildren(body.name);
+        const all = await this.cService.getAntibioticChildren(body.name);
         return res.send({message: 'success', type: 'categories', data: all});
       } else {
-        const all = this.service.getAntibioticChildren(body.name);
+        const all =  await this.service.getAntibioticChildren(body.name);
         return res.send({message: 'success', type: 'diagnosis', data: all});
       }
     } catch (error) {}
@@ -214,10 +214,10 @@ class DiagnosisController {
   }
       const hasChildren = await this.cService.hasChildrenClinical(body.name);
       if (hasChildren) {
-        const all = this.cService.getClinicalChildren(body.name);
+        const all = await this.cService.getClinicalChildren(body.name);
         return res.send({message: 'success', type: 'categories', data: all});
       } else {
-        const all = this.service.getClinicalChildren(body.name);
+        const all = await this.service.getClinicalChildren(body.name);
         return res.send({message: 'success', type: 'diagnosis', data: all});
       }
     } catch (error) {}
