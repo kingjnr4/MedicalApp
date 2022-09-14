@@ -138,7 +138,36 @@ class DiagnosisService {
         name: clinical.name,
         withPenicillin: clinical.withPenicillin,
         withoutPenicillin: clinical.withoutPenicillin,
-        category:clinical.category
+        category: clinical.category,
+      });
+    }
+    return results;
+  }
+  public async getClinicalChildren(category: string) {
+    const all = await this.model.find({category});
+    const results = [];
+    for (let i = 0; i < all.length; i++) {
+      const clinical = all[i];
+      results.push({
+        id: clinical._id,
+        disease: clinical.disease,
+        guide: clinical.guide,
+        category: clinical.category,
+      });
+    }
+    return results;
+  }
+  public async getAntibioticChildren(category: string) {
+    const all = await this.aModel.find({category});
+    const results = [];
+    for (let i = 0; i < all.length; i++) {
+      const clinical = all[i];
+      results.push({
+        id: clinical._id,
+        name: clinical.name,
+        withPenicillin: clinical.withPenicillin,
+        withoutPenicillin: clinical.withoutPenicillin,
+        category: clinical.category,
       });
     }
     return results;

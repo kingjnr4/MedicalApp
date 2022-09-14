@@ -55,3 +55,7 @@ export class DeleteAntibioticDto {
   @IsString()
   public id!: string;
 }
+export class SearchDto {
+  @IsString()
+  public name!: string;
+}

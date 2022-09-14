@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from 'express';
-import { CreateAntibioticDto, CreateClinicalDto, DeleteAntibioticDto, UpdateAntibioticDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
+import { CreateAntibioticDto, CreateClinicalDto, DeleteAntibioticDto, SearchDto, UpdateAntibioticDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
 import CategoryService from '../services/category.service';
 import DiagnosisService from '../services/diagnosis.service';
 
@@ -17,13 +17,13 @@ class DiagnosisController {
       if (!catExist) {
         return res.send({message: 'failed', reason: 'category does not exist'});
       }
-       const hasGuide = await this.cService.hasGuideAntibiotic(data.category);
-       if (hasGuide) {
-         return res.send({
-           message: 'failed',
-           reason: 'category has guide',
-         });
-       }
+      const hasGuide = await this.cService.hasGuideAntibiotic(data.category);
+      if (hasGuide) {
+        return res.send({
+          message: 'failed',
+          reason: 'category has guide',
+        });
+      }
       const nameExist = await this.service.existsAntibiotic(data.name);
       if (nameExist) {
         return res.send({message: 'failed', reason: 'name already exist'});
@@ -48,13 +48,13 @@ class DiagnosisController {
       if (!catExist) {
         return res.send({message: 'failed', reason: 'category does not exist'});
       }
-        const hasGuide = await this.cService.hasGuideClinical(data.category);
-        if (hasGuide) {
-          return res.send({
-            message: 'failed',
-            reason: 'category has guide',
-          });
-        }
+      const hasGuide = await this.cService.hasGuideClinical(data.category);
+      if (hasGuide) {
+        return res.send({
+          message: 'failed',
+          reason: 'category has guide',
+        });
+      }
       const nameExist = await this.service.existsClinical(data.disease);
       if (nameExist) {
         return res.send({message: 'failed', reason: 'name already exist'});
@@ -175,6 +175,51 @@ class DiagnosisController {
     try {
       const data = await this.service.getClinical();
       return res.send(data);
+    } catch (error) {}
+  };
+  public searchAntibioticGuide = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const body: SearchDto = req.body;
+       const catExist = await this.cService.existAntibiotic(body.name);
+       if (!catExist) {
+         return res.send({
+           message: 'failed',
+           reason: 'category does not exist',
+         });
+       }
+      const hasChildren = await this.cService.hasChildrenAntibiotic(body.name);
+      if (hasChildren) {
+        const all = this.cService.getAntibioticChildren(body.name);
+        return res.send({message: 'success', type: 'categories', data: all});
+      } else {
+        const all = this.service.getAntibioticChildren(body.name);
+        return res.send({message: 'success', type: 'diagnosis', data: all});
+      }
+    } catch (error) {}
+  };
+  public searchClinicalGuide = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const body: SearchDto = req.body;
+  const catExist = await this.cService.existClinical(body.name);
+  if (!catExist) {
+    return res.send({message: 'failed', reason: 'category does not exist'});
+  }
+      const hasChildren = await this.cService.hasChildrenClinical(body.name);
+      if (hasChildren) {
+        const all = this.cService.getClinicalChildren(body.name);
+        return res.send({message: 'success', type: 'categories', data: all});
+      } else {
+        const all = this.service.getClinicalChildren(body.name);
+        return res.send({message: 'success', type: 'diagnosis', data: all});
+      }
     } catch (error) {}
   };
 }

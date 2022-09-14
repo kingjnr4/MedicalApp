@@ -1,7 +1,8 @@
 import {Router} from 'express';
 import DiagnosisController from '../controllers/diagnosis.controller';
-import { CreateAntibioticDto, CreateClinicalDto, DeleteAntibioticDto, DeleteClinicalDto, UpdateAntibioticDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
+import { CreateAntibioticDto, CreateClinicalDto, DeleteAntibioticDto, DeleteClinicalDto, SearchDto, UpdateAntibioticDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
 import { AdminGuard } from '../guards/admin.guard';
+import { AuthGuard } from '../guards/auth.guard';
 import { EmptyJwtGuard } from '../guards/jwtempty.guard';
 import {IRoute} from '../interfaces/routes.interfaces';
 import validationMiddleware from '../middlewares/validation.middleware';
@@ -70,7 +71,22 @@ class DiagnosisRoute implements IRoute {
            AdminGuard.createInstance,
            this.controller.getAntibioticGuide,
          );
+          this.router.get(
+            `${this.path}/antibiotic/search`,
+            EmptyJwtGuard.check,
+            AuthGuard.createInstance,
+            validationMiddleware(SearchDto, 'body', 'fields'),
+            this.controller.searchAntibioticGuide,
+          );
+           this.router.get(
+             `${this.path}/clinical/search`,
+             EmptyJwtGuard.check,
+             AuthGuard.createInstance,
+             validationMiddleware(SearchDto, 'body', 'fields'),
+             this.controller.searchClinicalGuide,
+           );
   }
+
 
 }
 

@@ -50,7 +50,21 @@ class CategoryService {
       results.push({
         id: cat._id,
         name: cat.name,
-		category:cat.name,
+        category: cat.name,
+        parent: cat.parent || '',
+      });
+    }
+    return results;
+  }
+  public async getClinicalChildren(parent: string) {
+    const all = await this.model.find({parent});
+    const results = [];
+    for (let i = 0; i < all.length; i++) {
+      const cat = all[i];
+      results.push({
+        id: cat._id,
+        name: cat.name,
+        category: cat.name,
         parent: cat.parent || '',
       });
     }
@@ -85,7 +99,21 @@ class CategoryService {
       results.push({
         id: cat._id,
         name: cat.name,
-		category:cat.name,
+        category: cat.name,
+        parent: cat.parent || '',
+      });
+    }
+    return results;
+  }
+  public async getAntibioticChildren(parent: string) {
+    const all = await this.antibioticCatModel.find({parent});
+    const results = [];
+    for (let i = 0; i < all.length; i++) {
+      const cat = all[i];
+      results.push({
+        id: cat._id,
+        name: cat.name,
+        category: cat.name,
         parent: cat.parent || '',
       });
     }
@@ -103,7 +131,7 @@ class CategoryService {
       results.push({
         id: cat._id,
         name: cat.name,
-		category:cat.name,
+        category: cat.name,
         parent: cat.parent || '',
       });
     }
@@ -121,7 +149,7 @@ class CategoryService {
       results.push({
         id: cat._id,
         name: cat.name,
-		category:cat.name,
+        category: cat.name,
         parent: cat.parent || '',
       });
     }
@@ -137,7 +165,7 @@ class CategoryService {
     const count = await this.antibioticCatModel.count({parent: name});
     return count > 0;
   }
-    public async hasGuideClinical(name: string) {
+  public async hasGuideClinical(name: string) {
     const count = await clinicalModel.count({category: name});
     console.log(count);
 
