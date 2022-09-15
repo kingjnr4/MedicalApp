@@ -1,4 +1,5 @@
 import {NextFunction, Request, Response} from 'express';
+import { DeleteCatDto } from '../dtos/category.dto';
 import { CreateAntibioticDto, CreateClinicalDto, DeleteAntibioticDto, SearchDto, UpdateAntibioticDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
 import CategoryService from '../services/category.service';
 import DiagnosisService from '../services/diagnosis.service';
@@ -177,26 +178,82 @@ class DiagnosisController {
       return res.send(data);
     } catch (error) {}
   };
-  public searchAntibioticGuide = async (
+  public getAntibioticGuideSingle = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const body:DeleteCatDto = req.body
+      const data = await this.service.getAntibioticById(body.id);
+      if (data==null) {
+         return res.send({
+           message: 'failed',
+           reason: 'guide does not exist',
+         });
+      }
+      return res.send(data);
+    } catch (error) {}
+  };
+  public getClinicalGuideSingle = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+       const body: DeleteCatDto = req.body;
+
+      const data = await this.service.getClinicalById(body.id);
+        if (data == null) {
+          return res.send({
+            message: 'failed',
+            reason: 'guide does not exist',
+          });
+        }
+      return res.send(data);
+    } catch (error) {}
+  };
+  public singleCategoryAntibiotic = async (
     req: Request,
     res: Response,
     next: NextFunction,
   ) => {
     try {
       const body: SearchDto = req.body;
-       const catExist = await this.cService.existAntibiotic(body.name);
-       if (!catExist) {
-         return res.send({
-           message: 'failed',
-           reason: 'category does not exist',
-         });
-       }
+      const catExist = await this.cService.existAntibiotic(body.name);
+      if (!catExist) {
+        return res.send({
+          message: 'failed',
+          reason: 'category does not exist',
+        });
+      }
       const hasChildren = await this.cService.hasChildrenAntibiotic(body.name);
       if (hasChildren) {
         const all = await this.cService.getAntibioticChildren(body.name);
         return res.send({message: 'success', type: 'categories', data: all});
       } else {
-        const all =  await this.service.getAntibioticChildren(body.name);
+        const all = await this.service.getAntibioticChildren(body.name);
+        return res.send({message: 'success', type: 'diagnosis', data: all});
+      }
+    } catch (error) {}
+  };
+  public singleCategoryClinical = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const body: SearchDto = req.body;
+      const catExist = await this.cService.existClinical(body.name);
+      if (!catExist) {
+        return res.send({message: 'failed', reason: 'category does not exist'});
+      }
+      const hasChildren = await this.cService.hasChildrenClinical(body.name);
+      if (hasChildren) {
+        const all = await this.cService.getClinicalChildren(body.name);
+        return res.send({message: 'success', type: 'categories', data: all});
+      } else {
+        const all = await this.service.getClinicalChildren(body.name);
         return res.send({message: 'success', type: 'diagnosis', data: all});
       }
     } catch (error) {}
@@ -208,18 +265,19 @@ class DiagnosisController {
   ) => {
     try {
       const body: SearchDto = req.body;
-  const catExist = await this.cService.existClinical(body.name);
-  if (!catExist) {
-    return res.send({message: 'failed', reason: 'category does not exist'});
-  }
-      const hasChildren = await this.cService.hasChildrenClinical(body.name);
-      if (hasChildren) {
-        const all = await this.cService.getClinicalChildren(body.name);
-        return res.send({message: 'success', type: 'categories', data: all});
-      } else {
-        const all = await this.service.getClinicalChildren(body.name);
-        return res.send({message: 'success', type: 'diagnosis', data: all});
-      }
+      const data = await this.cService.searchClinical(body.name);
+      return res.send(data);
+    } catch (error) {}
+  };
+  public searchAntibioticGuide = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => {
+    try {
+      const body: SearchDto = req.body;
+      const data = await this.cService.searchAntibiotic(body.name);
+      return res.send(data);
     } catch (error) {}
   };
 }

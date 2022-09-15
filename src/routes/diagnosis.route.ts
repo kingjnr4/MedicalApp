@@ -1,5 +1,6 @@
 import {Router} from 'express';
 import DiagnosisController from '../controllers/diagnosis.controller';
+import { DeleteCatDto } from '../dtos/category.dto';
 import { CreateAntibioticDto, CreateClinicalDto, DeleteAntibioticDto, DeleteClinicalDto, SearchDto, UpdateAntibioticDto, UpdateClinicalDto } from '../dtos/diagnosis.dto';
 import { AdminGuard } from '../guards/admin.guard';
 import { AuthGuard } from '../guards/auth.guard';
@@ -85,7 +86,36 @@ class DiagnosisRoute implements IRoute {
              validationMiddleware(SearchDto, 'body', 'fields'),
              this.controller.searchClinicalGuide,
            );
+             this.router.get(
+               `${this.path}/antibiotic/single`,
+               EmptyJwtGuard.check,
+               AuthGuard.createInstance,
+               validationMiddleware(DeleteCatDto, 'body', 'fields'),
+               this.controller.getAntibioticGuideSingle,
+             );
+           this.router.get(
+             `${this.path}/clinical/single`,
+             EmptyJwtGuard.check,
+             AuthGuard.createInstance,
+             validationMiddleware(DeleteCatDto, 'body', 'fields'),
+             this.controller.getClinicalGuideSingle,
+           );
+            this.router.get(
+              `${this.path}/antibiotic/singlecat`,
+              EmptyJwtGuard.check,
+              AuthGuard.createInstance,
+              validationMiddleware(SearchDto, 'body', 'fields'),
+              this.controller.singleCategoryAntibiotic,
+            );
+            this.router.get(
+              `${this.path}/clinical/singlecat`,
+              EmptyJwtGuard.check,
+              AuthGuard.createInstance,
+              validationMiddleware(SearchDto, 'body', 'fields'),
+              this.controller.singleCategoryClinical,
+            );
   }
+  
 
 
 }

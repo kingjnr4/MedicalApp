@@ -42,6 +42,14 @@ class CategoryService {
     }
     return false;
   }
+  public async getClinicalId(id: string) {
+    const data = await this.model.findById(id);
+    return data;
+  }
+  public async getAntibioticId(id: string) {
+    const data = await this.antibioticCatModel.findById(id);
+    return data;
+  }
   public async getClinical() {
     const all = await this.model.find();
     const results = [];
@@ -107,6 +115,36 @@ class CategoryService {
   }
   public async getAntibioticChildren(parent: string) {
     const all = await this.antibioticCatModel.find({parent});
+    const results = [];
+    for (let i = 0; i < all.length; i++) {
+      const cat = all[i];
+      results.push({
+        id: cat._id,
+        name: cat.name,
+        category: cat.name,
+        parent: cat.parent || '',
+      });
+    }
+    return results;
+  }
+  public async searchClinical(query: string) {
+    const regex = new RegExp(query, 'i');
+    const all = await this.model.find({name: regex});
+    const results = [];
+    for (let i = 0; i < all.length; i++) {
+      const cat = all[i];
+      results.push({
+        id: cat._id,
+        name: cat.name,
+        category: cat.name,
+        parent: cat.parent || '',
+      });
+    }
+    return results;
+  }
+  public async searchAntibiotic(query: string) {
+    const regex = new RegExp(query, 'i');
+    const all = await this.antibioticCatModel.find({name: regex});
     const results = [];
     for (let i = 0; i < all.length; i++) {
       const cat = all[i];
