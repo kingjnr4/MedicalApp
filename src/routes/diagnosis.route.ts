@@ -72,42 +72,42 @@ class DiagnosisRoute implements IRoute {
            AdminGuard.createInstance,
            this.controller.getAntibioticGuide,
          );
-          this.router.get(
+          this.router.post(
             `${this.path}/antibiotic/search`,
             EmptyJwtGuard.check,
             AuthGuard.createInstance,
             validationMiddleware(SearchDto, 'body', 'fields'),
             this.controller.searchAntibioticGuide,
           );
-           this.router.get(
+           this.router.post(
              `${this.path}/clinical/search`,
              EmptyJwtGuard.check,
              AuthGuard.createInstance,
              validationMiddleware(SearchDto, 'body', 'fields'),
              this.controller.searchClinicalGuide,
            );
-             this.router.get(
+             this.router.post(
                `${this.path}/antibiotic/single`,
                EmptyJwtGuard.check,
                AuthGuard.createInstance,
                validationMiddleware(DeleteCatDto, 'body', 'fields'),
                this.controller.getAntibioticGuideSingle,
              );
-           this.router.get(
+           this.router.post(
              `${this.path}/clinical/single`,
              EmptyJwtGuard.check,
              AuthGuard.createInstance,
              validationMiddleware(DeleteCatDto, 'body', 'fields'),
              this.controller.getClinicalGuideSingle,
            );
-            this.router.get(
+            this.router.post(
               `${this.path}/antibiotic/singlecat`,
               EmptyJwtGuard.check,
               AuthGuard.createInstance,
               validationMiddleware(SearchDto, 'body', 'fields'),
               this.controller.singleCategoryAntibiotic,
             );
-            this.router.get(
+            this.router.post(
               `${this.path}/clinical/singlecat`,
               EmptyJwtGuard.check,
               AuthGuard.createInstance,
