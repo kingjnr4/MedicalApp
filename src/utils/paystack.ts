@@ -42,10 +42,12 @@ export class Paystack {
     const plan = await pService.findPlanByName(data.plan.name);
     const trial = await trialModel.findOne({user: user._id});
     trial.status = 'Ended';
+    const sub = await subModel.findOne({owner: user._id});
+    const teamlen=sub.users.length
     await trial.save();
     const subData = {
       status: 'active',
-      users: [user._id],
+      users: teamlen>plan.spaces?[user._id]:sub.users,
       owner: user._id,
       paystack_ref: data.subscription_code,
       ps_email_token: data.email_token,
@@ -53,7 +55,7 @@ export class Paystack {
       plan: plan._id,
     };
     await tService.addToTransaction(user, data.amount, 'success');
-    const sub = await subModel.findOne({owner: user._id});
+    
       const id = uuid();
     if (sub) {
       await sub.update(subData);
