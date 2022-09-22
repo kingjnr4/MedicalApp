@@ -24,7 +24,7 @@ class SubService {
     const plan = await planModel.findById(planId);
     const trial = await trialModel.findOne({user: user._id});
     if (!trial) {
-      throw new HttpException(401, 'Add A Fucking Card');
+      throw new HttpException(401, 'Please kindly add your card to your account');
     }
     const date = Date.now();
     const metadata = JSON.stringify({});
