@@ -18,13 +18,13 @@ class DiagnosisController {
       if (!catExist) {
         return res.send({message: 'failed', reason: 'category does not exist'});
       }
-      const hasGuide = await this.cService.hasGuideAntibiotic(data.category);
-      if (hasGuide) {
-        return res.send({
-          message: 'failed',
-          reason: 'category has guide',
-        });
-      }
+      // const hasGuide = await this.cService.hasGuideAntibiotic(data.category);
+      // if (hasGuide) {
+      //   return res.send({
+      //     message: 'failed',
+      //     reason: 'category has guide',
+      //   });
+      // }
       const nameExist = await this.service.existsAntibiotic(data.name);
       if (nameExist) {
         return res.send({message: 'failed', reason: 'name already exist'});
@@ -49,13 +49,13 @@ class DiagnosisController {
       if (!catExist) {
         return res.send({message: 'failed', reason: 'category does not exist'});
       }
-      const hasGuide = await this.cService.hasGuideClinical(data.category);
-      if (hasGuide) {
-        return res.send({
-          message: 'failed',
-          reason: 'category has guide',
-        });
-      }
+      // const hasGuide = await this.cService.hasGuideClinical(data.category);
+      // if (hasGuide) {
+      //   return res.send({
+      //     message: 'failed',
+      //     reason: 'category has guide',
+      //   });
+      // }
       const nameExist = await this.service.existsClinical(data.disease);
       if (nameExist) {
         return res.send({message: 'failed', reason: 'name already exist'});
