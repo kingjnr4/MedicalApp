@@ -10,27 +10,47 @@ import subModel from '../models/subscription.model';
 import PlanService from '../services/plan.services';
 import NotifService from '../services/notification.service';
 import TransactionService from '../services/transaction.service';
-import { uuid } from 'uuidv4';
+import {uuid} from 'uuidv4';
 
 export type Interval = 'monthly' | 'yearly' | 'daily';
 
 export class Paystack {
-  async handleSubEnded(data: any) {
-      const uService = new UserService();
-    const pService = new PlanService();
+  async handlePayFailed(data: any) {
+    const {subscription_code: code, email_token: token} = data.subscribtion;
+    await this.cancel(code, token);
+    const uService = new UserService();
     const nService = new NotifService();
+    const pService = new PlanService();
     const user = await uService.findUserByEmail(data.customer.email);
-     const plan = await pService.findPlanByName(data.plan.name);
+    const plan = await pService.findPlanByName(data.plan.name);
     const sub = await subModel.findOne({owner: user._id});
     sub.status = 'ended';
     await sub.save();
-      const id = uuid();
+    const id = uuid();
+    await nService.createNotification(
+      user,
+      'Sub Cancelled',
+      `Your subscribtion to plan ${plan.name} has come to an end due to payment issues `,
+      id,
+      'cancelled',
+    );
+  }
+  async handleSubEnded(data: any) {
+    const uService = new UserService();
+    const pService = new PlanService();
+    const nService = new NotifService();
+    const user = await uService.findUserByEmail(data.customer.email);
+    const plan = await pService.findPlanByName(data.plan.name);
+    const sub = await subModel.findOne({owner: user._id});
+    sub.status = 'ended';
+    await sub.save();
+    const id = uuid();
     await nService.createNotification(
       user,
       'Sub Cancelled',
       `Your subscribtion to plan ${plan.name} has come to an end`,
       id,
-      'cancelled'
+      'cancelled',
     );
   }
   async handleSubCancel(data: any) {
@@ -42,13 +62,13 @@ export class Paystack {
     const sub = await subModel.findOne({owner: user._id});
     sub.status = 'non-renewing';
     await sub.save();
-      const id = uuid();
+    const id = uuid();
     await nService.createNotification(
       user,
       'Sub Cancelled',
       'You have cancelled your subscribtion and it wont renew',
       id,
-      'cancelled'
+      'cancelled',
     );
   }
   async handleSubSuccess(data: any) {
@@ -61,11 +81,11 @@ export class Paystack {
     const trial = await trialModel.findOne({user: user._id});
     trial.status = 'Ended';
     const sub = await subModel.findOne({owner: user._id});
-    const teamlen=sub.users.length
+    const teamlen = sub.users.length;
     await trial.save();
     const subData = {
       status: 'active',
-      users: teamlen>plan.spaces?[user._id]:sub.users,
+      users: teamlen > plan.spaces ? [user._id] : sub.users,
       owner: user._id,
       paystack_ref: data.subscription_code,
       ps_email_token: data.email_token,
@@ -73,33 +93,33 @@ export class Paystack {
       plan: plan._id,
     };
     await tService.addToTransaction(user, data.amount, 'success');
-    
-      const id = uuid();
+
+    const id = uuid();
     if (sub) {
       await sub.update(subData);
-    
+
       await nService.createNotification(
         user,
         'Sub Created',
         'You have subscribed to plan ' + plan.name,
         id,
-        'subscribed'
+        'subscribed',
       );
       return;
     }
-    await subModel.create({owner: user._id,...subData});
+    await subModel.create({owner: user._id, ...subData});
 
     await nService.createNotification(
-
       user,
       'Sub Created',
       'You have subscribed to plan' + plan.name,
       id,
-      'subscribed'
+      'subscribed',
     );
   }
   public handleChargeSuccess = async (data: any) => {
     if (!data.metadata.evt) {
+      await this.handleSubSuccess(data);
       return;
     }
     await this.refund(data.reference);
@@ -242,9 +262,7 @@ export class Paystack {
     const res = await post(url, headers);
     return res;
   };
-  public createCustomer = async (
-    email: string,
-  ) => {
+  public createCustomer = async (email: string) => {
     const params = JSON.stringify({
       email,
     });
@@ -320,8 +338,11 @@ export class Paystack {
         case 'subscription.not_renew':
           ps.handleSubCancel(data.data);
           break;
-       case 'subscription.disable':
+        case 'subscription.disable':
           ps.handleSubEnded(data.data);
+          break;
+        case 'invoice.payment_failed':
+          ps.handlePayFailed(data.data);
           break;
         default:
           break;
