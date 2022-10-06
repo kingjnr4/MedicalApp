@@ -15,6 +15,24 @@ import { uuid } from 'uuidv4';
 export type Interval = 'monthly' | 'yearly' | 'daily';
 
 export class Paystack {
+  async handleSubEnded(data: any) {
+      const uService = new UserService();
+    const pService = new PlanService();
+    const nService = new NotifService();
+    const user = await uService.findUserByEmail(data.customer.email);
+     const plan = await pService.findPlanByName(data.plan.name);
+    const sub = await subModel.findOne({owner: user._id});
+    sub.status = 'ended';
+    await sub.save();
+      const id = uuid();
+    await nService.createNotification(
+      user,
+      'Sub Cancelled',
+      `Your subscribtion to plan ${plan.name} has come to an end`,
+      id,
+      'cancelled'
+    );
+  }
   async handleSubCancel(data: any) {
     const uService = new UserService();
     const pService = new PlanService();
@@ -301,6 +319,9 @@ export class Paystack {
           break;
         case 'subscription.not_renew':
           ps.handleSubCancel(data.data);
+          break;
+       case 'subscription.disable':
+          ps.handleSubEnded(data.data);
           break;
         default:
           break;
